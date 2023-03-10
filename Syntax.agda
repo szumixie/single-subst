@@ -45,10 +45,10 @@ postulate
 
   _[_]t    : Tm Γ A → (σ : Sub Δ Γ) → Tm Δ (A [ σ ]T)
 
-  ⁺⟨⟩T     : A [ ⟨ t ⟩ ]T [ σ ]T ≡ (A [ σ ⁺ ]T [ ⟨ t [ σ ]t ⟩ ]T) -- NEW
+  ⁺⟨⟩T     : A [ ⟨ t ⟩ ]T [ σ ]T ≡ A [ σ ⁺ ]T [ ⟨ t [ σ ]t ⟩ ]T -- NEW
   
-  p⟨⟩t     : (Tm Γ ~) p⟨⟩T (u [ p ]t [ ⟨ t ⟩ ]t)      u                       -- putting on top of the stack, then popping is the same as not doing anything
-  p⁺t      : (Tm _ ~) p⁺T  (u [ p {Γ}{B} ]t [ σ ⁺ ]t) (u [ σ ]t [ p ]t)       -- doing σ⁺, then pop is the same as first pop, then σ
+  p⟨⟩t     : subst (Tm Γ) p⟨⟩T (u [ p ]t [ ⟨ t ⟩ ]t)      ≡ u                     -- putting on top of the stack, then popping is the same as not doing anything
+  p⁺t      : subst (Tm _) p⁺T  (u [ p {Γ}{B} ]t [ σ ⁺ ]t) ≡ u [ σ ]t [ p ]t       -- doing σ⁺, then pop is the same as first pop, then σ
 
   q        : Tm (Γ ▹ A) (A [ p ]T)
   q[⟨⟩]    : (Tm Γ ~)              p⟨⟩T (q [ ⟨ t ⟩ ]t) t
@@ -68,10 +68,12 @@ postulate
   Πβ       : app (lam t) ≡ t
   Πη       : lam (app t) ≡ t
   -}
-  lam[]    : (Tm _ ~) Π[] (lam t [ σ ]t) (lam (t [ σ ⁺ ]t))
+  lam[]    : subst (Tm _) Π[] (lam t [ σ ]t) ≡ lam (t [ σ ⁺ ]t)
 
   -- TODO: depmodel
   -- TODO: create the QIIRT syntax using this -- not that easy because we need α-normal (substitution-normal) types and terms in the new syntax
+
+  -- TODO: the way to show that this syntax is correct is to prove canonicity
 
 record DepModel {i j k l} : Set (lsuc (i ⊔ j ⊔ k ⊔ l)) where
   infixl 6 _[_]T∙
@@ -84,19 +86,37 @@ record DepModel {i j k l} : Set (lsuc (i ⊔ j ⊔ k ⊔ l)) where
     Sub∙       : Con∙ Δ → Con∙ Γ → Sub Δ Γ → Set j
     Ty∙        : Con∙ Γ → Ty Γ → Set k
     Tm∙        : (Γ∙ : Con∙ Γ) → Ty∙ Γ∙ A → Tm Γ A → Set l
-{-    
+
+    _[_]T∙     : ∀{Γ∙ Δ∙} → Ty∙ Γ∙ A → Sub∙ Δ∙ Γ∙ σ → Ty∙ Δ∙ (A [ σ ]T)
+
     ◇∙         : Con∙ ◇
+    _▹∙_       : ∀{Γ∙} → Con∙ Γ → Ty∙ Γ∙ A → Con∙ (Γ ▹ A)
+
+    p∙         : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A} → Sub∙ (Γ∙ ▹∙ A∙) Γ∙ (p {Γ}{A})
+    ⟨_⟩∙       : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A} → Tm∙ Γ∙ A∙ t → Sub∙ Γ∙ (Γ∙ ▹∙ A∙) ⟨ t ⟩
+    _⁺∙        : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A}{Δ∙}(σ∙ : Sub∙ Δ∙ Γ∙ σ) → Sub∙ (Δ∙ ▹∙ A∙ [ σ∙ ]T∙) (Γ∙ ▹∙ A∙) (σ ⁺)
+
+    p⟨⟩T∙      : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A}{t∙ : Tm∙ Γ∙ A∙ t} → subst (Ty∙ Γ∙) p⟨⟩T (A∙ [ p∙ ]T∙ [ ⟨ t∙ ⟩∙ ]T∙) ≡ A∙
+    p⁺T∙       : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A}{t∙ : Tm∙ Γ∙ A∙ t}{Δ∙ : Con∙ Δ}{σ∙ : Sub∙ Δ∙ Γ∙ σ}{B∙ : Ty∙ Γ∙ B} →
+                 subst (Ty∙ (Δ∙ ▹∙ (B∙ [ σ∙ ]T∙))) p⁺T (A∙ [ p∙ {Γ∙ = Γ∙}{A∙ = B∙} ]T∙ [ σ∙ ⁺∙ ]T∙) ≡ A∙ [ σ∙ ]T∙ [ p∙ ]T∙
+  
+    _[_]t∙     : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A}{Δ∙} → Tm∙ Γ∙ A∙ t → (σ∙ : Sub∙ Δ∙ Γ∙ σ) → Tm∙ Δ∙ (A∙ [ σ∙ ]T∙) (t [ σ ]t)
+
+    ⁺⟨⟩T∙      : ∀{Γ∙}{B∙ : Ty∙ Γ∙ B}{t∙ : Tm∙ Γ∙ B∙ t}{A∙ : Ty∙ (Γ∙ ▹∙ B∙) A}{Δ∙}{σ∙ : Sub∙ Δ∙ Γ∙ σ} → subst (Ty∙ Δ∙) ⁺⟨⟩T (A∙ [ ⟨ t∙ ⟩∙ ]T∙ [ σ∙ ]T∙) ≡ A∙ [ σ∙ ⁺∙ ]T∙ [ ⟨ t∙ [ σ∙ ]t∙ ⟩∙ ]T∙
+
+    p⟨⟩t∙      : ∀{Γ∙}{A∙ : Ty∙ Γ∙ A}{u∙ : Tm∙ Γ∙ A∙ u}{B∙ : Ty∙ Γ∙ B}{t∙ : Tm∙ Γ∙ B∙ t} →
+                 subst {A = Σ (Ty Γ) λ A → Ty∙ Γ∙ A × Tm Γ A} (λ z → Tm∙ Γ∙ (π₁ (π₂ z)) (π₂ (π₂ z))) (p⟨⟩T ,= {!!} ,×= {!!}) (u∙ [ p∙ ]t∙ [ ⟨ t∙ ⟩∙ ]t∙)      ≡ u∙
+    -- p⁺t      : subst (Tm _) p⁺T  (u [ p {Γ}{B} ]t [ σ ⁺ ]t) ≡ u [ σ ]t [ p ]t
+
+{-    
     ε∙         : ∀{Γ}{Γ∙ : Con∙ Γ} → Sub∙ Γ∙ ◇∙ (ε {Γ})
     ◇η∙        : ∀{Γ}{Γ∙ : Con∙ Γ}{σ : Sub Γ ◇}{σ∙ : Sub∙ Γ∙ ◇∙ σ} → (Sub∙ Γ∙ ◇∙ ~) ◇η σ∙ ε∙
 
-    _[_]∙      : ∀{Γ Δ A}{Γ∙ : Con∙ Γ}{Δ∙ : Con∙ Δ}{A∙ : Ty∙ A}{t : Tm Γ A}{γ : Sub Δ Γ} → Tm∙ Γ∙ A∙ t → Sub∙ Δ∙ Γ∙ γ → Tm∙ Δ∙ A∙ (t [ γ ])
     [∘]∙       : ∀{Γ Δ Θ A}{Γ∙ : Con∙ Γ}{Δ∙ : Con∙ Δ}{Θ∙ : Con∙ Θ}{A∙ : Ty∙ A}{t : Tm Γ A}{γ : Sub Δ Γ}{δ : Sub Θ Δ}
                  {t∙ : Tm∙ Γ∙ A∙ t}{γ∙ : Sub∙ Δ∙ Γ∙ γ}{δ∙ : Sub∙ Θ∙ Δ∙ δ} →
                 (Tm∙ Θ∙ A∙ ~) [∘] (t∙ [ γ∙ ⊚∙ δ∙ ]∙) (t∙ [ γ∙ ]∙ [ δ∙ ]∙)
     [id]∙      : ∀{Γ A}{Γ∙ : Con∙ Γ}{A∙ : Ty∙ A}{t : Tm Γ A}{t∙ : Tm∙ Γ∙ A∙ t} → (Tm∙ Γ∙ A∙ ~) [id] (t∙ [ id∙ ]∙) t∙
-    _▹∙_       : ∀{Γ A} → Con∙ Γ → Ty∙ A → Con∙ (Γ ▹ A)
     _,o∙_      : ∀{Γ Δ A}{Γ∙ : Con∙ Γ}{Δ∙ : Con∙ Δ}{A∙ : Ty∙ A}{t : Tm Δ A}{γ : Sub Δ Γ} → Sub∙ Δ∙ Γ∙ γ → Tm∙ Δ∙ A∙ t → Sub∙ Δ∙ (Γ∙ ▹∙ A∙) (γ ,o t)
-    p∙         : ∀{Γ A}{Γ∙ : Con∙ Γ}{A∙ : Ty∙ A} → Sub∙ (Γ∙ ▹∙ A∙) Γ∙ (p {Γ}{A})
     q∙         : ∀{Γ A}{Γ∙ : Con∙ Γ}{A∙ : Ty∙ A} → Tm∙ (Γ∙ ▹∙ A∙) A∙ (q {Γ}{A})
     ▹β₁∙       : ∀{Γ Δ A}{Γ∙ : Con∙ Γ}{Δ∙ : Con∙ Δ}{A∙ : Ty∙ A}{γ : Sub Δ Γ}{t : Tm Δ A}{γ∙ : Sub∙ Δ∙ Γ∙ γ}{t∙ : Tm∙ Δ∙ A∙ t} → 
                 (Sub∙ Δ∙ Γ∙ ~) ▹β₁ (p∙ ⊚∙ (γ∙ ,o∙ t∙)) γ∙
