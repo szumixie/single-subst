@@ -1,0 +1,100 @@
+Sub   : Con → Con → Set
+p     : Sub (Γ▹A) Γ
+⟨_⟩   : Tm Γ A → Sub Γ (Γ▹A)
+_⁺    : Sub Δ Γ → Sub (Δ▹A) (Γ▹A)
+_[_]  : Tm Γ A → Sub Δ Γ → Tm Δ A
+q[⁺]  : q[σ⁺] = q
+p⁺⟨q⟩ : t[p⁺][⟨q⟩] = t
+
+** Define parallel substitutions for the above calculus.
+
+Sub' : Con → Con → Set
+Sub' Δ ◇     := ⊤
+Sub' Δ (Γ▹A) := Sub' Δ Γ × Tm Δ A
+
+wkfront : (Δ:Con) → Tm Θ A → Tm (Δ+Θ) A
+wkfront ◇     t := t
+wkfront (Δ▹B) t := wkfront Δ (t[p⁺^{Θ}])
+- t : Tm Θ A
+  p⁺^{Θ} : Sub (◇▹B+Θ) (◇+Θ)
+  t[p⁺^{Θ}] : Tm (◇▹B+Θ)
+   
+_[_]' : {Γ:Con} → Tm (Γ+Θ) A → Sub' Δ Γ → Tm (Δ+Θ) A
+_[_]' {◇}   t tt    := wkfront Δ t
+_[_]' {Γ▹B} t (σ,u) := (_[_]' {Γ} t σ)[⟨u⟩⁺^{Θ}]
+- t : Tm (Γ▹B+Θ) A
+  σ : Sub' Δ Γ
+  u : Tm Δ B
+  _[_]' {Γ} t σ : Tm (Δ▹B+Θ) A
+  ⟨u⟩ : Sub Δ (Δ▹B)
+  ⟨u⟩⁺{Θ} : Sub (Δ+Θ) (Δ▹B+Θ)
+
+_∘_ : {Γ:Con} → Sub' Δ Γ → Sub' Θ Δ → Sub' Θ Γ
+_∘_ {◇}   tt    ρ := tt
+_∘_ {Γ▹A} (σ,t) ρ := (σ∘ρ,t[ρ]')
+
+wk : {Γ:Con} → Sub' Δ Γ → Sub' (Δ▹B) Γ
+wk {◇}   tt    := tt
+wk {Γ▹A} (σ,t) := wk {Γ} σ,t[p]
+
+id : {Γ:Con} → Sub' Γ Γ
+id {◇}   := tt
+id {Γ▹A} := (wk (id {Γ}),q)
+
+p' : Sub (Γ▹A) Γ
+p' := wk id
+
+Now we have to prove the equations.
+
+wkfront[]' : {Δ:Con}{t:Tm Θ A}{σ:Sub' Ξ Δ} → wkfront Δ t[σ]' = wkfront Ξ t
+wkfront[]' {◇}  {t}{tt}  : wkfront ◇     t[tt]' = t[tt]' = wkfront Ξ t
+wkfront[]' {Δ▹B}{t}{σ,u} : wkfront (Δ▹B) t[σ,u]' =
+                           wkfront Δ (t[p⁺^{Θ}])[σ,u]' =
+                           wkfront Δ (t[p⁺^{Θ}])[σ]'[⟨u⟩⁺^{Θ}] =(wkfront[]' {Δ})
+                           wkfront Ξ (t[p⁺^{Θ}])[⟨u⟩⁺^{Θ}] =
+                           ? TODO
+                           wkfront Ξ t
+  t[p⁺^{Θ}] : Tm (◇▹B+Θ) A
+  wkfront Δ (t[p⁺^{Θ}]) : Tm (Δ▹B+Θ) A
+  wkfront Δ (t[p⁺^{Θ}])[σ]' : Tm (Ξ▹B+Θ) A
+  wkfront Ξ (t[p⁺^{Θ}]) : Tm (Ξ▹B+Θ) A
+  u : Tm Ξ B
+  ⟨u⟩⁺^{Θ} : Sub (Ξ+Θ) (Ξ▹B+Θ)
+  
+
+[∘] : {Γ:Con}{t : Tm (Γ+Θ) A}{σ : Sub' Δ Γ}{ρ : Sub' Ξ Δ} → t[σ∘ρ]' = t[σ]'[ρ]'
+[∘] {◇} : wkfront Ξ t = ? wkfront Δ t
+- t : Tm Θ A
+  wkfront Ξ t : Tm (Ξ+Θ) A
+  wkfront Δ t : Tm (Δ+Θ) A
+  wkfront Δ t[ρ]' : Tm (Ξ+Θ) A
+
+** Maybe it is easier to define the other single substitution calculus
+
+_⁺^_ : Sub Δ Γ → (Θ:Con) → Sub (Δ+Θ) (Γ+Θ)
+σ⁺^◇     := σ
+σ⁺^{Θ▹A} := (σ⁺^Θ)⁺
+   
+_⟨Γ,_,Δ⟩ : Tm (Γ+Δ) A → (B:Ty) → Tm (Γ▹B+Δ) A
+t⟨Γ,B,Δ⟩ := t[p⁺^Δ]
+
+_⌈Γ,_,Δ⌉ : Tm (Γ▹B+Δ) A → (u:Tm Γ B) → Tm (Γ+Δ) A
+t⌈Γ,u,Δ⌉ := t[⟨u⟩⁺^Δ]
+
+q⟨▹⟩  : q⟨Γ,A,Δ▹B⟩ = q[p⁺^{Δ▹B}] = q[(p⁺^Δ)⁺] =(q[⁺]) q
+⟨⟩⌈𝗊⌉ : {Δ:Con} → t⟨Γ,A,◇▹A+Δ⟩⌈Γ▹A,q,Δ⌉ = t[p⁺^{◇▹A+Δ}][⟨q⟩⁺^{Δ}] = t
+⟨⟩⌈𝗊⌉ {◇}   : t[p⁺^{◇▹A+◇}][⟨q⟩⁺^{◇}] = t[p⁺][⟨q⟩] =(p⁺⟨q⟩) t
+⟨⟩⌈q⌉ {◇▹B} : t[p⁺^{◇▹A▹B}][⟨q⟩⁺^{◇▹B}] = t[p⁺⁺][⟨q⟩⁺] = ? t
+⟨⟩⌈𝗊⌉ {Δ▹B} : t[p⁺^{◇▹A+Δ▹B}][⟨q⟩⁺^{Δ▹B}] = t[(p⁺^{◇▹A+Δ})⁺][(⟨q⟩⁺^{Δ})⁺] =   ? = t
+  ⟨⟩⌈q⌉ {Δ} : ?[p⁺^{◇▹A+Δ}][⟨q⟩⁺^{Δ}] = ?
+
+** THIS PROJECT FAILED
+It seems that we don't have a simpler definition for the single
+substitution calculus than what we did with Luksa Norbert. I don't see
+how to encode all the equations
+t[p⁺][⟨q⟩] = t
+t[p⁺⁺][⟨q⟩⁺] = t
+t[p⁺⁺⁺][⟨q⟩⁺⁺] = t
+t[p⁺⁺⁺⁺][⟨q⟩⁺⁺⁺] = t
+...
+in one go. The quasi-equation solutions are not strictly positive.
