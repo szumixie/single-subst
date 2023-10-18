@@ -98,3 +98,7 @@ t[p⁺⁺⁺][⟨q⟩⁺⁺] = t
 t[p⁺⁺⁺⁺][⟨q⟩⁺⁺⁺] = t
 ...
 in one go. The quasi-equation solutions are not strictly positive.
+
+We don't need these equations.
+
+If you define true : Tm ◇ Bool, you can weaken it to any finite context true [ p ] [ p ] [ p ] [ p ] : Tm (◇ ▹ A ▹ B ▹ C ▹ D) Bool, etc.
