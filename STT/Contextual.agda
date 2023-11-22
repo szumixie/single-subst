@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --without-K --postfix-projections #-}
 
-module STSSC where
+module STT.Contextual where
 
-open import Function using (_∋_; _↔_; mk↔′)
+open import Function using (_∋_; _↔_; mk↔ₛ′)
 open import Relation.Binary.PropositionalEquality
   using (_≡_; refl; sym; cong; module ≡-Reasoning)
 open ≡-Reasoning
@@ -548,7 +548,7 @@ module CwF→SSC→CwF (M : CwF) where
     γ ,ₜ a                                   ∎
 
   CSC-Sub : (Δ Γ : Con) → CSC.Sub Δ Γ ↔ Sub Δ Γ
-  CSC-Sub Δ Γ = mk↔′ T→S S→T S→T→S T→S→T
+  CSC-Sub Δ Γ = mk↔ₛ′ T→S S→T S→T→S T→S→T
 
   []-εₛ : (a : Tm ◆ A) → (Tm Γ A ∋ a [ εₛ ]ₛ) ≡ a [ ε ]
   []-εₛ {Γ = ◆} a = begin
