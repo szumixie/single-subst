@@ -75,7 +75,7 @@ as the initial model, which is a quotient inductive-inductive
 type. Such descriptions include categories with families (CwF),
 contextual categories, Awodey's natural models, C-systems and
 B-systems. With the exception of B-systems, these notions are based on
-a parallel substitution calculus where substituions form a
+a parallel substitution calculus where substitutions form a
 category. In this paper we define a single substitution calculus (SSC)
 for type theory and show that the SSC syntax and the CwF syntax are
 isomorphic for a theory with dependent function space and universe.
@@ -83,7 +83,7 @@ SSC only includes single substitutions and single weakenings, and six
 equations relating these. Four equations describe how to substitute
 variables, and two more equations are needed to typecheck these four
 equations. SSC provides a simple, minimalistic alternative to parallel
-subsitution calculi or B-systems for defining type theory. All the
+substitution calculi or B-systems for defining type theory. All the
 results in this paper were formalised in Agda.
 \end{abstract}
 
