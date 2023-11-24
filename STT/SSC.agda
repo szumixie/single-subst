@@ -15,8 +15,8 @@ data Con : Set where
   _▹_ : Con → Ty → Con
 
 private variable
-  Γ Δ : Con
-  A B : Ty
+  Γ Γ₀ Γ₁ Δ : Con
+  A A₀ A₁ B : Ty
 
 data Var : Con → Ty → Set where
   vz : Var (Γ ▹ A) A
@@ -55,6 +55,9 @@ postulate
 
   ⇒-β : app (lam b) a ≡ b [ ⟨ a ⟩ ]
   ⇒-η : f ≡ lam (app (f [ p ]) (var vz))
+
+tm[_,_] : Γ₀ ≡ Γ₁ → A₀ ≡ A₁ → Tm Γ₀ A₀ → Tm Γ₁ A₁
+tm[ refl , refl ] a = a
 
 record TmDModel ℓ₀ ℓ₁ : Set (suc (ℓ₀ ⊔ ℓ₁)) where
   no-eta-equality

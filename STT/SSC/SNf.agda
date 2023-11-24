@@ -61,10 +61,10 @@ x [ p ]ᵛʷ = vs x
 vz [ γʷ ⁺ ]ᵛʷ = vz
 vs x [ γʷ ⁺ ]ᵛʷ = vs (x [ γʷ ]ᵛʷ)
 
-var-[]ʷ : {γʷ : Wk Δ Γ γ} → var x [ γ ] ≡ var (x [ γʷ ]ᵛʷ)
-var-[]ʷ {x = x} {γʷ = p} = var-p
-var-[]ʷ {x = vz} {γʷ = γʷ ⁺} = vz-⁺
-var-[]ʷ {x = vs x} {γʷ = γʷ ⁺} = vs-⁺ ∙ cong _[ p ] var-[]ʷ ∙ var-p
+var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ] ≡ var (x [ γʷ ]ᵛʷ)
+var-[]ʷ {x = x} p = var-p
+var-[]ʷ {x = vz} (γʷ ⁺) = vz-⁺
+var-[]ʷ {x = vs x} (γʷ ⁺) = vs-⁺ ∙ cong _[ p ] (var-[]ʷ γʷ) ∙ var-p
 
 module []ᴺʷ where
   open NTmDModel
@@ -72,10 +72,10 @@ module []ᴺʷ where
   M : NTmDModel _
   M .NTmᴰ Γ A a _ = ∀ {Δ γ} → Wk Δ Γ γ → NTm Δ A (a [ γ ])
   M .NTmᴰ-prop = funextᵢ (funextᵢ (funext λ _ → NTm-prop))
-  M .varᴺᴰ x γʷ = ntm[ sym var-[]ʷ ] (varᴺ (x [ γʷ ]ᵛʷ))
+  M .varᴺᴰ x γʷ = ntm[ sym (var-[]ʷ γʷ) ] (varᴺ (x [ γʷ ]ᵛʷ))
 
-  M .appᴺᴰ fᴺ aᴺ γʷ = ntm[ sym app-[] ] (appᴺ (fᴺ γʷ) (aᴺ γʷ))
-  M .lamᴺᴰ bᴺ γʷ = ntm[ sym lam-[] ] (lamᴺ (bᴺ (γʷ ⁺)))
+  M .appᴺᴰ fᴺᴰ aᴺᴰ γʷ = ntm[ sym app-[] ] (appᴺ (fᴺᴰ γʷ) (aᴺᴰ γʷ))
+  M .lamᴺᴰ bᴺᴰ γʷ = ntm[ sym lam-[] ] (lamᴺ (bᴺᴰ (γʷ ⁺)))
 
   open NTmInd M public
 
@@ -101,8 +101,8 @@ module []ᴺᵗ where
   M .NTmᴰ-prop = funextᵢ (funextᵢ (funext λ _ → NTm-prop))
   M .varᴺᴰ x γᴺᵗ = x [ γᴺᵗ ]ᵛᴺᵗ
 
-  M .appᴺᴰ fᴺ aᴺ γᴺᵗ = ntm[ sym app-[] ] (appᴺ (fᴺ γᴺᵗ) (aᴺ γᴺᵗ))
-  M .lamᴺᴰ bᴺ γᴺᵗ = ntm[ sym lam-[] ] (lamᴺ (bᴺ (γᴺᵗ ⁺)))
+  M .appᴺᴰ fᴺᴰ aᴺᴰ γᴺᵗ = ntm[ sym app-[] ] (appᴺ (fᴺᴰ γᴺᵗ) (aᴺᴰ γᴺᵗ))
+  M .lamᴺᴰ bᴺᴰ γᴺᵗ = ntm[ sym lam-[] ] (lamᴺ (bᴺᴰ (γᴺᵗ ⁺)))
 
   open NTmInd M public
 
