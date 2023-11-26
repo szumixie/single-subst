@@ -20,11 +20,11 @@ postulate
   appᴺ : NTm Γ (A ⇒ B) f → NTm Γ A a → NTm Γ B (app f a)
   lamᴺ : NTm (Γ ▹ A) B b → NTm Γ (A ⇒ B) (lam b)
 
-ntm[_] : a₀ ≡ a₁ → NTm Γ A a₀ → NTm Γ A a₁
-ntm[ refl ] aᴺ = aᴺ
-
 private variable
   aᴺ bᴺ fᴺ : NTm Γ A a
+
+ntm[_] : a₀ ≡ a₁ → NTm Γ A a₀ → NTm Γ A a₁
+ntm[ refl ] aᴺ = aᴺ
 
 record NTmDModel ℓ : Set (suc ℓ) where
   no-eta-equality
