@@ -113,20 +113,20 @@ module TmInd {ℓˢ ℓᵗ} (D : TmDModel ℓˢ ℓᵗ) where
   open TmDModel D
 
   postulate
-    ⟦_⟧ᵗ : (a : Tm Γ A) → Tmᴰ Γ A a
+    ⟦_⟧ : (a : Tm Γ A) → Tmᴰ Γ A a
 
   ⟦_⟧ˢ : (γ : Sub Δ Γ) → Subᴰ Δ Γ γ
   ⟦ p ⟧ˢ = pᴰ
   ⟦ γ ⁺ ⟧ˢ = ⟦ γ ⟧ˢ ⁺ᴰ
-  ⟦ ⟨ a ⟩ ⟧ˢ = ⟨ ⟦ a ⟧ᵗ ⟩ᴰ
+  ⟦ ⟨ a ⟩ ⟧ˢ = ⟨ ⟦ a ⟧ ⟩ᴰ
 
   postulate
-    ⟦⟧-[] : ⟦ a [ γ ] ⟧ᵗ ≡ ⟦ a ⟧ᵗ [ ⟦ γ ⟧ˢ ]ᴰ
+    ⟦⟧-[] : ⟦ a [ γ ] ⟧ ≡ ⟦ a ⟧ [ ⟦ γ ⟧ˢ ]ᴰ
     {-# REWRITE ⟦⟧-[] #-}
-    ⟦⟧-var : ⟦ var x ⟧ᵗ ≡ varᴰ x
+    ⟦⟧-var : ⟦ var x ⟧ ≡ varᴰ x
     {-# REWRITE ⟦⟧-var #-}
 
-    ⟦⟧-app : ⟦ app f a ⟧ᵗ ≡ appᴰ ⟦ f ⟧ᵗ ⟦ a ⟧ᵗ
+    ⟦⟧-app : ⟦ app f a ⟧ ≡ appᴰ ⟦ f ⟧ ⟦ a ⟧
     {-# REWRITE ⟦⟧-app #-}
-    ⟦⟧-lam : ⟦ lam b ⟧ᵗ ≡ lamᴰ ⟦ b ⟧ᵗ
+    ⟦⟧-lam : ⟦ lam b ⟧ ≡ lamᴰ ⟦ b ⟧
     {-# REWRITE ⟦⟧-lam #-}

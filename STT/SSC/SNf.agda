@@ -62,7 +62,7 @@ vz [ γʷ ⁺ ]ᵛʷ = vz
 vs x [ γʷ ⁺ ]ᵛʷ = vs (x [ γʷ ]ᵛʷ)
 
 var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ] ≡ var (x [ γʷ ]ᵛʷ)
-var-[]ʷ {x = x} p = var-p
+var-[]ʷ p = var-p
 var-[]ʷ {x = vz} (γʷ ⁺) = vz-⁺
 var-[]ʷ {x = vs x} (γʷ ⁺) = vs-⁺ ∙ cong _[ p ] (var-[]ʷ γʷ) ∙ var-p
 
@@ -87,7 +87,7 @@ data NTSub : (Δ Γ : Con) → Sub Δ Γ → Set where
   _⁺ : NTSub Δ Γ γ → NTSub (Δ ▹ A) (Γ ▹ A) (γ ⁺)
   ⟨_⟩ : NTm Γ A a → NTSub Γ (Γ ▹ A) ⟨ a ⟩
 
-_[_]ᵛᴺᵗ : (a : Var Γ A) → NTSub Δ Γ γ → NTm Δ A (var a [ γ ])
+_[_]ᵛᴺᵗ : (x : Var Γ A) → NTSub Δ Γ γ → NTm Δ A (var x [ γ ])
 vz [ γᴺᵗ ⁺ ]ᵛᴺᵗ = ntm[ sym vz-⁺ ] (varᴺ vz)
 vs x [ γᴺᵗ ⁺ ]ᵛᴺᵗ = ntm[ sym vs-⁺ ] (x [ γᴺᵗ ]ᵛᴺᵗ [ p ]ᴺʷ)
 vz [ ⟨ aᴺ ⟩ ]ᵛᴺᵗ = ntm[ sym vz-⟨⟩ ] aᴺ
@@ -144,5 +144,8 @@ module norm where
 
   open TmInd M public
 
+normˢ : (γ : Sub Δ Γ) → NSub Δ Γ γ
+normˢ = norm.⟦_⟧ˢ
+
 norm : (a : Tm Γ A) → NTm Γ A a
-norm = norm.⟦_⟧ᵗ
+norm = norm.⟦_⟧
