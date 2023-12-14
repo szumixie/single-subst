@@ -19,7 +19,7 @@ data Con where
   _▹_ : (Γ : Con) → Ty Γ i → Con
 
 private variable
-  Γ Δ : Con
+  Γ Γ₀ Γ₁ Δ : Con
   A A₀ A₁ B : Ty Γ i
 
 postulate
@@ -50,8 +50,11 @@ private variable
   a b f α : Tm Γ A
   x : Var Γ A
 
-tm[_] : A₀ ≡ A₁ → Tm Γ A₀ → Tm Γ A₁
-tm[ refl ] a = a
+ty[_] : Γ₀ ≡ Γ₁ → Ty Γ₀ i → Ty Γ₁ i
+ty[ refl ] A = A
+
+tm[_,_] : (Γ₀₁ : Γ₀ ≡ Γ₁) → ty[ Γ₀₁ ] A₀ ≡ A₁ → Tm Γ₀ A₀ → Tm Γ₁ A₁
+tm[ refl , refl ] a = a
 
 postulate
   var : Var Γ A → Tm Γ A
@@ -60,15 +63,15 @@ postulate
 postulate
   p-⁺ᵀ : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ (Ty (Δ ▹ A [ γ ]ᵀ) i ∋ B [ γ ]ᵀ [ p ]ᵀ)
   vz-⁺ :
-    tm[ p-⁺ᵀ ] (var vz [ γ ⁺ ]ᵗ) ≡
+    tm[ refl , p-⁺ᵀ ] (var vz [ γ ⁺ ]ᵗ) ≡
     (Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ) ∋ var vz)
   vs-⁺ :
-    tm[ p-⁺ᵀ ] (var (vs x) [ γ ⁺ ]ᵗ) ≡
+    tm[ refl , p-⁺ᵀ ] (var (vs x) [ γ ⁺ ]ᵗ) ≡
     (Tm (Δ ▹ A [ γ ]ᵀ) (B [ γ ]ᵀ [ p ]ᵀ) ∋ var x [ γ ]ᵗ [ p ]ᵗ)
 
   p-⟨⟩ᵀ : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B
-  vz-⟨⟩ : tm[ p-⟨⟩ᵀ ] (var vz [ ⟨ a ⟩ ]ᵗ) ≡ a
-  vs-⟨⟩ : tm[ p-⟨⟩ᵀ ] (var (vs x) [ ⟨ a ⟩ ]ᵗ) ≡ var x
+  vz-⟨⟩ : tm[ refl , p-⟨⟩ᵀ ] (var vz [ ⟨ a ⟩ ]ᵗ) ≡ a
+  vs-⟨⟩ : tm[ refl , p-⟨⟩ᵀ ] (var (vs x) [ ⟨ a ⟩ ]ᵗ) ≡ var x
 
   ⟨⟩-[]ᵀ : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ
   ▹-ηᵀ : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ
@@ -78,10 +81,10 @@ postulate
   U-[] : U i [ γ ]ᵀ ≡ U i
 
   El : Tm Γ (U i) → Ty Γ i
-  El-[] : El α [ γ ]ᵀ ≡ El (tm[ U-[] ] (α [ γ ]ᵗ))
+  El-[] : El α [ γ ]ᵀ ≡ El (tm[ refl , U-[] ] (α [ γ ]ᵗ))
 
   c : Ty Γ i → Tm Γ (U i)
-  c-[] : tm[ U-[] ] (c A [ γ ]ᵗ) ≡ c (A [ γ ]ᵀ)
+  c-[] : tm[ refl , U-[] ] (c A [ γ ]ᵗ) ≡ c (A [ γ ]ᵀ)
 
   U-β : El (c A) ≡ A
   U-η : α ≡ c (El α)
@@ -91,25 +94,34 @@ postulate
 
   app : Tm Γ (Π A B) → (a : Tm Γ A) → Tm Γ (B [ ⟨ a ⟩ ]ᵀ)
   app-[] :
-    tm[ ⟨⟩-[]ᵀ ] (app f a [ γ ]ᵗ) ≡ app (tm[ Π-[] ] (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
+    tm[ refl , ⟨⟩-[]ᵀ ] (app f a [ γ ]ᵗ) ≡
+    app (tm[ refl , Π-[] ] (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
 
   lam : Tm (Γ ▹ A) B → Tm Γ (Π A B)
-  lam-[] : tm[ Π-[] ] (lam b [ γ ]ᵗ) ≡ lam (b [ γ ⁺ ]ᵗ)
+  lam-[] : tm[ refl , Π-[] ] (lam b [ γ ]ᵗ) ≡ lam (b [ γ ⁺ ]ᵗ)
 
   Π-β : app (lam b) a ≡ b [ ⟨ a ⟩ ]ᵗ
-  Π-η : f ≡ lam (tm[ sym ▹-ηᵀ ] (app (tm[ Π-[] ] (f [ p ]ᵗ)) (var vz)))
+  Π-η :
+    f ≡
+    lam (tm[ refl , sym ▹-ηᵀ ] (app (tm[ refl , Π-[] ] (f [ p ]ᵗ)) (var vz)))
 
 private variable
+  Γ₀₁ : Γ₀ ≡ Γ₁
   A₀₁ : A₀ ≡ A₁
   a₀ a₁ : Tm Γ A
 
-tm[]-shiftr : tm[ A₀₁ ] a₀ ≡ a₁ → a₀ ≡ tm[ sym A₀₁ ] a₁
-tm[]-shiftr {A₀₁ = refl} a₀₁ = a₀₁
+ty[]-shiftr : ty[ Γ₀₁ ] A₀ ≡ A₁ → A₀ ≡ ty[ sym Γ₀₁ ] A₁
+ty[]-shiftr {Γ₀₁ = refl} A₀₁ = A₀₁
+
+tm[]-shiftr :
+  tm[ Γ₀₁ , A₀₁ ] a₀ ≡ a₁ → a₀ ≡
+  tm[ sym Γ₀₁ , sym (ty[]-shiftr {Γ₀₁ = Γ₀₁} A₀₁) ] a₁
+tm[]-shiftr {Γ₀₁ = refl} {A₀₁ = refl} a₀₁ = a₀₁
 
 var[_] : A₀ ≡ A₁ → Var Γ A₀ → Var Γ A₁
 var[ refl ] x = x
 
-tm[]-var : tm[ A₀₁ ] (var x) ≡ var (var[ A₀₁ ] x)
+tm[]-var : tm[ refl , A₀₁ ] (var x) ≡ var (var[ A₀₁ ] x)
 tm[]-var {A₀₁ = refl} = refl
 
 private
@@ -127,7 +139,7 @@ private
     module _ (Tmᴹ : ∀ {Γ A} (Γᴹ : Conᴹ Γ) → Tyᴹ Γᴹ i A → Tm Γ A → Set ℓᵗ) where
       tmᴹ[_,_,_] :
         {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
-        (A₀₁ : A₀ ≡ A₁) → tyᴹ[ A₀₁ ] Aᴹ₀ ≡ Aᴹ₁ → tm[ A₀₁ ] a₀ ≡ a₁ →
+        (A₀₁ : A₀ ≡ A₁) → tyᴹ[ A₀₁ ] Aᴹ₀ ≡ Aᴹ₁ → tm[ refl , A₀₁ ] a₀ ≡ a₁ →
         Tmᴹ Γᴹ Aᴹ₀ a₀ → Tmᴹ Γᴹ Aᴹ₁ a₁
       tmᴹ[ refl ,  refl , refl ] aᴹ₀ = aᴹ₀
 
@@ -158,7 +170,7 @@ record DModel ℓᶜ ℓˢ ℓᵀ ℓᵗ ℓᵛ : Set (ℓ.suc (ℓᶜ ⊔ ℓˢ
 
   tmᴹ[_,_,_] :
     {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
-    (A₀₁ : A₀ ≡ A₁) → tyᴹ[ A₀₁ ] Aᴹ₀ ≡ Aᴹ₁ → tm[ A₀₁ ] a₀ ≡ a₁ →
+    (A₀₁ : A₀ ≡ A₁) → tyᴹ[ A₀₁ ] Aᴹ₀ ≡ Aᴹ₁ → tm[ refl , A₀₁ ] a₀ ≡ a₁ →
     Tmᴹ Γᴹ Aᴹ₀ a₀ → Tmᴹ Γᴹ Aᴹ₁ a₁
   tmᴹ[_,_,_] = Util.tmᴹ[_,_,_] Conᴹ Tyᴹ Tmᴹ
 

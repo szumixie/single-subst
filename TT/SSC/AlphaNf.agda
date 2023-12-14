@@ -37,7 +37,8 @@ private variable
 nty[_] : A₀ ≡ A₁ → NTy Γ i A₀ → NTy Γ i A₁
 nty[ refl ] Aᴺ = Aᴺ
 
-ntm[_,_] : (A₀₁ : A₀ ≡ A₁) → tm[ A₀₁ ] a₀ ≡ a₁ → NTm Γ A₀ a₀ → NTm Γ A₁ a₁
+ntm[_,_] :
+  (A₀₁ : A₀ ≡ A₁) → tm[ refl , A₀₁ ] a₀ ≡ a₁ → NTm Γ A₀ a₀ → NTm Γ A₁ a₁
 ntm[ refl , refl ] aᴺ = aᴺ
 
 record NfModel ℓᵀ ℓᵗ : Set (ℓ.suc (ℓᵀ ⊔ ℓᵗ)) where
@@ -127,7 +128,9 @@ var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
 var-[]ʷ p = var-p
 var-[]ʷ {x = vz} (γʷ ⁺) = tm[]-shiftr vz-⁺ ∙ tm[]-var
 var-[]ʷ {x = vs x} (γʷ ⁺) =
-  tm[]-shiftr vs-⁺ ∙ cong tm[ _ ] (cong _[ p ]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙ tm[]-var
+  tm[]-shiftr vs-⁺ ∙
+  cong tm[ _ , _ ] (cong _[ p ]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙
+  tm[]-var
 
 module []ᴺʷ =
   []ᴺᴾ Wk _⁺ (λ x γʷ → ntm[ refl , sym (var-[]ʷ γʷ) ] (varᴺ (x [ γʷ ]ᵛʷ)))
@@ -242,5 +245,16 @@ module norm where
 
   M .Π-βᴹ = NTm-prop
   M .Π-ηᴹ = NTm-prop
+
+  open Ind M public
+
+normˢ : (γ : Sub Δ Γ) → NSub Δ Γ γ
+normˢ γ = norm.⟦ γ ⟧ˢ
+
+normᵀ : (A : Ty Γ i) → NTy Γ i A
+normᵀ A = norm.⟦ A ⟧ᵀ
+
+normᵗ : (a : Tm Γ A) → NTm Γ A a
+normᵗ a = norm.⟦ a ⟧ᵗ
 
 -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
