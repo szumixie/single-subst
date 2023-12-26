@@ -1,7 +1,8 @@
 \section{Introduction}
 
-The traditional way of defining \cite{harper,softfound,plfa} a
-programming language is comprised of three steps: (i) definition of
+The traditional way of defining
+\cite{DBLP:books/daglib/0005958,DBLP:books/cu/Ha2016,Pierce:SF1,plfa22.08}
+a programming language is comprised of three steps: (i) definition of
 the presyntax (abstract syntax trees, ASTs) by a formal grammar; (ii)
 specification of well-formedness/well-typedness relations saying which
 ASTs are well-behaved; (iii) specification of rewriting/conversion
