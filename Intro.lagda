@@ -54,8 +54,7 @@ CwF-style syntax (Section \ref{sec:iso}). We list related work and
 conclude in Section \ref{sec:conclusion}.
 
 Our main contribution is the novel definition of a minimalistic single
-substitution calculus. We justify it by showing its equivalence with
-CwFs.
+substitution calculus, justified by showing its equivalence to CwFs.
 
 \subparagraph*{Metatheory and formalisation.} The source code of this
 paper comprises of several literate Agda files, everything is

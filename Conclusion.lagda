@@ -18,6 +18,8 @@ models than lambda calculus, but the syntaxes are
 isomorphic. Similarly, the single substitution calculus has more
 models, but the syntaxes are isomorphic.
 
+SSC was used in the 90s for simple type theories, ask Hugo for references.
+
 A more abstract, higher level description of a language is simply
 stating that a language is an algebraic theory: the terms of the
 language are given by a sort of the theory, the different term formers
