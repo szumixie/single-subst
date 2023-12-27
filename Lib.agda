@@ -1,6 +1,6 @@
 {-# OPTIONS --with-K --rewriting #-}
 
-module TT.Lib where
+module Lib where
 
 open import Level public using (Level; _⊔_)
 module ℓ = Level

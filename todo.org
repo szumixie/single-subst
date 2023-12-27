@@ -1,9 +1,0 @@
-- implement SSC version of syntax, derive the CwF style syntax from it
-  
-- write a paper about the above: this is a simpler presentation of the
-  syntax of type theory which is equivalent to the CwF-style syntax,
-  just like combinator logic is equivalent to lambda calculus (only
-  the syntaxes)
-  
-- maybe compare with natural model style syntax (which does not have
-  transport hell)
