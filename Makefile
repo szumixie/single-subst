@@ -21,7 +21,7 @@ main.pdf : main.tex ${TEXS}
 	xelatex main
 
 clean:
-	rm -f *.aux *.bbl *.blg *.fdb_latexmk *.fls *.log *.out *.nav *.snm *.toc *~ *.ptb *.idx *.pdf
+	rm -f *.aux *.bbl *.blg *.fdb_latexmk *.fls *.log *.out *.nav *.snm *.toc *~ *.ptb *.idx main.pdf
 	mv main.tex main.tex1
 	rm -f inputs.tex *.tex */*.tex agda.sty
 	mv main.tex1 main.tex
