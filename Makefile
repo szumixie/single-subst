@@ -2,7 +2,8 @@ LAGDAS := \
   Intro.lagda \
   SSC.lagda \
   AlphaNorm.lagda \
-  Iso.lagda
+  Iso.lagda \
+  Conclusion.lagda
 
 TEXS := $(addsuffix .tex,$(basename $(LAGDAS)))
 

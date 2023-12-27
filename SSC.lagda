@@ -1,4 +1,5 @@
 \section{A calculus with single substitutions}
+\label{sec:SSC}
 
 We are very minimalistic, we only introduce operations and equations
 which we are forced to introduce.

@@ -1,4 +1,5 @@
 \section{$\alpha$-normalisation}
+\label{sec:alpha}
 
 Intrinsic syntax for type theory has explicit substitutions, which
 makes it hard to prove properties of the syntax by structural
