@@ -513,3 +513,5 @@ are postulated. We just list their types here, and provide the pattern matching 
 
 -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
 \end{code}
+
+TODO: add examples, and show what we cannot do and need alpha-norm for.
