@@ -36,11 +36,11 @@ are quotiented by conversion rules, making convertible terms
 equal. Inductive types which allow such mutual indexing and
 quotienting are called quotient inductive-inductive types (QIITs
 \cite{DBLP:journals/pacmpl/KaposiKA19}). As Agda does not support them
-directly, we postulate their constructors and eliminators and add the
+directly, we postulate their constructors and induction principle and add the
 computation rules using rewrite rules \cite{DBLP:conf/types/Cockx19}.
 
 A QIIT is also the initial algebra/model of a generalised algebraic
-theory (GAT \cite{DBLP:journals/apal/Cartmell86}). The eliminator of
+theory (GAT \cite{DBLP:journals/apal/Cartmell86}). The induction principle of
 the QIIT is equivalent to having a unique morphism into any model
 \cite{DBLP:journals/pacmpl/KaposiKA19}. There are several ways to
 define type theory as a GAT: categories with families (CwFs
@@ -105,7 +105,7 @@ module NatExamplePostulated where
     n : ℕ
 \end{code}
 Then we define dependent (displayed) natural models, which collect the
-motive \AR{ℕᴹ} and methods \AR{zeroᴹ}, \AR{sucᴹ} of the eliminator (induction principle), one for each constructor.
+motive \AR{ℕᴹ} and methods \AR{zeroᴹ}, \AR{sucᴹ} of the induction principle (dependent eliminator), one for each constructor.
 \begin{code}
   record DModel ℓ : Set (ℓ.suc ℓ) where
     field
@@ -113,7 +113,7 @@ motive \AR{ℕᴹ} and methods \AR{zeroᴹ}, \AR{sucᴹ} of the eliminator (indu
       zeroᴹ  : ℕᴹ zero
       sucᴹ   : ℕᴹ n → ℕᴹ (suc n)
 \end{code}
-Finally, we say that we can eliminate into any dependent model, adding the computation rules for the eliminator \AD{⟦\_⟧} as rewrite rules.
+Finally, we say that we can eliminate into any dependent model, adding the computation rules for the induction principle \AD{⟦\_⟧} as rewrite rules.
 \begin{code}
   module Ind (D : DModel ℓ) where
     open DModel D

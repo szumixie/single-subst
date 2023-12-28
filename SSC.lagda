@@ -3,7 +3,8 @@
 
 In this section we define the syntax of a type theory with dependent
 function space and an infinite hierarchy of Coquand-universes
-\cite{coquandUniverse}.
+\cite{coquandUniverse}. The syntax is given by a quotient inductive-inductive type (QIIT),
+we list its sorts and constructors, and we briefly discuss its induction principle.
 
 \begin{code}[hide]
 {-# OPTIONS --with-K --rewriting #-}
@@ -70,7 +71,9 @@ infixl 9 _[_]ᵀ
 \end{code}
 Instantiation takes a type that has free variables in \AgdaGeneralizable{Γ},
 and a substitution from \AgdaGeneralizable{Δ} to \AgdaGeneralizable{Γ} and returns a type in context
-\AgdaGeneralizable{Δ}.
+\AgdaGeneralizable{Δ}. Note that instantiation is a constructor of our QIIT, thus we define
+an explicit substitution calculus. The substitution laws are given by equality constructors
+rather than definitional equalities.
 \begin{code}[hide]
 infixl 10 _⁺
 \end{code}
@@ -242,8 +245,8 @@ With this we conclude the definition of the constructors for our syntax.
 
 Just as for natural numbers in Subsection \ref{sec:metatheory}, we
 define a notion of dependent model of type theory, and postulate the
-eliminator. Here we list some of the fields of a dependent model, and
-the types of the eliminators. Consult the formalisation for all details.
+induction principle. Here we list some of the fields of a dependent model, and
+the types of the induction principle. Consult the formalisation for all details.
 \begin{code}[hide]
 private variable
   Γ₀₁ : Γ₀ ≡ Γ₁
@@ -451,8 +454,9 @@ module Ind (D : DModel ℓᶜ ℓˢ ℓᵀ ℓᵗ ℓᵛ) where
   open DModel D
 
 \end{code}
-Assuming a dependent model, the eliminators are defined for \AD{Con}, \AD{Sub}, \AD{Var} and postulated for \AD{Ty} and \AD{Tm}.
-We just list their types here, and provide the pattern matching definition of the eliminator for contexts.
+Assuming a dependent model, the induction principle consists of five functions, one for
+each sort. The ones for \AD{Con}, \AD{Sub}, \AD{Var} are defined by pattern matching, the ones for \AD{Ty} and \AD{Tm}
+are postulated. We just list their types here, and provide the pattern matching definition for the induction principle for \AD{Con}.
 \begin{AgdaAlign}
 \begin{code}
   ⟦_⟧ᶜ       : (Γ : Con) → Conᴹ Γ
