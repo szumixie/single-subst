@@ -1,4 +1,8 @@
-{-# OPTIONS --with-K --rewriting --postfix-projections #-}
+{-# OPTIONS
+  --without-K
+  --prop
+  --rewriting
+  --confluence-check #-}
 
 module TT.SSC.Properties where
 
@@ -10,14 +14,16 @@ private variable
   i j : ℕ
   Γ Δ : Con
   γ : Sub Δ Γ
-  A B : Ty Γ i
+  A A₀ A₁ B : Ty Γ i
   x : Var Γ A
 
-infixl 2 _++_
+infixl 2 _++_ _▹_
+infixl 9 _[_]ᵀˡ
+infixl 10 _⁺^ _⁺^ʷ
+
 data Tel (Γ : Con) : Set
 _++_ : (Γ : Con) → Tel Γ → Con
 
-infixl 2 _▹_
 data Tel Γ where
   ◇ : Tel Γ
   _▹_ : (Ω : Tel Γ) → Ty (Γ ++ Ω) i → Tel Γ
@@ -25,113 +31,69 @@ data Tel Γ where
 Γ ++ ◇ = Γ
 Γ ++ (Ω ▹ A) = (Γ ++ Ω) ▹ A
 
-module _ where
-  open import Data.Product
-
-  private
-    infixl 2 _▸′_
-    data Tel-++ (Γ : Con) : Con → Set where
-      ◆′ : Tel-++ Γ Γ
-      _▸′_ : (Ω : Tel-++ Γ Δ) → Ty Δ i → Tel-++ Γ (Δ ▹ A)
-
-    Tel′ : Con → Set
-    Tel′ Γ = Σ[ Δ ∈ Con ] Tel-++ Γ Δ
-
-    _++′_ : (Γ : Con) → Tel′ Γ → Con
-    Γ ++′ Ω = Ω .proj₁
-
 private variable
   Ω Ω₀ Ω₁ : Tel Γ
 
-cong-▹ :
-  {A₀ : Ty (Γ ++ Ω₀) i} {A₁ : Ty (Γ ++ Ω₁) i}
-  (Ω₀₁ : Ω₀ ≡ Ω₁) → ty[ cong (Γ ++_) Ω₀₁ ] A₀ ≡ A₁ → (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁)
-cong-▹ refl refl = refl
-
-infixl 9 _[_]ᵀˡ
-infixl 10 _⁺^[_]
 _[_]ᵀˡ : Tel Γ → Sub Δ Γ → Tel Δ
-_⁺^[_] : (γ : Sub Δ Γ) (Ω : Tel Γ) → Sub (Δ ++ Ω [ γ ]ᵀˡ) (Γ ++ Ω)
+_⁺^ : (γ : Sub Δ Γ) → Sub (Δ ++ Ω [ γ ]ᵀˡ) (Γ ++ Ω)
 
 ◇ [ γ ]ᵀˡ = ◇
-(Ω ▹ A) [ γ ]ᵀˡ = Ω [ γ ]ᵀˡ ▹ A [ γ ⁺^[ Ω ] ]ᵀ
+(Ω ▹ A) [ γ ]ᵀˡ = Ω [ γ ]ᵀˡ ▹ A [ γ ⁺^ ]ᵀ
 
-γ ⁺^[ ◇ ] = γ
-γ ⁺^[ Ω ▹ A ] = γ ⁺^[ Ω ] ⁺
+_⁺^ {Ω = ◇} γ = γ
+_⁺^ {Ω = Ω ▹ A} γ = γ ⁺^ ⁺
 
-module _ where
-  open import Data.Product
+_⁺^ʷ : Wk Δ Γ γ → Wk (Δ ++ Ω [ γ ]ᵀˡ) (Γ ++ Ω) (γ ⁺^)
+_⁺^ʷ {Ω = ◇} γʷ = γʷ
+_⁺^ʷ {Ω = Ω ▹ A} γʷ = γʷ ⁺^ʷ ⁺
 
-  private
-    []ᵀˡ-⁺^ : (Ω : Tel Γ) → Sub Δ Γ → Σ[ Ω′ ∈ Tel Δ ] Sub (Δ ++ Ω′) (Γ ++ Ω)
-    []ᵀˡ-⁺^ ◇ γ .proj₁ = ◇
-    []ᵀˡ-⁺^ ◇ γ .proj₂ = γ
-    []ᵀˡ-⁺^ (Ω ▹ A) γ .proj₁ = []ᵀˡ-⁺^ Ω γ .proj₁ ▹ A [ []ᵀˡ-⁺^ Ω γ .proj₂ ]ᵀ
-    []ᵀˡ-⁺^ (Ω ▹ A) γ .proj₂ = []ᵀˡ-⁺^ Ω γ .proj₂ ⁺
+ap-++ : Ω₀ ≡ Ω₁ → (Γ ++ Ω₀) ≡ (Γ ++ Ω₁)
+ap-++ refl = refl
 
-    infixl 9 _[_]ᵀˡ′
-    _[_]ᵀˡ′ : Tel Γ → Sub Δ Γ → Tel Δ
-    Ω [ γ ]ᵀˡ′ = []ᵀˡ-⁺^ Ω γ .proj₁
-
-    infixl 10 _⁺^′[_]
-    _⁺^′[_] : (γ : Sub Δ Γ) (Ω : Tel Γ) → Sub (Δ ++ Ω [ γ ]ᵀˡ′) (Γ ++ Ω)
-    γ ⁺^′[ Ω ] = []ᵀˡ-⁺^ Ω γ .proj₂
-
-infixl 10 _⁺^ʷ
-_⁺^ʷ[_] : Wk Δ Γ γ → (Ω : Tel Γ) → Wk (Δ ++ Ω [ γ ]ᵀˡ) (Γ ++ Ω) (γ ⁺^[ Ω ])
-γ ⁺^ʷ[ ◇ ] = γ
-γ ⁺^ʷ[ Ω ▹ A ] = γ ⁺^ʷ[ Ω ] ⁺
-{-
-var-p-⁺-⁺^ʷ :
-  {A : Ty Γ i} {x : Var (Γ ++ Ω) B} (γʷ : Wk Δ Γ γ) →
-  tm[ cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ) , (p-⁺ᵀ-⁺^ʷ γʷ) ]
-    (var x [ p {A = A} ⁺^[ Ω ] ]ᵗ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵗ) ≡
-  (Tm
-    (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ)
-    (B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
-    ∋ var x [ γ ⁺^[ Ω ] ]ᵗ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵗ)
-var-p-⁺-⁺^ʷ = {!   !}
--}
-module p-⁺ʷ where
-  open NfModel
-
-  M : NfModel _ _
-  M .NTyᴹ Γ₀ j B =
-    ∀ {i Γ} {A : Ty Γ i} {Ω} →
-    (p-⁺ᵀˡʷ :
-      ∀ {Δ γ} → Wk Δ Γ γ →
-      Ω [ p ]ᵀˡ [ γ ⁺ ]ᵀˡ ≡ (Tel (Δ ▹ A [ γ ]ᵀ) ∋ Ω [ γ ]ᵀˡ [ p ]ᵀˡ)) →
-    ∀ {Δ γ} (Γ₌ : Γ₀ ≡ (Γ ++ Ω)) (γʷ : Wk Δ Γ γ) →
-    ty[ cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ) ]
-      (ty[ Γ₌ ] B [ p ⁺^[ Ω ] ]ᵀ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵀ) ≡
-    (Ty (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) j
-      ∋ ty[ Γ₌ ] B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
-  M .NTy-propᴹ = {!   !}
-  M .NTmᴹ = {!   !}
-  M .NTm-propᴹ = {!   !}
-  M .varᴺᴹ = {!   !}
-  M .Uᴺᴹ = {!   !}
-  M .Elᴺᴹ = {!   !}
-  M .cᴺᴹ = {!   !}
-  M .Πᴺᴹ {A = A} Aᴺᴹ Bᴺᴹ {Ω = Ω} asd refl γʷ = {!   !}
-    where
-    _ = Bᴺᴹ {Ω = Ω ▹ A} (λ γʷ → cong-▹ (asd γʷ) (Aᴺᴹ asd refl γʷ)) refl γʷ
-  M .appᴺᴹ = {!   !}
-  M .lamᴺᴹ = {!   !}
-
-  open NfRec M public
-
-p-⁺ᵀˡʷ : Wk Δ Γ γ → Ω [ p ]ᵀˡ [ γ ⁺ ]ᵀˡ ≡ (Tel (Δ ▹ A [ γ ]ᵀ) ∋ Ω [ γ ]ᵀˡ [ p ]ᵀˡ)
-p-⁺ᵀ-⁺^ʷ :
-  {A : Ty Γ i} (γʷ : Wk Δ Γ γ) →
-  ty[ cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ) ]
-    (B [ p ⁺^[ Ω ] ]ᵀ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵀ) ≡
-  (Ty (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) j
-    ∋ B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
-
-p-⁺ᵀˡʷ {Ω = ◇} γʷ = refl
-p-⁺ᵀˡʷ {Ω = Ω ▹ B} γʷ = cong-▹ (p-⁺ᵀˡʷ γʷ) (p-⁺ᵀ-⁺^ʷ γʷ)
-
-p-⁺ᵀ-⁺^ʷ {B = B} γʷ = p-⁺ʷ.⟦_⟧ᵀ (normᵀ B) p-⁺ᵀˡʷ refl γʷ
+module _
+  (γʷ : Wk Δ Γ γ)
+  (p-⁺ᵀˡʷ :
+    ∀ {Ω} → Ω [ p ]ᵀˡ [ γ ⁺ ]ᵀˡ ≡ Ω [ γ ]ᵀˡ [ p ]ᵀˡ ∈ Tel (Δ ▹ A [ γ ]ᵀ))
+  (p-⁺ᵀ-⁺^ʷ :
+    ∀ {j Ω B} →
+    B [ p ⁺^ ]ᵀ [ γ ⁺ ⁺^ ]ᵀ ≡[ ap-Ty (ap-++ p-⁺ᵀˡʷ) ]
+    B [ γ ⁺^ ]ᵀ [ p ⁺^ ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) j)
+  where
+  var-p-⁺-⁺^ʷ₀ :
+    {x : Var (Γ ++ Ω) B} →
+    var x [ p ⁺^ ]ᵗ [ γ ⁺ ⁺^ ]ᵗ ≡[ ap-Tm (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ ]
+    var x [ γ ⁺^ ]ᵗ [ p ⁺^ ]ᵗ
+      ∈ Tm (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) (B [ γ ⁺^ ]ᵀ [ p ⁺^ ]ᵀ)
+  var-p-⁺-⁺^ʷ₀ {Ω = ◇} = dep (ap-[]ᵗ var-p) ∙ᵈ vs-⁺
+  var-p-⁺-⁺^ʷ₀ {Ω = Ω ▹ B} {x = vz} =
+    apᵈ-[]ᵗ refl refl (dep p-⁺ᵀ) vz-⁺ reflᵈ ∙ᵈ
+    vz-⁺ ∙ᵈ
+    apᵈ-var
+      (ap-▹ (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ)
+      (apᵈ-[]ᵀ
+        (ap-++ p-⁺ᵀˡʷ)
+        (ap-▹ (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ)
+        p-⁺ᵀ-⁺^ʷ
+        (apᵈ-p (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ))
+      (apᵈ-vz (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ) ∙ᵈ
+    symᵈ vz-⁺ ∙ᵈ
+    apᵈ-[]ᵗ refl refl (dep (sym p-⁺ᵀ)) (symᵈ vz-⁺) reflᵈ
+  var-p-⁺-⁺^ʷ₀ {Ω = Ω ▹ B} {x = vs x} =
+    apᵈ-[]ᵗ refl refl (dep p-⁺ᵀ)
+      (vs-⁺ ∙ᵈ dep (ap-[]ᵗ (var-[]ʷ (p ⁺^ʷ)) ∙ var-p))
+      reflᵈ ∙ᵈ
+    vs-⁺ ∙ᵈ
+    apᵈ-[]ᵗ
+      (ap-++ p-⁺ᵀˡʷ)
+      (ap-▹ (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ)
+      p-⁺ᵀ-⁺^ʷ
+      ( dep (ap-[]ᵗ (sym (var-[]ʷ (p ⁺^ʷ)))) ∙ᵈ
+        var-p-⁺-⁺^ʷ₀ ∙ᵈ
+        dep (ap-[]ᵗ (var-[]ʷ (γʷ ⁺^ʷ))))
+      (apᵈ-p (ap-++ p-⁺ᵀˡʷ) p-⁺ᵀ-⁺^ʷ) ∙ᵈ
+    symᵈ vs-⁺ ∙ᵈ
+    apᵈ-[]ᵗ refl refl (dep (sym p-⁺ᵀ))
+      (dep (sym var-p ∙ ap-[]ᵗ (sym (var-[]ʷ (γʷ ⁺^ʷ)))) ∙ᵈ symᵈ vs-⁺)
+      reflᵈ
 
 -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}

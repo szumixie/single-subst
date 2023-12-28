@@ -1,21 +1,93 @@
-{-# OPTIONS --with-K --rewriting #-}
+{-# OPTIONS
+  --without-K
+  --prop
+  --rewriting
+  --confluence-check #-}
 
 module TT.Lib where
 
-open import Level public using (Level; _⊔_)
-module ℓ = Level
-open import Function public using (_∋_)
-open import Relation.Binary.PropositionalEquality public
-  using (_≡_; refl; sym; cong) renaming (trans to infixr 9 _∙_)
-open import Agda.Builtin.Equality.Rewrite using ()
-open import Axiom.Extensionality.Propositional
-open import Axiom.UniquenessOfIdentityProofs.WithK public using (uip)
-open import Data.Unit public using (⊤; tt)
-open import Data.Nat public using (ℕ; zero; suc)
+open import Agda.Primitive public
+
+infix 4 _↝_ _≡_ _≡[_]_
+infixl 5 the
+infixr 9 _∙_ _∙ᵈ_
+
+private variable
+  ℓ : Level
+  A A₀ A₁ B : Set ℓ
+  P₀ P₁ : Prop ℓ
+  a a₀ a₁ a₂ : A
 
 postulate
-  funext : ∀ {ℓ₀ ℓ₁} → Extensionality ℓ₀ ℓ₁
+  _↝_ : A → A → Propω
+{-# BUILTIN REWRITE _↝_ #-}
 
-funextᵢ : ∀ {ℓ₀ ℓ₁} → ExtensionalityImplicit ℓ₀ ℓ₁
-funextᵢ = implicit-extensionality funext
+the : (A : Set ℓ) → A → A
+the _ a = a
+{-# INLINE the #-}
 
+syntax the A a = a ∈ A
+
+record Lift (P : Prop ℓ) : Set ℓ where
+  eta-equality
+  constructor lift
+  field
+    lower : P
+
+open Lift public
+
+data _≡_ {A : Set ℓ} (a : A) : A → Prop ℓ where
+  refl : a ≡ a
+
+sym : a₀ ≡ a₁ → a₁ ≡ a₀
+sym refl = refl
+
+_∙_ : a₀ ≡ a₁ → a₁ ≡ a₂ → a₀ ≡ a₂
+refl ∙ a₁₂ = a₁₂
+
+coeₚ : P₀ ≡ P₁ → P₀ → P₁
+coeₚ refl p = p
+
+private postulate
+  coe₀ : A₀ ≡ A₁ → A₀ → A₁
+  coe₀-refl : coe₀ refl a ↝ a
+  {-# REWRITE coe₀-refl #-}
+
+opaque
+  coe : A₀ ≡ A₁ → A₀ → A₁
+  coe = coe₀
+
+  coe-refl : coe refl a ≡ a
+  coe-refl = refl
+
+private variable
+  A₀₁ A₁₂ : A₀ ≡ A₁
+
+_≡[_]_ : A₀ → A₀ ≡ A₁ → A₁ → Prop _
+a₀ ≡[ A₀₁ ] a₁ = coe A₀₁ a₀ ≡ a₁
+
+opaque
+  unfolding coe
+
+  reflᵈ : a₀ ≡[ refl ] a₀
+  reflᵈ = refl
+
+  symᵈ : a₀ ≡[ A₀₁ ] a₁ → a₁ ≡[ sym A₀₁ ] a₀
+  symᵈ {A₀₁ = refl} refl = refl
+
+  _∙ᵈ_ : a₀ ≡[ A₀₁ ] a₁ → a₁ ≡[ A₁₂ ] a₂ → a₀ ≡[ A₀₁ ∙ A₁₂ ] a₂
+  _∙ᵈ_ {A₀₁ = refl} refl a₁₂ = a₁₂
+
+  dep : a₀ ≡ a₁ → a₀ ≡[ refl ] a₁
+  dep a₀₁ = a₀₁
+
+  undep : a₀ ≡[ refl ] a₁ → a₀ ≡ a₁
+  undep a₀₁ = a₀₁
+
+record ⊤ : Set where
+  eta-equality
+  constructor ⋆
+
+data ℕ : Set where
+  zero : ℕ
+  suc : ℕ → ℕ

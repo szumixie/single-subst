@@ -1,12 +1,18 @@
-{-# OPTIONS --with-K --rewriting --postfix-projections #-}
+{-# OPTIONS
+  --without-K
+  --prop
+  --rewriting
+  --confluence-check
+  --postfix-projections #-}
 
 module TT.SSC.AlphaNf where
 
 open import TT.Lib
 open import TT.SSC
 
+infixl 9 _[_]ᵛʷ _[_]ᵛᴺˢ _[_]ᵀᴺ _[_]ᵗᴺ
+
 private variable
-  ℓᵀ ℓᵗ : Level
   i : ℕ
   Γ Δ : Con
   γ : Sub Δ Γ
@@ -14,73 +20,32 @@ private variable
   a a₀ a₁ b f α : Tm Γ A
   x : Var Γ A
 
-postulate
-  NTy : (Γ : Con) (i : ℕ) → Ty Γ i → Set
-  NTy-prop : {Aᴺ₀ Aᴺ₁ : NTy Γ i A} → Aᴺ₀ ≡ Aᴺ₁
+data NTy : (Γ : Con) (i : ℕ) → Ty Γ i → Prop
+data NTm : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Prop
 
-  NTm : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Set
-  NTm-prop : {aᴺ₀ aᴺ₁ : NTm Γ A a} → aᴺ₀ ≡ aᴺ₁
-  varᴺ : (x : Var Γ A) → NTm Γ A (var x)
-
+data NTy where
   Uᴺ : (i : ℕ) → NTy Γ (suc i) (U i)
   Elᴺ : NTm Γ (U i) α → NTy Γ i (El α)
+  Πᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTy Γ i (Π A B)
+
+data NTm where
+  varᴺ : (x : Var Γ A) → NTm Γ A (var x)
   cᴺ : NTy Γ i A → NTm Γ (U i) (c A)
 
-  Πᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTy Γ i (Π A B)
   appᴺ : NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
   lamᴺ : NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
 
-private variable
-  Aᴺ Bᴺ : NTy Γ i A
-  aᴺ bᴺ fᴺ αᴺ : NTm Γ A a
+opaque
+  unfolding coe
 
-nty[_] : A₀ ≡ A₁ → NTy Γ i A₀ → NTy Γ i A₁
-nty[ refl ] Aᴺ = Aᴺ
+  ap-NTy : A₀ ≡ A₁ → NTy Γ i A₀ ≡ NTy Γ i A₁
+  ap-NTy refl = refl
 
-ntm[_,_] :
-  (A₀₁ : A₀ ≡ A₁) → tm[ refl , A₀₁ ] a₀ ≡ a₁ → NTm Γ A₀ a₀ → NTm Γ A₁ a₁
-ntm[ refl , refl ] aᴺ = aᴺ
-
-record NfModel ℓᵀ ℓᵗ : Set (ℓ.suc (ℓᵀ ⊔ ℓᵗ)) where
-  no-eta-equality
-  field
-    NTyᴹ : (Γ : Con) (i : ℕ) → Ty Γ i → Set ℓᵀ
-    NTy-propᴹ : {Aᴺᴹ₀ Aᴺᴹ₁ : NTyᴹ Γ i A} → Aᴺᴹ₀ ≡ Aᴺᴹ₁
-
-    NTmᴹ : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Set ℓᵗ
-    NTm-propᴹ : {aᴺᴹ₀ aᴺᴹ₁ : NTmᴹ Γ A a} → aᴺᴹ₀ ≡ aᴺᴹ₁
-    varᴺᴹ : (x : Var Γ A) → NTmᴹ Γ A (var x)
-
-    Uᴺᴹ : (i : ℕ) → NTyᴹ Γ (suc i) (U i)
-    Elᴺᴹ : NTmᴹ Γ (U i) α → NTyᴹ Γ i (El α)
-    cᴺᴹ : NTyᴹ Γ i A → NTmᴹ Γ (U i) (c A)
-
-    Πᴺᴹ : NTyᴹ Γ i A → NTyᴹ (Γ ▹ A) i B → NTyᴹ Γ i (Π A B)
-    appᴺᴹ : NTmᴹ Γ (Π A B) f → NTmᴹ Γ A a → NTmᴹ Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
-    lamᴺᴹ : NTmᴹ (Γ ▹ A) B b → NTmᴹ Γ (Π A B) (lam b)
-
-module NfRec (D : NfModel ℓᵀ ℓᵗ) where
-  open NfModel D
-
-  postulate
-    ⟦_⟧ᵀ : NTy Γ i A → NTyᴹ Γ i A
-    ⟦_⟧ᵗ : NTm Γ A a → NTmᴹ Γ A a
-    ⟦⟧-varᴺ : ⟦ varᴺ x ⟧ᵗ ≡ varᴺᴹ x
-    {-# REWRITE ⟦⟧-varᴺ #-}
-
-    ⟦⟧-Uᴺ : ⟦ Uᴺ i ⟧ᵀ ≡ (NTyᴹ Γ (suc i) (U i) ∋ Uᴺᴹ i)
-    {-# REWRITE ⟦⟧-Uᴺ #-}
-    ⟦⟧-Elᴺ : ⟦ Elᴺ αᴺ ⟧ᵀ ≡ Elᴺᴹ ⟦ αᴺ ⟧ᵗ
-    {-# REWRITE ⟦⟧-Elᴺ #-}
-    ⟦⟧-cᴺ : ⟦ cᴺ Aᴺ ⟧ᵗ ≡ cᴺᴹ ⟦ Aᴺ ⟧ᵀ
-    {-# REWRITE ⟦⟧-cᴺ #-}
-
-    ⟦⟧-Πᴺ : ⟦ Πᴺ Aᴺ Bᴺ ⟧ᵀ ≡ Πᴺᴹ ⟦ Aᴺ ⟧ᵀ ⟦ Bᴺ ⟧ᵀ
-    {-# REWRITE ⟦⟧-Πᴺ #-}
-    ⟦⟧-appᴺ : ⟦ appᴺ fᴺ aᴺ ⟧ᵗ ≡ appᴺᴹ ⟦ fᴺ ⟧ᵗ ⟦ aᴺ ⟧ᵗ
-    {-# REWRITE ⟦⟧-appᴺ #-}
-    ⟦⟧-lamᴺ : ⟦ lamᴺ bᴺ ⟧ᵗ ≡ lamᴺᴹ ⟦ bᴺ ⟧ᵗ
-    {-# REWRITE ⟦⟧-lamᴺ #-}
+  ap-NTm :
+    (A₀₁ : A₀ ≡ A₁) →
+    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
+    NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
+  ap-NTm refl refl = refl
 
 module []ᴺᴾ
   (Subᴾ : (Δ Γ : Con) → Sub Δ Γ → Set)
@@ -89,92 +54,67 @@ module []ᴺᴾ
   (_[_]ᵛᴾ :
     ∀ {Γ Δ i} {A : Ty Γ i} {γ}
     (x : Var Γ A) → Subᴾ Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (var x [ γ ]ᵗ))
+  (let infixl 9 _[_]ᵛᴾ; _[_]ᵛᴾ = _[_]ᵛᴾ)
   where
-  open NfModel
+  infixl 9 _[_]ᵀᴺᴾ _[_]ᵗᴺᴾ
 
-  M : NfModel _ _
-  M .NTyᴹ Γ i A = ∀ {Δ γ} → Subᴾ Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
-  M .NTy-propᴹ = funextᵢ (funextᵢ (funext λ _ → NTy-prop))
+  _[_]ᵀᴺᴾ : NTy Γ i A → Subᴾ Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
+  _[_]ᵗᴺᴾ : NTm Γ A a → Subᴾ Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 
-  M .NTmᴹ Γ A a = ∀ {Δ γ} → Subᴾ Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
-  M .NTm-propᴹ = funextᵢ (funextᵢ (funext λ _ → NTm-prop))
-  M .varᴺᴹ x = _[_]ᵛᴾ x
+  Uᴺ i [ γᴾ ]ᵀᴺᴾ = coeₚ (ap-NTy (sym U-[])) (Uᴺ i)
+  Elᴺ αᴺ [ γᴾ ]ᵀᴺᴾ =
+    coeₚ (ap-NTy (sym El-[])) (Elᴺ (coeₚ (ap-NTm U-[] refl) (αᴺ [ γᴾ ]ᵗᴺᴾ)))
+  Πᴺ Aᴺ Bᴺ [ γᴾ ]ᵀᴺᴾ =
+    coeₚ (ap-NTy (sym Π-[])) (Πᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ))
 
-  M .Uᴺᴹ i γᴾ = nty[ sym U-[] ] (Uᴺ i)
-  M .Elᴺᴹ αᴺᴹ γᴾ = nty[ sym El-[] ] (Elᴺ (ntm[ U-[] , refl ] (αᴺᴹ γᴾ)))
-  M .cᴺᴹ Aᴺᴹ γᴾ = ntm[ sym U-[] , sym (tm[]-shiftr c-[]) ] (cᴺ (Aᴺᴹ γᴾ))
+  varᴺ x [ γᴾ ]ᵗᴺᴾ = x [ γᴾ ]ᵛᴾ
+  cᴺ Aᴺ [ γᴾ ]ᵗᴺᴾ = coeₚ (ap-NTm (sym U-[]) (symᵈ c-[])) (cᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
 
-  M .Πᴺᴹ Aᴺᴹ Bᴺᴹ γᴾ = nty[ sym Π-[] ] (Πᴺ (Aᴺᴹ γᴾ) (Bᴺᴹ (γᴾ ⁺ᴾ)))
-  M .appᴺᴹ fᴺᴹ aᴺᴹ γᴾ =
-    ntm[ sym ⟨⟩-[]ᵀ , sym (tm[]-shiftr app-[]) ]
-      (appᴺ (ntm[ Π-[] , refl ] (fᴺᴹ γᴾ)) (aᴺᴹ γᴾ))
-  M .lamᴺᴹ bᴺᴹ γᴾ =
-    ntm[ sym Π-[] , sym (tm[]-shiftr lam-[]) ] (lamᴺ (bᴺᴹ (γᴾ ⁺ᴾ)))
+  appᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm (sym ⟨⟩-[]ᵀ) (symᵈ app-[]))
+      (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
+  lamᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[])) (lamᴺ (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
 
-  open NfRec M public
-
-infixl 10 _⁺
 data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
   p : Wk (Γ ▹ A) Γ p
   _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
 
-infixl 9 _[_]ᵛʷ
 _[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
 x [ p ]ᵛʷ = vs x
-vz [ γʷ ⁺ ]ᵛʷ = var[ sym p-⁺ᵀ ] vz
-vs x [ γʷ ⁺ ]ᵛʷ = var[ sym p-⁺ᵀ ] (vs (x [ γʷ ]ᵛʷ))
+vz [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) vz
+vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) (vs (x [ γʷ ]ᵛʷ))
 
 var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
 var-[]ʷ p = var-p
-var-[]ʷ {x = vz} (γʷ ⁺) = tm[]-shiftr vz-⁺ ∙ tm[]-var
+var-[]ʷ {x = vz} (γʷ ⁺) = undep (vz-⁺ ∙ᵈ coe-var (sym p-⁺ᵀ))
 var-[]ʷ {x = vs x} (γʷ ⁺) =
-  tm[]-shiftr vs-⁺ ∙
-  cong tm[ _ , _ ] (cong _[ p ]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙
-  tm[]-var
+  undep (vs-⁺ ∙ᵈ dep (ap-[]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙ᵈ coe-var (sym p-⁺ᵀ))
 
-module []ᴺʷ =
-  []ᴺᴾ Wk _⁺ (λ x γʷ → ntm[ refl , sym (var-[]ʷ γʷ) ] (varᴺ (x [ γʷ ]ᵛʷ)))
-
-infixl 9 _[_]ᵀᴺʷ
-_[_]ᵀᴺʷ : NTy Γ i A → Wk Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
-_[_]ᵀᴺʷ Aᴺ = []ᴺʷ.⟦ Aᴺ ⟧ᵀ
-
-infixl 9 _[_]ᵗᴺʷ
-_[_]ᵗᴺʷ : NTm Γ A a → Wk Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
-_[_]ᵗᴺʷ aᴺ = []ᴺʷ.⟦ aᴺ ⟧ᵗ
+open []ᴺᴾ Wk _⁺
+  (λ x γʷ → coeₚ (ap-NTm refl (dep (sym (var-[]ʷ γʷ)))) (varᴺ (x [ γʷ ]ᵛʷ)))
+  renaming (_[_]ᵀᴺᴾ to _[_]ᵀᴺʷ; _[_]ᵗᴺᴾ to _[_]ᵗᴺʷ)
 
 data NSSub : (Δ Γ : Con) → Sub Δ Γ → Set where
   _⁺ : NSSub Δ Γ γ → NSSub (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
   ⟨_⟩ : NTm Γ A a → NSSub Γ (Γ ▹ A) ⟨ a ⟩
 
-infixl 9 _[_]ᵛᴺˢ
 _[_]ᵛᴺˢ : (x : Var Γ A) → NSSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (var x [ γ ]ᵗ)
-vz [ γᴺˢ ⁺ ]ᵛᴺˢ = ntm[ sym p-⁺ᵀ , sym (tm[]-shiftr vz-⁺) ] (varᴺ vz)
-vs x [ γᴺˢ ⁺ ]ᵛᴺˢ =
-  ntm[ sym p-⁺ᵀ , sym (tm[]-shiftr vs-⁺) ] (x [ γᴺˢ ]ᵛᴺˢ [ p ]ᵗᴺʷ)
-vz [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (tm[]-shiftr vz-⟨⟩) ] aᴺ
-vs x [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (tm[]-shiftr vs-⟨⟩) ] (varᴺ x)
+vz [ γᴺˢ ⁺ ]ᵛᴺˢ = coeₚ (ap-NTm (sym p-⁺ᵀ) (symᵈ vz-⁺)) (varᴺ vz)
+vs x [ γᴺˢ ⁺ ]ᵛᴺˢ = coeₚ (ap-NTm (sym p-⁺ᵀ) (symᵈ vs-⁺)) (x [ γᴺˢ ]ᵛᴺˢ [ p ]ᵗᴺʷ)
+vz [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = coeₚ (ap-NTm (sym p-⟨⟩ᵀ) (symᵈ vz-⟨⟩)) aᴺ
+vs x [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = coeₚ (ap-NTm (sym p-⟨⟩ᵀ) (symᵈ vs-⟨⟩)) (varᴺ x)
 
-module []ᴺˢ = []ᴺᴾ NSSub _⁺ (λ x → x [_]ᵛᴺˢ)
-
-infixl 9 _[_]ᵀᴺˢ
-_[_]ᵀᴺˢ : NTy Γ i A → NSSub Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
-_[_]ᵀᴺˢ Aᴺ = []ᴺˢ.⟦ Aᴺ ⟧ᵀ
-
-infixl 9 _[_]ᵗᴺˢ
-_[_]ᵗᴺˢ : NTm Γ A a → NSSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
-_[_]ᵗᴺˢ aᴺ = []ᴺˢ.⟦ aᴺ ⟧ᵗ
+open []ᴺᴾ NSSub _⁺ _[_]ᵛᴺˢ renaming (_[_]ᵀᴺᴾ to _[_]ᵀᴺˢ; _[_]ᵗᴺᴾ to _[_]ᵗᴺˢ)
 
 data NSub (Δ Γ : Con) (γ : Sub Δ Γ) : Set where
   wk : Wk Δ Γ γ → NSub Δ Γ γ
   nssub : NSSub Δ Γ γ → NSub Δ Γ γ
 
-infixl 9 _[_]ᵀᴺ
 _[_]ᵀᴺ : NTy Γ i A → NSub Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
 Aᴺ [ wk γʷ ]ᵀᴺ = Aᴺ [ γʷ ]ᵀᴺʷ
 Aᴺ [ nssub γᴺˢ ]ᵀᴺ = Aᴺ [ γᴺˢ ]ᵀᴺˢ
 
-infixl 9 _[_]ᵗᴺ
 _[_]ᵗᴺ : NTm Γ A a → NSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 aᴺ [ wk γʷ ]ᵗᴺ = aᴺ [ γʷ ]ᵗᴺʷ
 aᴺ [ nssub γᴺˢ ]ᵗᴺ = aᴺ [ γᴺˢ ]ᵗᴺˢ
@@ -186,65 +126,65 @@ nssub γᴺˢ ⁺ᴺ = nssub (γᴺˢ ⁺)
 module norm where
   open DModel
 
-  M : DModel _ _ _ _ _
+  M : DModel
   M .Conᴹ _ = ⊤
   M .Subᴹ _ _ = NSub _ _
 
-  M .Tyᴹ _ = NTy _
-  M ._[_]ᵀᴹ = _[_]ᵀᴺ
+  M .Tyᴹ _ _ A = Lift (NTy _ _ A)
+  M ._[_]ᵀᴹ (lift Aᴺ) γᴺ = lift (Aᴺ [ γᴺ ]ᵀᴺ)
 
-  M .Tmᴹ _ _ = NTm _ _
-  M ._[_]ᵗᴹ = _[_]ᵗᴺ
+  M .Tmᴹ _ _ a = Lift (NTm _ _ a)
+  M ._[_]ᵗᴹ (lift aᴺ) γᴺ = lift (aᴺ [ γᴺ ]ᵗᴺ)
 
-  M .◇ᴹ = tt
-  M ._▹ᴹ_ _ _ = tt
+  M .◇ᴹ = ⋆
+  M ._▹ᴹ_ _ _ = ⋆
   M .pᴹ = wk p
 
   M .Varᴹ _ _ _ = ⊤
-  M .varᴹ _ = varᴺ _
+  M .varᴹ _ = lift (varᴺ _)
 
-  M .vzᴹ = tt
-  M .vsᴹ _ = tt
-  M .var-pᴹ = NTm-prop
+  M .vzᴹ = ⋆
+  M .vsᴹ _ = ⋆
+  M .var-pᴹ = refl
 
   M ._⁺ᴹ = _⁺ᴺ
-  M .p-⁺ᵀᴹ = NTy-prop
+  M .p-⁺ᵀᴹ = refl
 
-  M .vz-⁺ᴹ = NTm-prop
-  M .vs-⁺ᴹ = NTm-prop
+  M .vz-⁺ᴹ = refl
+  M .vs-⁺ᴹ = refl
 
-  M .⟨_⟩ᴹ aᴺ = nssub ⟨ aᴺ ⟩
-  M .p-⟨⟩ᵀᴹ = NTy-prop
+  M .⟨_⟩ᴹ (lift aᴺ) = nssub ⟨ aᴺ ⟩
+  M .p-⟨⟩ᵀᴹ = refl
 
-  M .vz-⟨⟩ᴹ = NTm-prop
-  M .vs-⟨⟩ᴹ = NTm-prop
+  M .vz-⟨⟩ᴹ = refl
+  M .vs-⟨⟩ᴹ = refl
 
-  M .⟨⟩-[]ᵀᴹ = NTy-prop
-  M .▹-ηᵀᴹ = NTy-prop
+  M .⟨⟩-[]ᵀᴹ = refl
+  M .▹-ηᵀᴹ = refl
 
-  M .Uᴹ = Uᴺ
-  M .U-[]ᴹ = NTy-prop
+  M .Uᴹ i = lift (Uᴺ i)
+  M .U-[]ᴹ = refl
 
-  M .Elᴹ = Elᴺ
-  M .El-[]ᴹ = NTy-prop
+  M .Elᴹ (lift αᴺ) = lift (Elᴺ αᴺ)
+  M .El-[]ᴹ = refl
 
-  M .cᴹ = cᴺ
-  M .c-[]ᴹ = NTm-prop
+  M .cᴹ (lift Aᴺ) = lift (cᴺ Aᴺ)
+  M .c-[]ᴹ = refl
 
-  M .U-βᴹ = NTy-prop
-  M .U-ηᴹ = NTm-prop
+  M .U-βᴹ = refl
+  M .U-ηᴹ = refl
 
-  M .Πᴹ = Πᴺ
-  M .Π-[]ᴹ = NTy-prop
+  M .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
+  M .Π-[]ᴹ = refl
 
-  M .appᴹ = appᴺ
-  M .app-[]ᴹ = NTm-prop
+  M .appᴹ (lift fᴺ) (lift aᴺ) = lift (appᴺ fᴺ aᴺ)
+  M .app-[]ᴹ = refl
 
-  M .lamᴹ = lamᴺ
-  M .lam-[]ᴹ = NTm-prop
+  M .lamᴹ (lift bᴺ) = lift (lamᴺ bᴺ)
+  M .lam-[]ᴹ = refl
 
-  M .Π-βᴹ = NTm-prop
-  M .Π-ηᴹ = NTm-prop
+  M .Π-βᴹ = refl
+  M .Π-ηᴹ = refl
 
   open Ind M public
 
@@ -252,9 +192,9 @@ normˢ : (γ : Sub Δ Γ) → NSub Δ Γ γ
 normˢ γ = norm.⟦ γ ⟧ˢ
 
 normᵀ : (A : Ty Γ i) → NTy Γ i A
-normᵀ A = norm.⟦ A ⟧ᵀ
+normᵀ A = norm.⟦ A ⟧ᵀ .lower
 
 normᵗ : (a : Tm Γ A) → NTm Γ A a
-normᵗ a = norm.⟦ a ⟧ᵗ
+normᵗ a = norm.⟦ a ⟧ᵗ .lower
 
 -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
