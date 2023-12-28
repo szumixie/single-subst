@@ -65,7 +65,9 @@ CwF-style syntax (Section \ref{sec:iso}). We list related work and
 conclude in Section \ref{sec:conclusion}.
 
 Our main contribution is the novel definition of a minimalistic single
-substitution calculus, justified by showing its equivalence to CwFs.
+substitution calculus, the $\alpha$-normalisation algorithm which can
+be useful for other explicit substitution calculi, and finally our
+proof of equivalence with the CwF-style syntax.
 
 \subsection{Metatheory and formalisation}
 \label{sec:metatheory}
