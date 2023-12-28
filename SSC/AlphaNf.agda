@@ -38,7 +38,7 @@ nty[_] : A₀ ≡ A₁ → NTy Γ i A₀ → NTy Γ i A₁
 nty[ refl ] Aᴺ = Aᴺ
 
 ntm[_,_] :
-  (A₀₁ : A₀ ≡ A₁) → tm[ refl , A₀₁ ] a₀ ≡ a₁ → NTm Γ A₀ a₀ → NTm Γ A₁ a₁
+  (A₀₁ : A₀ ≡ A₁) → transpTm refl A₀₁ a₀ ≡ a₁ → NTm Γ A₀ a₀ → NTm Γ A₁ a₁
 ntm[ refl , refl ] aᴺ = aᴺ
 
 record NfModel ℓᵀ ℓᵗ : Set (ℓ.suc (ℓᵀ ⊔ ℓᵗ)) where
@@ -102,14 +102,14 @@ module []ᴺᴾ
 
   M .Uᴺᴹ i γᴾ = nty[ sym U-[] ] (Uᴺ i)
   M .Elᴺᴹ αᴺᴹ γᴾ = nty[ sym El-[] ] (Elᴺ (ntm[ U-[] , refl ] (αᴺᴹ γᴾ)))
-  M .cᴺᴹ Aᴺᴹ γᴾ = ntm[ sym U-[] , sym (tm[]-shiftr c-[]) ] (cᴺ (Aᴺᴹ γᴾ))
+  M .cᴺᴹ Aᴺᴹ γᴾ = ntm[ sym U-[] , sym (transpTm-shiftr c-[]) ] (cᴺ (Aᴺᴹ γᴾ))
 
   M .Πᴺᴹ Aᴺᴹ Bᴺᴹ γᴾ = nty[ sym Π-[] ] (Πᴺ (Aᴺᴹ γᴾ) (Bᴺᴹ (γᴾ ⁺ᴾ)))
   M .appᴺᴹ fᴺᴹ aᴺᴹ γᴾ =
-    ntm[ sym ⟨⟩-[]ᵀ , sym (tm[]-shiftr app-[]) ]
+    ntm[ sym ⟨⟩-[]ᵀ , sym (transpTm-shiftr app-[]) ]
       (appᴺ (ntm[ Π-[] , refl ] (fᴺᴹ γᴾ)) (aᴺᴹ γᴾ))
   M .lamᴺᴹ bᴺᴹ γᴾ =
-    ntm[ sym Π-[] , sym (tm[]-shiftr lam-[]) ] (lamᴺ (bᴺᴹ (γᴾ ⁺ᴾ)))
+    ntm[ sym Π-[] , sym (transpTm-shiftr lam-[]) ] (lamᴺ (bᴺᴹ (γᴾ ⁺ᴾ)))
 
   open NfRec M public
 
@@ -121,16 +121,16 @@ data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
 infixl 9 _[_]ᵛʷ
 _[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
 x [ p ]ᵛʷ = vs x
-vz [ γʷ ⁺ ]ᵛʷ = var[ sym p-⁺ᵀ ] vz
-vs x [ γʷ ⁺ ]ᵛʷ = var[ sym p-⁺ᵀ ] (vs (x [ γʷ ]ᵛʷ))
+vz [ γʷ ⁺ ]ᵛʷ = transpVar (sym p-⁺ᵀ) vz
+vs x [ γʷ ⁺ ]ᵛʷ = transpVar (sym p-⁺ᵀ) (vs (x [ γʷ ]ᵛʷ))
 
 var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
 var-[]ʷ p = var-p
-var-[]ʷ {x = vz} (γʷ ⁺) = tm[]-shiftr vz-⁺ ∙ tm[]-var
+var-[]ʷ {x = vz} (γʷ ⁺) = transpTm-shiftr vz-⁺ ∙ transp-var
 var-[]ʷ {x = vs x} (γʷ ⁺) =
-  tm[]-shiftr vs-⁺ ∙
-  cong tm[ _ , _ ] (cong _[ p ]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙
-  tm[]-var
+  transpTm-shiftr vs-⁺ ∙
+  cong (transpTm _ _) (cong _[ p ]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙
+  transp-var
 
 module []ᴺʷ =
   []ᴺᴾ Wk _⁺ (λ x γʷ → ntm[ refl , sym (var-[]ʷ γʷ) ] (varᴺ (x [ γʷ ]ᵛʷ)))
@@ -149,11 +149,11 @@ data NSSub : (Δ Γ : Con) → Sub Δ Γ → Set where
 
 infixl 9 _[_]ᵛᴺˢ
 _[_]ᵛᴺˢ : (x : Var Γ A) → NSSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (var x [ γ ]ᵗ)
-vz [ γᴺˢ ⁺ ]ᵛᴺˢ = ntm[ sym p-⁺ᵀ , sym (tm[]-shiftr vz-⁺) ] (varᴺ vz)
+vz [ γᴺˢ ⁺ ]ᵛᴺˢ = ntm[ sym p-⁺ᵀ , sym (transpTm-shiftr vz-⁺) ] (varᴺ vz)
 vs x [ γᴺˢ ⁺ ]ᵛᴺˢ =
-  ntm[ sym p-⁺ᵀ , sym (tm[]-shiftr vs-⁺) ] (x [ γᴺˢ ]ᵛᴺˢ [ p ]ᵗᴺʷ)
-vz [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (tm[]-shiftr vz-⟨⟩) ] aᴺ
-vs x [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (tm[]-shiftr vs-⟨⟩) ] (varᴺ x)
+  ntm[ sym p-⁺ᵀ , sym (transpTm-shiftr vs-⁺) ] (x [ γᴺˢ ]ᵛᴺˢ [ p ]ᵗᴺʷ)
+vz [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (transpTm-shiftr vz-⟨⟩) ] aᴺ
+vs x [ ⟨ aᴺ ⟩ ]ᵛᴺˢ = ntm[ sym p-⟨⟩ᵀ , sym (transpTm-shiftr vs-⟨⟩) ] (varᴺ x)
 
 module []ᴺˢ = []ᴺᴾ NSSub _⁺ (λ x → x [_]ᵛᴺˢ)
 
