@@ -71,11 +71,15 @@ module []ᴺᴾ
   cᴺ Aᴺ [ γᴾ ]ᵗᴺᴾ = coeₚ (ap-NTm (sym U-[]) (symᵈ c-[])) (cᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
 
   appᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm {!!} {!app-[]!})
+      (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
+  {-
     coeₚ (ap-NTm (sym ⟨⟩-[]ᵀ) (symᵈ app-[]))
       (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
+  -}
   lamᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
     coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[])) (lamᴺ (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
-
+{-
 data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
   p : Wk (Γ ▹ A) Γ p
   _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)

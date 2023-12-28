@@ -67,20 +67,17 @@ postulate
   var-p : var x [ p ]ᵗ ≡ var (vs x) ∈ Tm (Γ ▹ A) (B [ p ]ᵀ)
 
 postulate
-  p-⁺ᵀ : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) i
   vz-⁺ :
-    var vz [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep p-⁺ᵀ) ]
+    (e : A [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ A [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) i) →
+    var vz [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep e) ]
     var vz ∈ Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ)
   vs-⁺ :
-    var (vs x) [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep p-⁺ᵀ) ]
+    (e : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) i) →
+    var (vs x) [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep e) ]
     var x [ γ ]ᵗ [ p ]ᵗ ∈ Tm (Δ ▹ A [ γ ]ᵀ) (B [ γ ]ᵀ [ p ]ᵀ)
 
-  p-⟨⟩ᵀ : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B
-  vz-⟨⟩ : var vz [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep p-⟨⟩ᵀ) ] a
-  vs-⟨⟩ : var (vs x) [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep p-⟨⟩ᵀ) ] var x
-
-  ⟨⟩-[]ᵀ : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ
-  ▹-ηᵀ : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ
+  vz-⟨⟩ : (e : A [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ A) → var vz [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep e) ] a
+  vs-⟨⟩ : (e : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B) → var (vs x) [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep e) ] var x
 
 postulate
   U : (i : ℕ) → Ty Γ (suc i)
@@ -100,17 +97,18 @@ postulate
 
   app : Tm Γ (Π A B) → (a : Tm Γ A) → Tm Γ (B [ ⟨ a ⟩ ]ᵀ)
   app-[] :
-    app f a [ γ ]ᵗ ≡[ ap-Tm refl (dep ⟨⟩-[]ᵀ) ]
+    (e : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ) →
+    app f a [ γ ]ᵗ ≡[ ap-Tm refl (dep e) ]
     app (coe (ap-Tm refl (dep Π-[])) (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
 
   lam : Tm (Γ ▹ A) B → Tm Γ (Π A B)
   lam-[] : lam b [ γ ]ᵗ ≡[ ap-Tm refl (dep Π-[]) ] lam (b [ γ ⁺ ]ᵗ)
 
   Π-β : app (lam b) a ≡ b [ ⟨ a ⟩ ]ᵗ
-  Π-η :
+  Π-η : (e : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ) →
     f ≡
     lam
-      (coe (ap-Tm refl (dep (sym ▹-ηᵀ)))
+      (coe (ap-Tm refl (dep (sym e)))
         (app (coe (ap-Tm refl (dep Π-[])) (f [ p ]ᵗ)) (var vz)))
 
 opaque
@@ -236,45 +234,34 @@ record DModel : Set₁ where
     _⁺ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A}
       (γᴹ : Subᴹ Δᴹ Γᴹ γ) → Subᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Γᴹ ▹ᴹ Aᴹ) (γ ⁺)
-    p-⁺ᵀᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B}
-      {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      Bᴹ [ pᴹ ]ᵀᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ p-⁺ᵀ ]
-      Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ ∈ Tyᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) j (B [ γ ]ᵀ [ p ]ᵀ)
-
     vz-⁺ᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      varᴹ vzᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ vz-⁺ ]
+      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {γᴹ : Subᴹ Δᴹ Γᴹ γ}
+      (e : A [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ A [ γ ]ᵀ [ p ]ᵀ)
+      (eᴹ : Aᴹ [ pᴹ ]ᵀᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ e ] Aᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) →
+      varᴹ vzᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ e eᴹ (vz-⁺ e) ]
       varᴹ vzᴹ ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Aᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) (var vz)
     vs-⁺ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B}
-      {xᴹ : Varᴹ Γᴹ Bᴹ x} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      varᴹ (vsᴹ xᴹ) [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ vs-⁺ ]
+      {xᴹ : Varᴹ Γᴹ Bᴹ x} {γᴹ : Subᴹ Δᴹ Γᴹ γ}
+      (e : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ)
+      (eᴹ : Bᴹ [ pᴹ ]ᵀᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ e ] Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) →
+      varᴹ (vsᴹ xᴹ) [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ e eᴹ (vs-⁺ e) ]
       varᴹ xᴹ [ γᴹ ]ᵗᴹ [ pᴹ ]ᵗᴹ
         ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) (var x [ γ ]ᵗ [ p ]ᵗ)
 
     ⟨_⟩ᴹ :
       {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Tmᴹ Γᴹ Aᴹ a → Subᴹ Γᴹ (Γᴹ ▹ᴹ Aᴹ) ⟨ a ⟩
-    p-⟨⟩ᵀᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
-      Bᴹ [ pᴹ ]ᵀᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ p-⟨⟩ᵀ ] Bᴹ
-
     vz-⟨⟩ᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
-      varᴹ vzᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ vz-⟨⟩ ] aᴹ
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {aᴹ : Tmᴹ Γᴹ Aᴹ a}
+      (e : A [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ A)
+      (eᴹ : Aᴹ [ pᴹ ]ᵀᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ e ] Aᴹ) →
+      varᴹ vzᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ e eᴹ (vz-⟨⟩ e) ] aᴹ
     vs-⟨⟩ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B}
-      {xᴹ : Varᴹ Γᴹ Bᴹ x} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
-      varᴹ (vsᴹ xᴹ) [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ vs-⟨⟩ ] varᴹ xᴹ
-
-    ⟨⟩-[]ᵀᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
-      {aᴹ : Tmᴹ Γᴹ Aᴹ a} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      Bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ [ γᴹ ]ᵀᴹ ≡[ ap-Tyᴹ ⟨⟩-[]ᵀ ]
-      Bᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ aᴹ [ γᴹ ]ᵗᴹ ⟩ᴹ ]ᵀᴹ
-    ▹-ηᵀᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B} →
-      Bᴹ ≡[ ap-Tyᴹ ▹-ηᵀ ] Bᴹ [ pᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ varᴹ vzᴹ ⟩ᴹ ]ᵀᴹ
+      {xᴹ : Varᴹ Γᴹ Bᴹ x} {aᴹ : Tmᴹ Γᴹ Aᴹ a}
+      (e : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B)
+      (eᴹ : Bᴹ [ pᴹ ]ᵀᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ e ] Bᴹ) →
+      varᴹ (vsᴹ xᴹ) [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ e eᴹ (vs-⟨⟩ e) ] varᴹ xᴹ
 
   field
     Uᴹ : {Γᴹ : Conᴹ Γ} (i : ℕ) → Tyᴹ Γᴹ (suc i) (U i)
@@ -310,8 +297,10 @@ record DModel : Set₁ where
       (aᴹ : Tmᴹ Γᴹ Aᴹ a) → Tmᴹ Γᴹ (Bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ) (app f a)
     app-[]ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
-      {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f} {aᴹ : Tmᴹ Γᴹ Aᴹ a} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      appᴹ fᴹ aᴹ [ γᴹ ]ᵗᴹ ≡[ ap-Tmᴹ ⟨⟩-[]ᵀ ⟨⟩-[]ᵀᴹ app-[] ]
+      {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f} {aᴹ : Tmᴹ Γᴹ Aᴹ a} {γᴹ : Subᴹ Δᴹ Γᴹ γ}
+      (e : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ)
+      (eᴹ : Bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ [ γᴹ ]ᵀᴹ ≡[ ap-Tyᴹ e ] Bᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ aᴹ [ γᴹ ]ᵗᴹ ⟩ᴹ ]ᵀᴹ) →
+      appᴹ fᴹ aᴹ [ γᴹ ]ᵗᴹ ≡[ ap-Tmᴹ e eᴹ (app-[] e) ]
       appᴹ (coe (ap-Tmᴹ Π-[] Π-[]ᴹ refl) (fᴹ [ γᴹ ]ᵗᴹ)) (aᴹ [ γᴹ ]ᵗᴹ)
 
     lamᴹ :
@@ -328,10 +317,12 @@ record DModel : Set₁ where
       appᴹ (lamᴹ bᴹ) aᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep Π-β) ] bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ
     Π-ηᴹ :
       {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
-      {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f} →
-      fᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep Π-η) ]
+      {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f}
+      (e : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ)
+      (eᴹ : Bᴹ ≡[ ap-Tyᴹ e ] Bᴹ [ pᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ varᴹ vzᴹ ⟩ᴹ ]ᵀᴹ) →
+      fᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep (Π-η e)) ]
       lamᴹ
-        (coe (ap-Tmᴹ (sym ▹-ηᵀ) (symᵈ ▹-ηᵀᴹ) refl)
+        (coe (ap-Tmᴹ (sym e) (symᵈ eᴹ) refl)
           (appᴹ (coe (ap-Tmᴹ Π-[] Π-[]ᴹ refl) (fᴹ [ pᴹ ]ᵗᴹ)) (varᴹ vzᴹ)))
 
 module Ind (M : DModel) where
