@@ -1,10 +1,10 @@
 {-# OPTIONS --with-K --rewriting --postfix-projections #-}
 
-module TT.SSC.Properties where
+module SSC.Properties where
 
-open import TT.Lib
-open import TT.SSC
-open import TT.SSC.AlphaNf
+open import Lib
+open import SSC
+open import SSC.AlphaNf
 
 private variable
   i j : ℕ
@@ -45,7 +45,7 @@ private variable
 
 cong-▹ :
   {A₀ : Ty (Γ ++ Ω₀) i} {A₁ : Ty (Γ ++ Ω₁) i}
-  (Ω₀₁ : Ω₀ ≡ Ω₁) → ty[ cong (Γ ++_) Ω₀₁ ] A₀ ≡ A₁ → (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁)
+  (Ω₀₁ : Ω₀ ≡ Ω₁) → transpTy (cong (Γ ++_) Ω₀₁) A₀ ≡ A₁ → (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁)
 cong-▹ refl refl = refl
 
 infixl 9 _[_]ᵀˡ
@@ -102,10 +102,10 @@ module p-⁺ʷ where
       ∀ {Δ γ} → Wk Δ Γ γ →
       Ω [ p ]ᵀˡ [ γ ⁺ ]ᵀˡ ≡ (Tel (Δ ▹ A [ γ ]ᵀ) ∋ Ω [ γ ]ᵀˡ [ p ]ᵀˡ)) →
     ∀ {Δ γ} (Γ₌ : Γ₀ ≡ (Γ ++ Ω)) (γʷ : Wk Δ Γ γ) →
-    ty[ cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ) ]
-      (ty[ Γ₌ ] B [ p ⁺^[ Ω ] ]ᵀ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵀ) ≡
+    transpTy (cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ))
+      (transpTy Γ₌ B [ p ⁺^[ Ω ] ]ᵀ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵀ) ≡
     (Ty (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) j
-      ∋ ty[ Γ₌ ] B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
+      ∋ transpTy Γ₌ B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
   M .NTy-propᴹ = {!   !}
   M .NTmᴹ = {!   !}
   M .NTm-propᴹ = {!   !}
@@ -124,7 +124,7 @@ module p-⁺ʷ where
 p-⁺ᵀˡʷ : Wk Δ Γ γ → Ω [ p ]ᵀˡ [ γ ⁺ ]ᵀˡ ≡ (Tel (Δ ▹ A [ γ ]ᵀ) ∋ Ω [ γ ]ᵀˡ [ p ]ᵀˡ)
 p-⁺ᵀ-⁺^ʷ :
   {A : Ty Γ i} (γʷ : Wk Δ Γ γ) →
-  ty[ cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ) ]
+  transpTy (cong (Δ ▹ A [ γ ]ᵀ ++_) (p-⁺ᵀˡʷ γʷ))
     (B [ p ⁺^[ Ω ] ]ᵀ [ γ ⁺ ⁺^[ Ω [ p ]ᵀˡ ] ]ᵀ) ≡
   (Ty (Δ ▹ A [ γ ]ᵀ ++ Ω [ γ ]ᵀˡ [ p ]ᵀˡ) j
     ∋ B [ γ ⁺^[ Ω ] ]ᵀ [ p ⁺^[ Ω [ γ ]ᵀˡ ] ]ᵀ)
