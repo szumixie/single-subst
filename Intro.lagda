@@ -1,3 +1,14 @@
+\begin{code}[hide]
+{-# OPTIONS --with-K --rewriting #-}
+
+module Intro where
+
+open import Lib hiding (ℕ; zero; suc)
+
+private variable
+  ℓ : Level
+\end{code}
+
 \section{Introduction}
 
 What is type theory? This term can refer to formal systems (languages,
@@ -56,7 +67,81 @@ conclude in Section \ref{sec:conclusion}.
 Our main contribution is the novel definition of a minimalistic single
 substitution calculus, justified by showing its equivalence to CwFs.
 
-\subparagraph*{Metatheory and formalisation.} The source code of this
+\subsection{Metatheory and formalisation}
+\label{sec:metatheory}
+
+The source code of this
 paper comprises of several literate Agda files, everything is
-formalised. We use Agda with postulated QIITs using rewrite rules
-\cite{DBLP:conf/types/Cockx19}.
+formalised. We use Agda with QIITs postulated using rewrite rules
+\cite{DBLP:conf/types/Cockx19}. We illustrate this technique by defining natural
+numbers in two different ways. The first way is the usual one: we declare
+natural numbers as an inductive datatype:
+\begin{code}[hide]
+module NatExample where
+\end{code}
+\begin{code}
+  data ℕ  : Set where
+    zero  : ℕ
+    suc   : ℕ → ℕ
+\end{code}
+Now we can define functions such as addition by pattern matching:
+\begin{code}
+  add : ℕ → ℕ → ℕ
+  add zero     n = n
+  add (suc m)  n = suc (add m n)
+\end{code}
+The alternative is to postulate the type and its constructors:
+\begin{code}[hide]
+module NatExamplePostulated where
+\end{code}
+\begin{code}
+  postulate
+    ℕ     : Set
+    zero  : ℕ
+    suc   : ℕ → ℕ
+\end{code}
+\begin{code}[hide]
+  private variable
+    n : ℕ
+\end{code}
+Then we define dependent (displayed) natural models, which collect the
+motive \AR{ℕᴹ} and methods \AR{zeroᴹ}, \AR{sucᴹ} of the eliminator (induction principle), one for each constructor.
+\begin{code}
+  record DModel ℓ : Set (ℓ.suc ℓ) where
+    field
+      ℕᴹ     : ℕ → Set ℓ
+      zeroᴹ  : ℕᴹ zero
+      sucᴹ   : ℕᴹ n → ℕᴹ (suc n)
+\end{code}
+Finally, we say that we can eliminate into any dependent model, adding the computation rules for the eliminator \AD{⟦\_⟧} as rewrite rules.
+\begin{code}
+  module Ind (D : DModel ℓ) where
+    open DModel D
+    postulate
+      ⟦_⟧      : (n : ℕ) → ℕᴹ n
+      ⟦⟧-zero  : ⟦ zero   ⟧ ≡ zeroᴹ
+      ⟦⟧-suc   : ⟦ suc n  ⟧ ≡ sucᴹ ⟦ n ⟧
+      {-# REWRITE ⟦⟧-zero ⟦⟧-suc #-}
+\end{code}
+We define addition via elimination into a dependent model:
+\begin{code}
+  add : ℕ → ℕ → ℕ
+  add m n = ⟦ m ⟧
+    where
+      D : DModel ℓ.zero
+      D = record { ℕᴹ = λ _ → ℕ ; zeroᴹ = n ; sucᴹ = suc }
+      open Ind D
+\end{code}
+Actually, this model is not dependent, as \AD{ℕᴹ} is defined as the constant
+\AD{ℕ} family. The method \AF{zeroᴹ} expresses that when addition is called on \AD{m = zero}, it returns \AD{n}. The method \AF{sucᴹ} expresses that addition on \AD{m = suc m'} makes a recursive call and then puts a \AD{suc} on top.
+
+The two versions of \AD{ℕ} allow us to define the same functions, up to translating pattern matching definitions to eliminators \cite{DBLP:phd/basesearch/Cockx17}. We prefer the datatype definition because pattern matching is easier to write and read. However, Agda does not allow equality constructors for inductive types, so when defining quotient inductive types, we use the latter method.
+
+We use uniqueness of identity proofs, and the universe of strict propositions \AD{Prop} \cite{DBLP:journals/pacmpl/GilbertCST19}.
+
+We use the ``variable'' feature of Agda for readability.
+
+Sometimes we use the phrase ``set'' to refer to metatheoretic types, which aligns well with Agda's notation \AD{Set} for the universe of types.
+
+We write element notation for equalities. We define separate transport
+operations for families.

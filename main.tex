@@ -12,11 +12,84 @@
 %for producing a PDF according the PDF/A standard, add "pdfa"
 
 \usepackage{agda}
+\usepackage{stmaryrd}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+\usepackage{newunicodechar}
+\newunicodechar{₀}{\ensuremath{{}_0}}
+\newunicodechar{₁}{\ensuremath{{}_1}}
+\newunicodechar{₂}{\ensuremath{{}_2}}
+\newunicodechar{₃}{\ensuremath{{}_3}}
+\newunicodechar{ₛ}{\ensuremath{{}_{\mathrm{s}}}}
+\newunicodechar{ₜ}{\ensuremath{{}_{\mathrm{t}}}}
+\newunicodechar{ᵢ}{\ensuremath{{}_{\mathrm{i}}}}
+\newunicodechar{ₙ}{\ensuremath{{}_{\mathrm{n}}}}
+\newunicodechar{ᴰ}{\ensuremath{{}^{\mathrm{D}}}}
+\newunicodechar{ᴵ}{\ensuremath{{}^{\mathrm{I}}}}
+\newunicodechar{⁻}{\ensuremath{{}^{-}}}
+\newunicodechar{𝟘}{\ensuremath{\mathbb{0}}}
+\newunicodechar{𝟙}{\ensuremath{\mathbb{1}}}
+\newunicodechar{𝟚}{\ensuremath{\mathbb{2}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ν}{\ensuremath{\nu}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{η}{\ensuremath{\eta}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{Π}{\ensuremath{\Pi}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{ℓ}{\ensuremath{\ell}}
+\newunicodechar{⁰}{\ensuremath{{}^0}}
+\newunicodechar{¹}{\ensuremath{{}^1}}
+\newunicodechar{²}{\ensuremath{{}^2}}
+\newunicodechar{³}{\ensuremath{{}^3}}
+\newunicodechar{⁴}{\ensuremath{{}^4}}
+\newunicodechar{□}{\ensuremath{\square}}
+\newunicodechar{○}{\ensuremath{\bigcirc}}
+\newunicodechar{⁅}{\ensuremath{[}}
+\newunicodechar{⁆}{\ensuremath{]}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{◇}{\ensuremath{\diamond}}
+\newunicodechar{∙}{\ensuremath{\bullet}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⁺}{\ensuremath{{}^{+}}}
+\newunicodechar{▹}{\ensuremath{\scriptscriptstyle\triangleright}}
+\newunicodechar{ᴹ}{\ensuremath{{}^{\mathsf{M}}}}
+\newunicodechar{ᵀ}{\ensuremath{{}^{\mathsf{T}}}}
+\newunicodechar{ᵗ}{\ensuremath{{}^{\mathsf{t}}}}
+\newunicodechar{ᶜ}{\ensuremath{{}^{\mathsf{c}}}}
+\newunicodechar{ˢ}{\ensuremath{{}^{\mathsf{s}}}}
+\newunicodechar{ᵛ}{\ensuremath{{}^{\mathsf{v}}}}
+\newunicodechar{⊔}{\ensuremath{\sqcup}}
+\newunicodechar{⟦}{\ensuremath{\llbracket}}
+\newunicodechar{⟧}{\ensuremath{\rrbracket}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
+\newunicodechar{⋯}{\ensuremath{\dots}}
+\newunicodechar{∋}{\ensuremath{\ni}}
+
+\newcommand{\AD}[1]{\AgdaDatatype{#1}}
+\newcommand{\AC}[1]{\AgdaInductiveConstructor{#1}}
+\newcommand{\AF}[1]{\AgdaFunction{#1}}
+\newcommand{\AB}[1]{\AgdaBound{#1}}
+\newcommand{\AK}[1]{\AgdaKeyword{#1}}
+\newcommand{\AR}[1]{\AgdaField{#1}}
+\newcommand{\AM}[1]{\AgdaModule{#1}}
+\newcommand{\AN}[1]{\AgdaNumber{#1}}
+\newcommand{\AS}[1]{\AgdaString{#1}}
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
 
@@ -90,6 +163,8 @@ equations. SSC provides a simple, minimalistic alternative to parallel
 substitution calculi or B-systems for defining type theory. All the
 results were formalised in Agda.
 \end{abstract}
+
+%\AgdaNoSpaceAroundCode{}
 
 \input{inputs.tex}
 

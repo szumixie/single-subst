@@ -51,3 +51,5 @@ our syntax, at some point we need to turn it into a first-order
 algebraic theory \cite{DBLP:conf/fscd/BocquetKS23}.
 
 We conjecture that any SOGAT can be turned into an SSC.
+
+Maybe we can do without the extra type equations, by using assumptions.

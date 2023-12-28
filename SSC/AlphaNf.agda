@@ -1,9 +1,9 @@
 {-# OPTIONS --with-K --rewriting --postfix-projections #-}
 
-module TT.SSC.AlphaNf where
+module SSC.AlphaNf where
 
-open import TT.Lib
-open import TT.SSC
+open import Lib
+open import SSC
 
 private variable
   ℓᵀ ℓᵗ : Level
