@@ -53,3 +53,5 @@ algebraic theory \cite{DBLP:conf/fscd/BocquetKS23}.
 We conjecture that any SOGAT can be turned into an SSC.
 
 Maybe we can do without the extra type equations, by using assumptions.
+
+Luksa, Thorsten thesis.

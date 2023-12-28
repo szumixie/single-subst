@@ -245,7 +245,11 @@ With this we conclude the definition of the constructors for our syntax.
 
 Just as for natural numbers in Subsection \ref{sec:metatheory}, we
 define a notion of dependent model of type theory, and postulate the
-induction principle. Here we list some of the fields of a dependent model, and
+induction principle. This part is automatic, there is no creativity
+involved, there are generic algorithms which compute the notion of
+dependent model and the types of the induction principle from the
+types of the constructors \cite{DBLP:journals/pacmpl/KaposiKA19}.
+Here we list some of the fields of a dependent model, and
 the types of the induction principle. Consult the formalisation for all details.
 \begin{code}[hide]
 private variable
