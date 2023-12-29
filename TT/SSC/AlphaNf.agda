@@ -3,7 +3,9 @@
   --prop
   --rewriting
   --confluence-check
-  --postfix-projections #-}
+  --postfix-projections
+  --no-termination-check
+#-}
 
 module TT.SSC.AlphaNf where
 
@@ -32,8 +34,8 @@ data NTm where
   varᴺ : (x : Var Γ A) → NTm Γ A (var x)
   cᴺ : NTy Γ i A → NTm Γ (U i) (c A)
 
-  appᴺ : NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
-  lamᴺ : NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
+  appᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
+  lamᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
 
 opaque
   unfolding coe
@@ -47,6 +49,25 @@ opaque
     NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
   ap-NTm refl refl = refl
 
+data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
+  p : Wk (Γ ▹ A) Γ p
+  _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
+
+-- this is interesting: it seems that we also need NCon to show these, and we need to prove mutually the equation (A [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ A [ γ ]ᵀ [ p ]ᵀ) with defining substitution of normal forms
+
+_[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
+x [ p ]ᵛʷ = vs x
+vz [ γʷ ⁺ ]ᵛʷ = {!vz!} -- coe (ap-Var refl (dep {!!})) vz
+vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep {!!})) (vs (x [ γʷ ]ᵛʷ))
+
+var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
+var-[]ʷ p = var-p
+var-[]ʷ {x = vz} (γʷ ⁺) = undep (vz-⁺ {!!} ∙ᵈ coe-var {!!})
+var-[]ʷ {x = vs x} (γʷ ⁺) =
+  undep (vs-⁺ {!!} ∙ᵈ dep (ap-[]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙ᵈ coe-var {!!})
+
+
+{-
 module []ᴺᴾ
   (Subᴾ : (Δ Γ : Con) → Sub Δ Γ → Set)
   (_⁺ᴾ :
@@ -70,30 +91,17 @@ module []ᴺᴾ
   varᴺ x [ γᴾ ]ᵗᴺᴾ = x [ γᴾ ]ᵛᴾ
   cᴺ Aᴺ [ γᴾ ]ᵗᴺᴾ = coeₚ (ap-NTm (sym U-[]) (symᵈ c-[])) (cᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
 
-  appᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
-    coeₚ (ap-NTm {!!} {!app-[]!})
-      (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
+  appᴺ Aᴺ Bᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm {!Bᴺ!} {!app-[]!})
+      (appᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ) (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
   {-
     coeₚ (ap-NTm (sym ⟨⟩-[]ᵀ) (symᵈ app-[]))
       (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
   -}
-  lamᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
-    coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[])) (lamᴺ (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
+  lamᴺ Aᴺ Bᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[])) (lamᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ) (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
+-}
 {-
-data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
-  p : Wk (Γ ▹ A) Γ p
-  _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
-
-_[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
-x [ p ]ᵛʷ = vs x
-vz [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) vz
-vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) (vs (x [ γʷ ]ᵛʷ))
-
-var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
-var-[]ʷ p = var-p
-var-[]ʷ {x = vz} (γʷ ⁺) = undep (vz-⁺ ∙ᵈ coe-var (sym p-⁺ᵀ))
-var-[]ʷ {x = vs x} (γʷ ⁺) =
-  undep (vs-⁺ ∙ᵈ dep (ap-[]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙ᵈ coe-var (sym p-⁺ᵀ))
 
 open []ᴺᴾ Wk _⁺
   (λ x γʷ → coeₚ (ap-NTm refl (dep (sym (var-[]ʷ γʷ)))) (varᴺ (x [ γʷ ]ᵛʷ)))
