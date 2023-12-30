@@ -11,9 +11,11 @@ open import Agda.Primitive public
 infix 4 _↝_ _≡_ _≡[_]_
 infixl 5 the
 infixr 9 _∙_ _∙ᵈ_
+infixl 6 _,_
+infixl 3 _×ₚ_
 
 private variable
-  ℓ : Level
+  ℓ ℓ' : Level
   A A₀ A₁ B : Set ℓ
   P₀ P₁ : Prop ℓ
   a a₀ a₁ a₂ : A
@@ -84,6 +86,12 @@ opaque
   undep : a₀ ≡[ refl ] a₁ → a₀ ≡ a₁
   undep a₀₁ = a₀₁
 
+  ap : (f : A → B) → a₀ ≡ a₁ → f a₀ ≡ f a₁
+  ap f refl = refl
+
+  dep' : a₀ ≡ a₁ → a₀ ≡[ A₀₁ ] coe (sym A₀₁) a₁
+  dep' refl = refl
+
 record ⊤ : Set where
   eta-equality
   constructor ⋆
@@ -91,3 +99,11 @@ record ⊤ : Set where
 data ℕ : Set where
   zero : ℕ
   suc : ℕ → ℕ
+
+record _×ₚ_ (A : Prop ℓ)(B : Prop ℓ') : Prop (ℓ ⊔ ℓ') where
+  constructor _,_
+  field
+    fst : A
+    snd : B
+open _×ₚ_ public
+

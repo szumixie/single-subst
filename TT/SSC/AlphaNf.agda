@@ -20,9 +20,21 @@ private variable
   γ : Sub Δ Γ
   A A₀ A₁ B : Ty Γ i
   a a₀ a₁ b f α : Tm Γ A
-  x : Var Γ A
+
+-- some derivable equalities
+
+ap-El : a₀ ≡ a₁ → El a₀ ≡ El a₁
+ap-El refl = refl
+
+-- coe (ap-Tm )
+
+p-⁺ᵀ : {A : Ty Γ i} → A [ p {A = B} ]ᵀ [ γ ⁺ ]ᵀ ≡ A [ γ ]ᵀ [ p ]ᵀ
+p-⁺ᵀ {A = A} = {!!}
+  -- ap-[]ᵀ (ap-[]ᵀ (sym U-β)) ∙ ap-[]ᵀ El-[] ∙ El-[] ∙ ap-El {!!} ∙ sym El-[] ∙ ap-[]ᵀ (sym El-[]) ∙ ap-[]ᵀ (ap-[]ᵀ U-β)
+
 
 data NTy : (Γ : Con) (i : ℕ) → Ty Γ i → Prop
+data Var : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Prop
 data NTm : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Prop
 
 data NTy where
@@ -30,9 +42,13 @@ data NTy where
   Elᴺ : NTm Γ (U i) α → NTy Γ i (El α)
   Πᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTy Γ i (Π A B)
 
+data Var where
+  vz : Var (Γ ▹ A) (A [ p ]ᵀ) q
+  vs : Var Γ A a → Var (Γ ▹ B) (A [ p ]ᵀ) (a [ p ]ᵗ)
+
 data NTm where
-  varᴺ : (x : Var Γ A) → NTm Γ A (var x)
-  cᴺ : NTy Γ i A → NTm Γ (U i) (c A)
+  varᴺ : Var Γ A a → NTm Γ A a
+  cᴺ   : NTy Γ i A → NTm Γ (U i) (c A)
 
   appᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
   lamᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
@@ -43,28 +59,59 @@ opaque
   ap-NTy : A₀ ≡ A₁ → NTy Γ i A₀ ≡ NTy Γ i A₁
   ap-NTy refl = refl
 
+  ap-Var :
+     (A₀₁ : A₀ ≡ A₁) →
+    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
+    Var Γ A₀ a₀ ≡ Var Γ A₁ a₁
+  ap-Var refl refl = refl
+
   ap-NTm :
     (A₀₁ : A₀ ≡ A₁) →
     a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
     NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
   ap-NTm refl refl = refl
 
-data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
+data Wk : (Δ Γ : Con) → Sub Δ Γ → Prop where
   p : Wk (Γ ▹ A) Γ p
   _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
 
+data NCon : Con → Prop where
+  ◇ᴺ : NCon ◇
+  _▹ᴺ_ : NCon Γ → NTy Γ i A → NCon (Γ ▹ A)
+
+{-
+-}
+
+_[_]ᵀᴺʷ : NTy Γ i A → NCon Δ ×ₚ NCon Γ ×ₚ Wk Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
+_[_]ⱽᴺʷ : Var Γ A a → NCon Δ ×ₚ NCon Γ ×ₚ Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
+proj    : Var Γ A a → NCon Γ → NTy Γ i A
+_[_]ᵗᴺʷ : NTm Γ A a → NCon Δ ×ₚ NCon Γ ×ₚ Wk Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
+
+Uᴺ i [ Δᴺ , Γᴺ , γᴺ ]ᵀᴺʷ = coeₚ (ap-NTy (sym U-[])) (Uᴺ i)
+Elᴺ aᴺ [ Δᴺ , Γᴺ , γᴺ ]ᵀᴺʷ = coeₚ (ap-NTy (sym El-[])) (Elᴺ (coeₚ (ap-NTm U-[] refl) (aᴺ [ Δᴺ , Γᴺ , γᴺ ]ᵗᴺʷ)))
+Πᴺ Aᴺ Bᴺ [ Δᴺ , Γᴺ , γᴺ ]ᵀᴺʷ = coeₚ (ap-NTy (sym Π-[])) (Πᴺ (Aᴺ [ Δᴺ , Γᴺ , γᴺ ]ᵀᴺʷ) (Bᴺ [ Δᴺ ▹ᴺ (Aᴺ [ Δᴺ , Γᴺ , γᴺ ]ᵀᴺʷ) , (Γᴺ ▹ᴺ Aᴺ) , γᴺ ⁺ ]ᵀᴺʷ))
+
+x [ Γᴺ ▹ᴺ Aᴺ , Γᴺ , p ]ⱽᴺʷ = vs x
+vz [ Δᴺ ▹ᴺ Aγᴺ , Γᴺ ▹ᴺ Aᴺ , (γᴺ ⁺) ]ⱽᴺʷ = coeₚ (ap-Var (sym p-⁺ᵀ) (symᵈ (q-⁺ p-⁺ᵀ))) vz
+vs x [ Δᴺ ▹ᴺ Bγᴺ , Γᴺ ▹ᴺ Aᴺ , (γᴺ ⁺) ]ⱽᴺʷ = coeₚ (ap-Var (sym p-⁺ᵀ) (symᵈ (p-⁺ p-⁺ᵀ))) (x [ Δᴺ , Γᴺ , γᴺ ]ⱽᴺʷ [ Δᴺ ▹ᴺ Bγᴺ , Δᴺ , p ]ⱽᴺʷ)
+
+proj vz     (Γᴺ ▹ᴺ Aᴺ) = Aᴺ [ (Γᴺ ▹ᴺ Aᴺ) , Γᴺ , p ]ᵀᴺʷ
+proj (vs x) (Γᴺ ▹ᴺ Aᴺ) = proj x Γᴺ [ (Γᴺ ▹ᴺ Aᴺ) , Γᴺ , p ]ᵀᴺʷ
+
+{-
+x [ (? , ? , p) ]ⱽᴺʷ = vs x
+vz {A = A} [ γᴺ ⁺ ]ⱽᴺʷ = coeₚ (ap-Var (sym (p-⁺ᵀ {!!})) (symᵈ (q-⁺ (p-⁺ᵀ {!!})))) vz
+vs x [ γᴺ ⁺ ]ⱽᴺʷ = coeₚ {!!} (x [ γᴺ ]ⱽᴺʷ [ p ]ⱽᴺʷ)
+-}
+
+varᴺ x [ γᴺ ]ᵗᴺʷ = {!!}
+cᴺ aᴺ [ γᴺ ]ᵗᴺʷ = {!!}
+appᴺ Aᴺ Bᴺ fᴺ aᴺ [ γᴺ ]ᵗᴺʷ = {!!}
+lamᴺ Aᴺ Bᴺ bᴺ [ γᴺ ]ᵗᴺʷ = {!!}
+
 -- this is interesting: it seems that we also need NCon to show these, and we need to prove mutually the equation (A [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ A [ γ ]ᵀ [ p ]ᵀ) with defining substitution of normal forms
 
-_[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
-x [ p ]ᵛʷ = vs x
-vz [ γʷ ⁺ ]ᵛʷ = {!vz!} -- coe (ap-Var refl (dep {!!})) vz
-vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep {!!})) (vs (x [ γʷ ]ᵛʷ))
 
-var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
-var-[]ʷ p = var-p
-var-[]ʷ {x = vz} (γʷ ⁺) = undep (vz-⁺ {!!} ∙ᵈ coe-var {!!})
-var-[]ʷ {x = vs x} (γʷ ⁺) =
-  undep (vs-⁺ {!!} ∙ᵈ dep (ap-[]ᵗ (var-[]ʷ γʷ) ∙ var-p) ∙ᵈ coe-var {!!})
 
 
 {-
@@ -189,7 +236,7 @@ module norm where
   M .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
   M .Π-[]ᴹ = refl
 
-  M .appᴹ (lift fᴺ) (lift aᴺ) = lift (appᴺ fᴺ aᴺ)
+   M .appᴹ (lift fᴺ) (lift aᴺ) = lift (appᴺ fᴺ aᴺ)
   M .app-[]ᴹ = refl
 
   M .lamᴹ (lift bᴺ) = lift (lamᴺ bᴺ)
