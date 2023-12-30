@@ -26,7 +26,7 @@ data Con where
 
 private variable
   Γ Γ₀ Γ₁ Δ Δ₀ Δ₁ : Con
-  A A₀ A₁ B : Ty Γ i
+  A A₀ A₁ B B₀ B₁ : Ty Γ i
 
 postulate
   Tm : (Γ : Con) → Ty Γ i → Set
@@ -50,7 +50,7 @@ data Var : (Γ : Con) → Ty Γ i → Set where
 
 private variable
   γ γ₀ γ₁ : Sub Δ Γ
-  a a₀ a₁ b f α : Tm Γ A
+  a a₀ a₁ b b₀ b₁ f f₀ f₁ α α₀ α₁ : Tm Γ A
   x x₀ x₁ : Var Γ A
 
 opaque
@@ -137,6 +137,12 @@ opaque
     a₀ [ γ₀ ]ᵗ ≡[ ap-Tm Δ₀₁ (apᵈ-[]ᵀ Γ₀₁ Δ₀₁ A₀₁ γ₀₁) ] a₁ [ γ₁ ]ᵗ
   apᵈ-[]ᵗ refl refl refl refl refl = refl
 
+  coe-[]ᵗ :
+    (A₀₁ : A₀ ≡ A₁) →
+    coe (ap-Tm refl (dep (ap-[]ᵀ A₀₁))) (a [ γ ]ᵗ) ≡
+    coe (ap-Tm refl (dep A₀₁)) a [ γ ]ᵗ
+  coe-[]ᵗ refl = refl
+
   ap-▹ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → (Γ₀ ▹ A₀) ≡ (Γ₁ ▹ A₁)
   ap-▹ refl refl = refl
 
@@ -166,6 +172,47 @@ opaque
     vz
   apᵈ-vz refl refl = refl
 
+  apᵈ-⟨⟩ :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
+    a₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] a₁ → ⟨ a₀ ⟩ ≡[ ap-Sub Γ₀₁ (ap-▹ Γ₀₁ A₀₁) ] ⟨ a₁ ⟩
+  apᵈ-⟨⟩ refl refl refl = refl
+
+  apᵈ-U : (Γ₀₁ : Γ₀ ≡ Γ₁) → U i ≡[ ap-Ty Γ₀₁ ] U i
+  apᵈ-U refl = refl
+
+  apᵈ-El :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) →
+    α₀ ≡[ ap-Tm Γ₀₁ (apᵈ-U Γ₀₁) ] α₁ → El α₀ ≡[ ap-Ty Γ₀₁ ] El α₁
+  apᵈ-El refl refl = refl
+
+  apᵈ-c :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) →
+    A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → c A₀ ≡[ ap-Tm Γ₀₁ (apᵈ-U Γ₀₁) ] c A₁
+  apᵈ-c refl refl = refl
+
+  apᵈ-Π :
+    (Γ₀₁ : Γ₀ ≡ Γ₁)
+    (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) → B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁ →
+    Π A₀ B₀ ≡[ ap-Ty Γ₀₁ ] Π A₁ B₁
+  apᵈ-Π refl refl refl = refl
+
+  apᵈ-app :
+    (Γ₀₁ : Γ₀ ≡ Γ₁)
+    (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) (B₀₁ : B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁) →
+    f₀ ≡[ ap-Tm Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] f₁ →
+    (a₀₁ : a₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] a₁) →
+    app f₀ a₀
+      ≡[ ap-Tm Γ₀₁ (apᵈ-[]ᵀ (ap-▹ Γ₀₁ A₀₁) Γ₀₁ B₀₁ (apᵈ-⟨⟩ Γ₀₁ A₀₁ a₀₁)) ]
+    app f₁ a₁
+  apᵈ-app refl refl refl refl refl = refl
+
+  apᵈ-lam :
+    (Γ₀₁ : Γ₀ ≡ Γ₁)
+    (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) (B₀₁ : B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁) →
+    b₀ ≡[ ap-Tm (ap-▹ Γ₀₁ A₀₁) B₀₁ ] b₁ →
+    lam b₀ ≡[ ap-Tm Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] lam b₁
+  apᵈ-lam refl refl refl refl = refl
+
 private
   module Util
     (Conᴹ : Con → Set) (Tyᴹ : ∀ {Γ} → Conᴹ Γ → (i : ℕ) → Ty Γ i → Set)
@@ -179,10 +226,8 @@ private
 
         ap-Tmᴹ :
           {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
-          (A₀₁ : A₀ ≡ A₁) →
-          Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
-          a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
-          Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
+          (A₀₁ : A₀ ≡ A₁) → Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
+          a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
         ap-Tmᴹ refl refl refl = refl
 
 record DModel : Set₁ where
@@ -214,10 +259,8 @@ record DModel : Set₁ where
 
   ap-Tmᴹ :
     {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
-    (A₀₁ : A₀ ≡ A₁) →
-    Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
-    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
-    Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
+    (A₀₁ : A₀ ≡ A₁) → Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
+    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
   ap-Tmᴹ = Util.ap-Tmᴹ Conᴹ Tyᴹ Tmᴹ
 
   field

@@ -32,8 +32,10 @@ data NTm where
   varᴺ : (x : Var Γ A) → NTm Γ A (var x)
   cᴺ : NTy Γ i A → NTm Γ (U i) (c A)
 
-  appᴺ : NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
-  lamᴺ : NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
+  appᴺ :
+    NTy Γ i A → NTy (Γ ▹ A) i B →
+    NTm Γ (Π A B) f → NTm Γ A a → NTm Γ (B [ ⟨ a ⟩ ]ᵀ) (app f a)
+  lamᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTm (Γ ▹ A) B b → NTm Γ (Π A B) (lam b)
 
 opaque
   unfolding coe
@@ -43,8 +45,7 @@ opaque
 
   ap-NTm :
     (A₀₁ : A₀ ≡ A₁) →
-    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ →
-    NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
+    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
   ap-NTm refl refl = refl
 
 module []ᴺᴾ
@@ -70,11 +71,16 @@ module []ᴺᴾ
   varᴺ x [ γᴾ ]ᵗᴺᴾ = x [ γᴾ ]ᵛᴾ
   cᴺ Aᴺ [ γᴾ ]ᵗᴺᴾ = coeₚ (ap-NTm (sym U-[]) (symᵈ c-[])) (cᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
 
-  appᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+  appᴺ Aᴺ Bᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
     coeₚ (ap-NTm (sym ⟨⟩-[]ᵀ) (symᵈ app-[]))
-      (appᴺ (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ)) (aᴺ [ γᴾ ]ᵗᴺᴾ))
-  lamᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
-    coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[])) (lamᴺ (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
+      (appᴺ
+        (Aᴺ [ γᴾ ]ᵀᴺᴾ)
+        (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ)
+        (coeₚ (ap-NTm Π-[] refl) (fᴺ [ γᴾ ]ᵗᴺᴾ))
+        (aᴺ [ γᴾ ]ᵗᴺᴾ))
+  lamᴺ Aᴺ Bᴺ bᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm (sym Π-[]) (symᵈ lam-[]))
+      (lamᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ) (bᴺ [ γᴾ ⁺ᴾ ]ᵗᴺᴾ))
 
 data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
   p : Wk (Γ ▹ A) Γ p
@@ -177,10 +183,11 @@ module norm where
   M .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
   M .Π-[]ᴹ = refl
 
-  M .appᴹ (lift fᴺ) (lift aᴺ) = lift (appᴺ fᴺ aᴺ)
+  M .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) =
+    lift (appᴺ Aᴺ Bᴺ fᴺ aᴺ)
   M .app-[]ᴹ = refl
 
-  M .lamᴹ (lift bᴺ) = lift (lamᴺ bᴺ)
+  M .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) = lift (lamᴺ Aᴺ Bᴺ bᴺ)
   M .lam-[]ᴹ = refl
 
   M .Π-βᴹ = refl

@@ -16,7 +16,7 @@ private variable
   ℓ : Level
   A A₀ A₁ B : Set ℓ
   P₀ P₁ : Prop ℓ
-  a a₀ a₁ a₂ : A
+  a a₀ a₁ a₂ a₃ : A
 
 postulate
   _↝_ : A → A → Propω
@@ -61,7 +61,7 @@ opaque
   coe-refl = refl
 
 private variable
-  A₀₁ A₁₂ : A₀ ≡ A₁
+  A₀₁ A₁₂ A₂₁ A₃₂ : A₀ ≡ A₁
 
 _≡[_]_ : A₀ → A₀ ≡ A₁ → A₁ → Prop _
 a₀ ≡[ A₀₁ ] a₁ = coe A₀₁ a₀ ≡ a₁
@@ -84,6 +84,15 @@ opaque
   undep : a₀ ≡[ refl ] a₁ → a₀ ≡ a₁
   undep a₀₁ = a₀₁
 
+  splitl : a₀ ≡[ A₀₁ ∙ A₁₂ ] a₂ → coe A₀₁ a₀ ≡[ A₁₂ ] a₂
+  splitl {A₀₁ = refl} a₀₂ = a₀₂
+
+  splitr : a₀ ≡[ A₀₁ ∙ sym A₂₁ ] a₂ → a₀ ≡[ A₀₁ ] coe A₂₁ a₂
+  splitr {A₀₁ = refl} {A₂₁ = refl} a₀₂ = a₀₂
+
+  splitlr : a₀ ≡[ A₀₁ ∙ A₁₂ ∙ sym A₃₂ ] a₃ → coe A₀₁ a₀ ≡[ A₁₂ ] coe A₃₂ a₃
+  splitlr {A₀₁ = refl} {A₁₂ = refl} {A₃₂ = refl} a₀₃ = a₀₃
+
 record ⊤ : Set where
   eta-equality
   constructor ⋆
@@ -91,3 +100,5 @@ record ⊤ : Set where
 data ℕ : Set where
   zero : ℕ
   suc : ℕ → ℕ
+
+-- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
