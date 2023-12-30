@@ -228,7 +228,7 @@ The left to right direction of the isomorphism is given by \AD{lam}. Instead of 
 assuming the right to left direction, we define the more traditional two-argument
 application operator.
 \begin{code}
-  Π       : (A : Ty Γ i) → Ty (Γ ▹ A) i → Ty Γ i
+  Π       : (A : Ty Γ i) → Ty (Γ ▹ A) j → Ty Γ (max i j)
   lam     : Tm (Γ ▹ A) B → Tm Γ (Π A B)
   app     : Tm Γ (Π A B) → (a : Tm Γ A) → Tm Γ (B [ ⟨ a ⟩ ]ᵀ)
   Π-β     : app (lam b) a ≡ b [ ⟨ a ⟩ ]ᵗ
@@ -418,24 +418,24 @@ record DModel ℓᶜ ℓˢ ℓᵀ ℓᵗ ℓᵛ : Set (ℓ.suc (ℓᶜ ⊔ ℓˢ
       {Γᴹ : Conᴹ Γ} {αᴹ : Tmᴹ Γᴹ (Uᴹ i) α} →
       tmᴹ[ refl , refl , U-η ] αᴹ ≡ cᴹ (Elᴹ αᴹ)
 
-    Πᴹ : {Γᴹ : Conᴹ Γ} (Aᴹ : Tyᴹ Γᴹ i A) → Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B → Tyᴹ Γᴹ i (Π A B)
+    Πᴹ : {Γᴹ : Conᴹ Γ} (Aᴹ : Tyᴹ Γᴹ i A) → Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B → Tyᴹ Γᴹ (max i j) (Π A B)
     Π-[]ᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
+      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
       {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
       transpTyᴹ Π-[] (Πᴹ Aᴹ Bᴹ [ γᴹ ]ᵀᴹ) ≡ Πᴹ (Aᴹ [ γᴹ ]ᵀᴹ) (Bᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ)
 
     appᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B} →
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B} →
       Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f →
       (aᴹ : Tmᴹ Γᴹ Aᴹ a) → Tmᴹ Γᴹ (Bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ) (app f a)
     app-[]ᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
+      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
       {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f} {aᴹ : Tmᴹ Γᴹ Aᴹ a} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
       tmᴹ[ ⟨⟩-[]ᵀ , ⟨⟩-[]ᵀᴹ , app-[] ] (appᴹ fᴹ aᴹ [ γᴹ ]ᵗᴹ) ≡
       appᴹ (tmᴹ[ Π-[] , Π-[]ᴹ , refl ] (fᴹ [ γᴹ ]ᵗᴹ)) (aᴹ [ γᴹ ]ᵗᴹ)
 
     lamᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B} →
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B} →
       Tmᴹ (Γᴹ ▹ᴹ Aᴹ) Bᴹ b → Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) (lam b)
     lam-[]ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
@@ -443,11 +443,11 @@ record DModel ℓᶜ ℓˢ ℓᵀ ℓᵗ ℓᵛ : Set (ℓ.suc (ℓᶜ ⊔ ℓˢ
       tmᴹ[ Π-[] , Π-[]ᴹ , lam-[] ] (lamᴹ bᴹ [ γᴹ ]ᵗᴹ) ≡ lamᴹ (bᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ)
 
     Π-βᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
       {bᴹ : Tmᴹ (Γᴹ ▹ᴹ Aᴹ) Bᴹ b} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
       tmᴹ[ refl , refl , Π-β ] (appᴹ (lamᴹ bᴹ) aᴹ) ≡ bᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ
     Π-ηᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B}
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
       {fᴹ : Tmᴹ Γᴹ (Πᴹ Aᴹ Bᴹ) f} →
       tmᴹ[ refl , refl , Π-η ] fᴹ ≡
       lamᴹ
@@ -510,8 +510,21 @@ are postulated. We just list their types here, and provide the pattern matching 
     {-# REWRITE ⟦⟧-app #-}
     ⟦⟧-lam : ⟦ lam b ⟧ᵗ ≡ lamᴹ ⟦ b ⟧ᵗ
     {-# REWRITE ⟦⟧-lam #-}
-
--- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
 \end{code}
 
 TODO: add examples, and show what we cannot do and need alpha-norm for.
+
+\begin{code}
+_⇒_ : Ty Γ i → Ty Γ j → Ty Γ (max i j)
+A ⇒ B = Π A (B [ p ]ᵀ)
+
+id : Tm ◇ (Π (U i) (El (subst (Tm (◇ ▹ U i)) U-[] (var vz)) ⇒ El (subst (Tm (◇ ▹ U i)) U-[] (var vz))))
+id = lam (lam (var vz))
+
+idβ : app (subst (Tm ◇) Π-[] (app id (c A))) a ≡ subst (Tm ◇) (sym p-⟨⟩ᵀ ∙ cong (_[ ⟨ a ⟩ ]ᵀ) (sym p-⁺ᵀ)) a
+idβ = {!!}
+\end{code}
+
+\begin{code}[hide]
+-- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
+\end{code}
