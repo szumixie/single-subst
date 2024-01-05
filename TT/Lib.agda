@@ -8,9 +8,7 @@ module TT.Lib where
 
 open import Agda.Primitive public
 
-infixr 2 Σₚ
 infix 4 _↝_ _≡_ _≡[_]_
-infixr 4 _,,_
 infixl 5 the
 infixr 9 _∙_ _∙ᵈ_
 
@@ -94,15 +92,6 @@ opaque
 
   splitlr : a₀ ≡[ A₀₁ ∙ A₁₂ ∙ sym A₃₂ ] a₃ → coe A₀₁ a₀ ≡[ A₁₂ ] coe A₃₂ a₃
   splitlr {A₀₁ = refl} {A₁₂ = refl} {A₃₂ = refl} a₀₃ = a₀₃
-
-record Σₚ (P : Prop ℓ₁) (Q : P → Prop ℓ₂) : Prop (ℓ₁ ⊔ ℓ₂) where
-  constructor _,,_
-  field
-    fst : P
-    snd : Q fst
-
-open Σₚ public
-syntax Σₚ P (λ p → Q) = Σₚ[ p ∈ P ] Q
 
 record ⊤ : Set where
   eta-equality

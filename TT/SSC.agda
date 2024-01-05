@@ -13,7 +13,7 @@ infixl 9 _[_]ᵀ _[_]ᵗ
 infixl 10 _⁺
 
 private variable
-  i j : ℕ
+  i i₀ i₁ j : ℕ
 
 data Con : Set
 
@@ -59,8 +59,14 @@ opaque
   ap-Ty : Γ₀ ≡ Γ₁ → Ty Γ₀ i ≡ Ty Γ₁ i
   ap-Ty refl = refl
 
-  ap-Tm : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁
-  ap-Tm refl refl = refl
+  ap-Ty₂ : Γ₀ ≡ Γ₁ → i₀ ≡ i₁ → Ty Γ₀ i₀ ≡ Ty Γ₁ i₁
+  ap-Ty₂ refl refl = refl
+
+  ap-Tm : (A₀₁ : A₀ ≡ A₁) → Tm Γ A₀ ≡ Tm Γ A₁
+  ap-Tm refl = refl
+
+  ap-Tm₂ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁
+  ap-Tm₂ refl refl = refl
 
 postulate
   var : Var Γ A → Tm Γ A
@@ -69,15 +75,14 @@ postulate
 postulate
   p-⁺ᵀ : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) i
   vz-⁺ :
-    var vz [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep p-⁺ᵀ) ]
-    var vz ∈ Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ)
+    var vz [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ] var vz ∈ Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ)
   vs-⁺ :
-    var (vs x) [ γ ⁺ ]ᵗ ≡[ ap-Tm refl (dep p-⁺ᵀ) ]
+    var (vs x) [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ]
     var x [ γ ]ᵗ [ p ]ᵗ ∈ Tm (Δ ▹ A [ γ ]ᵀ) (B [ γ ]ᵀ [ p ]ᵀ)
 
   p-⟨⟩ᵀ : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B
-  vz-⟨⟩ : var vz [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep p-⟨⟩ᵀ) ] a
-  vs-⟨⟩ : var (vs x) [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm refl (dep p-⟨⟩ᵀ) ] var x
+  vz-⟨⟩ : var vz [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] a
+  vs-⟨⟩ : var (vs x) [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] var x
 
   ⟨⟩-[]ᵀ : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ
   ▹-ηᵀ : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ
@@ -87,10 +92,10 @@ postulate
   U-[] : U i [ γ ]ᵀ ≡ U i
 
   El : Tm Γ (U i) → Ty Γ i
-  El-[] : El α [ γ ]ᵀ ≡ El (coe (ap-Tm refl (dep U-[])) (α [ γ ]ᵗ))
+  El-[] : El α [ γ ]ᵀ ≡ El (coe (ap-Tm U-[]) (α [ γ ]ᵗ))
 
   c : Ty Γ i → Tm Γ (U i)
-  c-[] : c A [ γ ]ᵗ ≡[ ap-Tm refl (dep U-[]) ] c (A [ γ ]ᵀ)
+  c-[] : c A [ γ ]ᵗ ≡[ ap-Tm U-[] ] c (A [ γ ]ᵀ)
 
   U-β : El (c A) ≡ A
   U-η : α ≡ c (El α)
@@ -100,18 +105,16 @@ postulate
 
   app : Tm Γ (Π A B) → (a : Tm Γ A) → Tm Γ (B [ ⟨ a ⟩ ]ᵀ)
   app-[] :
-    app f a [ γ ]ᵗ ≡[ ap-Tm refl (dep ⟨⟩-[]ᵀ) ]
-    app (coe (ap-Tm refl (dep Π-[])) (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
+    app f a [ γ ]ᵗ ≡[ ap-Tm ⟨⟩-[]ᵀ ]
+    app (coe (ap-Tm Π-[]) (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
 
   lam : Tm (Γ ▹ A) B → Tm Γ (Π A B)
-  lam-[] : lam b [ γ ]ᵗ ≡[ ap-Tm refl (dep Π-[]) ] lam (b [ γ ⁺ ]ᵗ)
+  lam-[] : lam b [ γ ]ᵗ ≡[ ap-Tm Π-[] ] lam (b [ γ ⁺ ]ᵗ)
 
   Π-β : app (lam b) a ≡ b [ ⟨ a ⟩ ]ᵗ
   Π-η :
     f ≡
-    lam
-      (coe (ap-Tm refl (dep (sym ▹-ηᵀ)))
-        (app (coe (ap-Tm refl (dep Π-[])) (f [ p ]ᵗ)) (var vz)))
+    lam (coe (ap-Tm (sym ▹-ηᵀ)) (app (coe (ap-Tm Π-[]) (f [ p ]ᵗ)) (var vz)))
 
 opaque
   unfolding coe
@@ -123,8 +126,8 @@ opaque
   ap-[]ᵀ refl = refl
 
   apᵈ-[]ᵀ :
-    (Γ₀₁ : Γ₀ ≡ Γ₁) (Δ₀₁ : Δ₀ ≡ Δ₁) →
-    A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁ →
+    (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ →
+    (Δ₀₁ : Δ₀ ≡ Δ₁) → γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁ →
     A₀ [ γ₀ ]ᵀ ≡[ ap-Ty Δ₀₁ ] A₁ [ γ₁ ]ᵀ
   apᵈ-[]ᵀ refl refl refl refl = refl
 
@@ -132,16 +135,15 @@ opaque
   ap-[]ᵗ refl = refl
 
   apᵈ-[]ᵗ :
-    (Γ₀₁ : Γ₀ ≡ Γ₁) (Δ₀₁ : Δ₀ ≡ Δ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
-    a₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] a₁ → (γ₀₁ : γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁) →
-    a₀ [ γ₀ ]ᵗ ≡[ ap-Tm Δ₀₁ (apᵈ-[]ᵀ Γ₀₁ Δ₀₁ A₀₁ γ₀₁) ] a₁ [ γ₁ ]ᵗ
-  apᵈ-[]ᵗ refl refl refl refl refl = refl
-
-  coe-[]ᵗ :
     (A₀₁ : A₀ ≡ A₁) →
-    coe (ap-Tm refl (dep (ap-[]ᵀ A₀₁))) (a [ γ ]ᵗ) ≡
-    coe (ap-Tm refl (dep A₀₁)) a [ γ ]ᵗ
-  coe-[]ᵗ refl = refl
+    a₀ ≡[ ap-Tm A₀₁ ] a₁ → a₀ [ γ ]ᵗ ≡[ ap-Tm (ap-[]ᵀ A₀₁) ] a₁ [ γ ]ᵗ
+  apᵈ-[]ᵗ refl refl = refl
+
+  apᵈ-[]ᵗ₅ :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) → a₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] a₁ →
+    (Δ₀₁ : Δ₀ ≡ Δ₁) → (γ₀₁ : γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁) →
+    a₀ [ γ₀ ]ᵗ ≡[ ap-Tm₂ Δ₀₁ (apᵈ-[]ᵀ Γ₀₁ A₀₁ Δ₀₁ γ₀₁) ] a₁ [ γ₁ ]ᵗ
+  apᵈ-[]ᵗ₅ refl refl refl refl refl = refl
 
   ap-▹ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → (Γ₀ ▹ A₀) ≡ (Γ₁ ▹ A₁)
   ap-▹ refl refl = refl
@@ -151,43 +153,49 @@ opaque
     p ≡[ ap-Sub (ap-▹ Γ₀₁ A₀₁) Γ₀₁ ] p
   apᵈ-p refl refl = refl
 
-  ap-Var : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Var Γ₀ A₀ ≡ Var Γ₁ A₁
-  ap-Var refl refl = refl
+  ap-Var : A₀ ≡ A₁ → Var Γ A₀ ≡ Var Γ A₁
+  ap-Var refl = refl
+
+  ap-Var₂ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Var Γ₀ A₀ ≡ Var Γ₁ A₁
+  ap-Var₂ refl refl = refl
 
   apᵈ-var :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
-    x₀ ≡[ ap-Var Γ₀₁ A₀₁ ] x₁ → var x₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] var x₁
+    x₀ ≡[ ap-Var₂ Γ₀₁ A₀₁ ] x₁ → var x₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] var x₁
   apᵈ-var refl refl refl = refl
 
-  coe-var :
-    (A₀₁ : A₀ ≡ A₁) →
-    coe (ap-Tm refl (dep A₀₁)) (var x) ≡ var (coe (ap-Var refl (dep A₀₁)) x)
+  coe-var : (A₀₁ : A₀ ≡ A₁) → coe (ap-Tm A₀₁) (var x) ≡ var (coe (ap-Var A₀₁) x)
   coe-var refl = refl
 
   apᵈ-vz :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
     vz
       ≡[
-        ap-Var (ap-▹ Γ₀₁ A₀₁) (apᵈ-[]ᵀ Γ₀₁ (ap-▹ Γ₀₁ A₀₁) A₀₁ (apᵈ-p Γ₀₁ A₀₁)) ]
+        ap-Var₂
+          (ap-▹ Γ₀₁ A₀₁)
+          (apᵈ-[]ᵀ Γ₀₁ A₀₁ (ap-▹ Γ₀₁ A₀₁) (apᵈ-p Γ₀₁ A₀₁)) ]
     vz
   apᵈ-vz refl refl = refl
 
   apᵈ-⟨⟩ :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
-    a₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] a₁ → ⟨ a₀ ⟩ ≡[ ap-Sub Γ₀₁ (ap-▹ Γ₀₁ A₀₁) ] ⟨ a₁ ⟩
+    a₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] a₁ → ⟨ a₀ ⟩ ≡[ ap-Sub Γ₀₁ (ap-▹ Γ₀₁ A₀₁) ] ⟨ a₁ ⟩
   apᵈ-⟨⟩ refl refl refl = refl
 
   apᵈ-U : (Γ₀₁ : Γ₀ ≡ Γ₁) → U i ≡[ ap-Ty Γ₀₁ ] U i
   apᵈ-U refl = refl
 
+  ap-El : α₀ ≡ α₁ → El α₀ ≡ El α₁
+  ap-El refl = refl
+
   apᵈ-El :
     (Γ₀₁ : Γ₀ ≡ Γ₁) →
-    α₀ ≡[ ap-Tm Γ₀₁ (apᵈ-U Γ₀₁) ] α₁ → El α₀ ≡[ ap-Ty Γ₀₁ ] El α₁
+    α₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-U Γ₀₁) ] α₁ → El α₀ ≡[ ap-Ty Γ₀₁ ] El α₁
   apᵈ-El refl refl = refl
 
   apᵈ-c :
     (Γ₀₁ : Γ₀ ≡ Γ₁) →
-    A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → c A₀ ≡[ ap-Tm Γ₀₁ (apᵈ-U Γ₀₁) ] c A₁
+    A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → c A₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-U Γ₀₁) ] c A₁
   apᵈ-c refl refl = refl
 
   apᵈ-Π :
@@ -196,21 +204,24 @@ opaque
     Π A₀ B₀ ≡[ ap-Ty Γ₀₁ ] Π A₁ B₁
   apᵈ-Π refl refl refl = refl
 
+  ap-app : f₀ ≡ f₁ → app f₀ a ≡ app f₁ a
+  ap-app refl = refl
+
   apᵈ-app :
     (Γ₀₁ : Γ₀ ≡ Γ₁)
     (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) (B₀₁ : B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁) →
-    f₀ ≡[ ap-Tm Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] f₁ →
-    (a₀₁ : a₀ ≡[ ap-Tm Γ₀₁ A₀₁ ] a₁) →
+    f₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] f₁ →
+    (a₀₁ : a₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] a₁) →
     app f₀ a₀
-      ≡[ ap-Tm Γ₀₁ (apᵈ-[]ᵀ (ap-▹ Γ₀₁ A₀₁) Γ₀₁ B₀₁ (apᵈ-⟨⟩ Γ₀₁ A₀₁ a₀₁)) ]
+      ≡[ ap-Tm₂ Γ₀₁ (apᵈ-[]ᵀ (ap-▹ Γ₀₁ A₀₁) B₀₁ Γ₀₁ (apᵈ-⟨⟩ Γ₀₁ A₀₁ a₀₁)) ]
     app f₁ a₁
   apᵈ-app refl refl refl refl refl = refl
 
   apᵈ-lam :
     (Γ₀₁ : Γ₀ ≡ Γ₁)
     (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) (B₀₁ : B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁) →
-    b₀ ≡[ ap-Tm (ap-▹ Γ₀₁ A₀₁) B₀₁ ] b₁ →
-    lam b₀ ≡[ ap-Tm Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] lam b₁
+    b₀ ≡[ ap-Tm₂ (ap-▹ Γ₀₁ A₀₁) B₀₁ ] b₁ →
+    lam b₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] lam b₁
   apᵈ-lam refl refl refl refl = refl
 
 private
@@ -227,7 +238,7 @@ private
         ap-Tmᴹ :
           {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
           (A₀₁ : A₀ ≡ A₁) → Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
-          a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
+          a₀ ≡[ ap-Tm A₀₁ ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
         ap-Tmᴹ refl refl refl = refl
 
 record DModel : Set₁ where
@@ -260,7 +271,7 @@ record DModel : Set₁ where
   ap-Tmᴹ :
     {Γᴹ : Conᴹ Γ} {Aᴹ₀ : Tyᴹ Γᴹ i A₀} {Aᴹ₁ : Tyᴹ Γᴹ i A₁}
     (A₀₁ : A₀ ≡ A₁) → Aᴹ₀ ≡[ ap-Tyᴹ A₀₁ ] Aᴹ₁ →
-    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
+    a₀ ≡[ ap-Tm A₀₁ ] a₁ → Tmᴹ Γᴹ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ Aᴹ₁ a₁
   ap-Tmᴹ = Util.ap-Tmᴹ Conᴹ Tyᴹ Tmᴹ
 
   field

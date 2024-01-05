@@ -43,9 +43,7 @@ opaque
   ap-NTy : A₀ ≡ A₁ → NTy Γ i A₀ ≡ NTy Γ i A₁
   ap-NTy refl = refl
 
-  ap-NTm :
-    (A₀₁ : A₀ ≡ A₁) →
-    a₀ ≡[ ap-Tm refl (dep A₀₁) ] a₁ → NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
+  ap-NTm : (A₀₁ : A₀ ≡ A₁) → a₀ ≡[ ap-Tm A₀₁ ] a₁ → NTm Γ A₀ a₀ ≡ NTm Γ A₁ a₁
   ap-NTm refl refl = refl
 
 module []ᴺᴾ
@@ -88,8 +86,8 @@ data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
 
 _[_]ᵛʷ : Var Γ A → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ)
 x [ p ]ᵛʷ = vs x
-vz [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) vz
-vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var refl (dep (sym p-⁺ᵀ))) (vs (x [ γʷ ]ᵛʷ))
+vz [ γʷ ⁺ ]ᵛʷ = coe (ap-Var (sym p-⁺ᵀ)) vz
+vs x [ γʷ ⁺ ]ᵛʷ = coe (ap-Var (sym p-⁺ᵀ)) (vs (x [ γʷ ]ᵛʷ))
 
 var-[]ʷ : (γʷ : Wk Δ Γ γ) → var x [ γ ]ᵗ ≡ var (x [ γʷ ]ᵛʷ)
 var-[]ʷ p = var-p
