@@ -7,3 +7,13 @@
   
 - maybe compare with natural model style syntax (which does not have
   transport hell)
+
+- show examples of using the syntax (only derivable things)
+
+- show examples for which we need admissible things (using alpha-normalisation)
+
+- show how alpha-normalisation also helps with having a stricter, more usable syntax
+
+- define the standard model
+
+- prove canonicity or something similar, maybe only an SProp-truncated version
