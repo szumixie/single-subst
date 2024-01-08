@@ -43,15 +43,11 @@ data Sub where
 
 postulate
   _[_]ᵗ : Tm Γ A → (γ : Sub Δ Γ) → Tm Δ (A [ γ ]ᵀ)
-
-data Var : (Γ : Con) → Ty Γ i → Set where
-  vz : Var (Γ ▹ A) (A [ p ]ᵀ)
-  vs : Var Γ B → Var (Γ ▹ A) (B [ p ]ᵀ)
+  q : Tm (Γ ▹ A) (A [ p ]ᵀ)
 
 private variable
   γ γ₀ γ₁ : Sub Δ Γ
   a a₀ a₁ b b₀ b₁ f f₀ f₁ α α₀ α₁ : Tm Γ A
-  x x₀ x₁ : Var Γ A
 
 opaque
   unfolding coe
@@ -69,23 +65,18 @@ opaque
   ap-Tm₂ refl refl = refl
 
 postulate
-  var : Var Γ A → Tm Γ A
-  var-p : var x [ p ]ᵗ ≡ var (vs x) ∈ Tm (Γ ▹ A) (B [ p ]ᵀ)
-
-postulate
   p-⁺ᵀ : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) i
-  vz-⁺ :
-    var vz [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ] var vz ∈ Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ)
-  vs-⁺ :
-    var (vs x) [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ]
-    var x [ γ ]ᵗ [ p ]ᵗ ∈ Tm (Δ ▹ A [ γ ]ᵀ) (B [ γ ]ᵀ [ p ]ᵀ)
+  p-⁺ᵗ :
+    b [ p ]ᵗ [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ]
+    b [ γ ]ᵗ [ p ]ᵗ ∈ Tm (Δ ▹ A [ γ ]ᵀ) (B [ γ ]ᵀ [ p ]ᵀ)
+  q-⁺ : q [ γ ⁺ ]ᵗ ≡[ ap-Tm p-⁺ᵀ ] q ∈ Tm (Δ ▹ A [ γ ]ᵀ) (A [ γ ]ᵀ [ p ]ᵀ)
 
   p-⟨⟩ᵀ : B [ p ]ᵀ [ ⟨ a ⟩ ]ᵀ ≡ B
-  vz-⟨⟩ : var vz [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] a
-  vs-⟨⟩ : var (vs x) [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] var x
+  p-⟨⟩ᵗ : b [ p ]ᵗ [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] b
+  q-⟨⟩ : q [ ⟨ a ⟩ ]ᵗ ≡[ ap-Tm p-⟨⟩ᵀ ] a
 
   ⟨⟩-[]ᵀ : B [ ⟨ a ⟩ ]ᵀ [ γ ]ᵀ ≡ B [ γ ⁺ ]ᵀ [ ⟨ a [ γ ]ᵗ ⟩ ]ᵀ
-  ▹-ηᵀ : B ≡ B [ p ⁺ ]ᵀ [ ⟨ var vz ⟩ ]ᵀ
+  ▹-ηᵀ : B ≡ B [ p ⁺ ]ᵀ [ ⟨ q ⟩ ]ᵀ
 
 postulate
   U : (i : ℕ) → Ty Γ (suc i)
@@ -112,9 +103,7 @@ postulate
   lam-[] : lam b [ γ ]ᵗ ≡[ ap-Tm Π-[] ] lam (b [ γ ⁺ ]ᵗ)
 
   Π-β : app (lam b) a ≡ b [ ⟨ a ⟩ ]ᵗ
-  Π-η :
-    f ≡
-    lam (coe (ap-Tm (sym ▹-ηᵀ)) (app (coe (ap-Tm Π-[]) (f [ p ]ᵗ)) (var vz)))
+  Π-η : f ≡ lam (coe (ap-Tm (sym ▹-ηᵀ)) (app (coe (ap-Tm Π-[]) (f [ p ]ᵗ)) q))
 
 opaque
   unfolding coe
@@ -153,29 +142,13 @@ opaque
     p ≡[ ap-Sub (ap-▹ Γ₀₁ A₀₁) Γ₀₁ ] p
   apᵈ-p refl refl = refl
 
-  ap-Var : A₀ ≡ A₁ → Var Γ A₀ ≡ Var Γ A₁
-  ap-Var refl = refl
-
-  ap-Var₂ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Var Γ₀ A₀ ≡ Var Γ₁ A₁
-  ap-Var₂ refl refl = refl
-
-  apᵈ-var :
+  apᵈ-q :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
-    x₀ ≡[ ap-Var₂ Γ₀₁ A₀₁ ] x₁ → var x₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] var x₁
-  apᵈ-var refl refl refl = refl
-
-  coe-var : (A₀₁ : A₀ ≡ A₁) → coe (ap-Tm A₀₁) (var x) ≡ var (coe (ap-Var A₀₁) x)
-  coe-var refl = refl
-
-  apᵈ-vz :
-    (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
-    vz
+    q
       ≡[
-        ap-Var₂
-          (ap-▹ Γ₀₁ A₀₁)
-          (apᵈ-[]ᵀ Γ₀₁ A₀₁ (ap-▹ Γ₀₁ A₀₁) (apᵈ-p Γ₀₁ A₀₁)) ]
-    vz
-  apᵈ-vz refl refl = refl
+        ap-Tm₂ (ap-▹ Γ₀₁ A₀₁) (apᵈ-[]ᵀ Γ₀₁ A₀₁ (ap-▹ Γ₀₁ A₀₁) (apᵈ-p Γ₀₁ A₀₁)) ]
+    q
+  apᵈ-q refl refl = refl
 
   apᵈ-⟨⟩ :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
@@ -261,10 +234,6 @@ record DModel : Set₁ where
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} →
       Tmᴹ Γᴹ Aᴹ a → (γᴹ : Subᴹ Δᴹ Γᴹ γ) → Tmᴹ Δᴹ (Aᴹ [ γᴹ ]ᵀᴹ) (a [ γ ]ᵗ)
 
-    ◇ᴹ : Conᴹ ◇
-    _▹ᴹ_ : (Γᴹ : Conᴹ Γ) → Tyᴹ Γᴹ i A → Conᴹ (Γ ▹ A)
-    pᴹ : {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Subᴹ (Γᴹ ▹ᴹ Aᴹ) Γᴹ p
-
   ap-Tyᴹ : {Γᴹ : Conᴹ Γ} → A₀ ≡ A₁ → Tyᴹ Γᴹ i A₀ ≡ Tyᴹ Γᴹ i A₁
   ap-Tyᴹ = Util.ap-Tyᴹ Conᴹ Tyᴹ
 
@@ -275,17 +244,11 @@ record DModel : Set₁ where
   ap-Tmᴹ = Util.ap-Tmᴹ Conᴹ Tyᴹ Tmᴹ
 
   field
-    Varᴹ : (Γᴹ : Conᴹ Γ) → Tyᴹ Γᴹ i A → Var Γ A → Set
-    varᴹ : {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Varᴹ Γᴹ Aᴹ x → Tmᴹ Γᴹ Aᴹ (var x)
+    ◇ᴹ : Conᴹ ◇
+    _▹ᴹ_ : (Γᴹ : Conᴹ Γ) → Tyᴹ Γᴹ i A → Conᴹ (Γ ▹ A)
 
-    vzᴹ : {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Varᴹ (Γᴹ ▹ᴹ Aᴹ) (Aᴹ [ pᴹ ]ᵀᴹ) vz
-    vsᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B} →
-      Varᴹ Γᴹ Bᴹ x → Varᴹ (Γᴹ ▹ᴹ Aᴹ) (Bᴹ [ pᴹ ]ᵀᴹ) (vs x)
-    var-pᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B} {xᴹ : Varᴹ Γᴹ Bᴹ x} →
-      varᴹ xᴹ [ pᴹ ]ᵗᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep var-p) ]
-      varᴹ (vsᴹ xᴹ) ∈ Tmᴹ (Γᴹ ▹ᴹ Aᴹ) (Bᴹ [ pᴹ ]ᵀᴹ) (var (vs x))
+    pᴹ : {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Subᴹ (Γᴹ ▹ᴹ Aᴹ) Γᴹ p
+    qᴹ : {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Tmᴹ (Γᴹ ▹ᴹ Aᴹ) (Aᴹ [ pᴹ ]ᵀᴹ) q
 
     _⁺ᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A}
@@ -296,16 +259,16 @@ record DModel : Set₁ where
       Bᴹ [ pᴹ ]ᵀᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ p-⁺ᵀ ]
       Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ ∈ Tyᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) j (B [ γ ]ᵀ [ p ]ᵀ)
 
-    vz-⁺ᴹ :
-      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      varᴹ vzᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ vz-⁺ ]
-      varᴹ vzᴹ ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Aᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) (var vz)
-    vs-⁺ᴹ :
+    p-⁺ᵗᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B}
-      {xᴹ : Varᴹ Γᴹ Bᴹ x} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
-      varᴹ (vsᴹ xᴹ) [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ vs-⁺ ]
-      varᴹ xᴹ [ γᴹ ]ᵗᴹ [ pᴹ ]ᵗᴹ
-        ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) (var x [ γ ]ᵗ [ p ]ᵗ)
+      {bᴹ : Tmᴹ Γᴹ Bᴹ b} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
+      bᴹ [ pᴹ ]ᵗᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ p-⁺ᵗ ]
+      bᴹ [ γᴹ ]ᵗᴹ [ pᴹ ]ᵗᴹ
+        ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Bᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) (b [ γ ]ᵗ [ p ]ᵗ)
+    q-⁺ᴹ :
+      {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {γᴹ : Subᴹ Δᴹ Γᴹ γ} →
+      qᴹ [ γᴹ ⁺ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⁺ᵀ p-⁺ᵀᴹ q-⁺ ]
+      qᴹ ∈ Tmᴹ (Δᴹ ▹ᴹ Aᴹ [ γᴹ ]ᵀᴹ) (Aᴹ [ γᴹ ]ᵀᴹ [ pᴹ ]ᵀᴹ) q
 
     ⟨_⟩ᴹ :
       {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} → Tmᴹ Γᴹ Aᴹ a → Subᴹ Γᴹ (Γᴹ ▹ᴹ Aᴹ) ⟨ a ⟩
@@ -313,13 +276,13 @@ record DModel : Set₁ where
       {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
       Bᴹ [ pᴹ ]ᵀᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵀᴹ ≡[ ap-Tyᴹ p-⟨⟩ᵀ ] Bᴹ
 
-    vz-⟨⟩ᴹ :
-      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
-      varᴹ vzᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ vz-⟨⟩ ] aᴹ
-    vs-⟨⟩ᴹ :
+    p-⟨⟩ᵗᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ Γᴹ j B}
-      {xᴹ : Varᴹ Γᴹ Bᴹ x} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
-      varᴹ (vsᴹ xᴹ) [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ vs-⟨⟩ ] varᴹ xᴹ
+      {aᴹ : Tmᴹ Γᴹ Aᴹ a} {bᴹ : Tmᴹ Γᴹ Bᴹ b} →
+      bᴹ [ pᴹ ]ᵗᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ p-⟨⟩ᵗ ] bᴹ
+    q-⟨⟩ᴹ :
+      {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {aᴹ : Tmᴹ Γᴹ Aᴹ a} →
+      qᴹ [ ⟨ aᴹ ⟩ᴹ ]ᵗᴹ ≡[ ap-Tmᴹ p-⟨⟩ᵀ p-⟨⟩ᵀᴹ q-⟨⟩ ] aᴹ
 
     ⟨⟩-[]ᵀᴹ :
       {Γᴹ : Conᴹ Γ} {Δᴹ : Conᴹ Δ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B}
@@ -328,7 +291,7 @@ record DModel : Set₁ where
       Bᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ aᴹ [ γᴹ ]ᵗᴹ ⟩ᴹ ]ᵀᴹ
     ▹-ηᵀᴹ :
       {Γᴹ : Conᴹ Γ} {Aᴹ : Tyᴹ Γᴹ i A} {Bᴹ : Tyᴹ (Γᴹ ▹ᴹ Aᴹ) j B} →
-      Bᴹ ≡[ ap-Tyᴹ ▹-ηᵀ ] Bᴹ [ pᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ varᴹ vzᴹ ⟩ᴹ ]ᵀᴹ
+      Bᴹ ≡[ ap-Tyᴹ ▹-ηᵀ ] Bᴹ [ pᴹ ⁺ᴹ ]ᵀᴹ [ ⟨ qᴹ ⟩ᴹ ]ᵀᴹ
 
   field
     Uᴹ : {Γᴹ : Conᴹ Γ} (i : ℕ) → Tyᴹ Γᴹ (suc i) (U i)
@@ -386,7 +349,7 @@ record DModel : Set₁ where
       fᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep Π-η) ]
       lamᴹ
         (coe (ap-Tmᴹ (sym ▹-ηᵀ) (symᵈ ▹-ηᵀᴹ) refl)
-          (appᴹ (coe (ap-Tmᴹ Π-[] Π-[]ᴹ refl) (fᴹ [ pᴹ ]ᵗᴹ)) (varᴹ vzᴹ)))
+          (appᴹ (coe (ap-Tmᴹ Π-[] Π-[]ᴹ refl) (fᴹ [ pᴹ ]ᵗᴹ)) qᴹ))
 
 module Ind (M : DModel) where
   open DModel M
@@ -415,15 +378,10 @@ module Ind (M : DModel) where
   postulate
     ⟦⟧-[]ᵗ : ⟦ a [ γ ]ᵗ ⟧ᵗ ↝ ⟦ a ⟧ᵗ [ ⟦ γ ⟧ˢ ]ᵗᴹ
     {-# REWRITE ⟦⟧-[]ᵗ #-}
-
-  ⟦_⟧ᵛ : (x : Var Γ A) → Varᴹ ⟦ Γ ⟧ᶜ ⟦ A ⟧ᵀ x
-  ⟦ vz ⟧ᵛ = vzᴹ
-  ⟦ vs x ⟧ᵛ = vsᴹ ⟦ x ⟧ᵛ
+    ⟦⟧-q : ⟦ q ⟧ᵗ ↝ qᴹ ∈ Tmᴹ ⟦ Γ ▹ A ⟧ᶜ ⟦ A [ p ]ᵀ ⟧ᵀ q
+    {-# REWRITE ⟦⟧-q #-}
 
   postulate
-    ⟦⟧-var : ⟦ var x ⟧ᵗ ↝ varᴹ ⟦ x ⟧ᵛ
-    {-# REWRITE ⟦⟧-var #-}
-
     ⟦⟧-U : ⟦ U i ⟧ᵀ ↝ Uᴹ i ∈ Tyᴹ ⟦ Γ ⟧ᶜ (suc i) (U i)
     {-# REWRITE ⟦⟧-U #-}
     ⟦⟧-El : ⟦ El α ⟧ᵀ ↝ Elᴹ ⟦ α ⟧ᵗ
