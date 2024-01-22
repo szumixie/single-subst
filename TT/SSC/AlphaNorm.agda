@@ -5,12 +5,11 @@
   --confluence-check
   --postfix-projections #-}
 
-module TT.SSC.AlphaNf where
+module TT.SSC.AlphaNorm where
 
 open import TT.Lib
-open import TT.SSC
-
-infixl 9 _[_]ᵛʷ _[_]ᵛᴺˢ _[_]ᵀᴺ _[_]ᵗᴺ
+open import TT.SSC.Syntax
+open import TT.SSC.Ind
 
 private variable
   i : ℕ
@@ -56,13 +55,13 @@ module []ᴺᴾ
   (Subᴾ : (Δ Γ : Con) → Sub Δ Γ → Set)
   (_⁺ᴾ :
     ∀ {Γ Δ i} {A : Ty Γ i} {γ} → Subᴾ Δ Γ γ → Subᴾ (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺))
+  (let infixl 10 _⁺ᴾ; _⁺ᴾ = _⁺ᴾ)
   (_[_]ᵛᴾ :
     ∀ {Γ Δ i} {A : Ty Γ i} {a γ} →
     Var Γ A a → Subᴾ Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ))
   (let infixl 9 _[_]ᵛᴾ; _[_]ᵛᴾ = _[_]ᵛᴾ)
   where
   infixl 9 _[_]ᵀᴺᴾ _[_]ᵗᴺᴾ
-
   _[_]ᵀᴺᴾ : NTy Γ i A → Subᴾ Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
   _[_]ᵗᴺᴾ : NTm Γ A a → Subᴾ Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 
@@ -90,6 +89,7 @@ data Wk : (Δ Γ : Con) → Sub Δ Γ → Set where
   p : Wk (Γ ▹ A) Γ p
   _⁺ : Wk Δ Γ γ → Wk (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
 
+infixl 9 _[_]ᵛʷ
 _[_]ᵛʷ : Var Γ A a → Wk Δ Γ γ → Var Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 aᵛ [ p ]ᵛʷ = vs aᵛ
 vz [ γʷ ⁺ ]ᵛʷ = coe (ap-Var (sym p-⁺ᵀ) (symᵈ q-⁺)) vz
@@ -102,6 +102,7 @@ data NSSub : (Δ Γ : Con) → Sub Δ Γ → Set where
   _⁺ : NSSub Δ Γ γ → NSSub (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
   ⟨_⟩ : NTm Γ A a → NSSub Γ (Γ ▹ A) ⟨ a ⟩
 
+infixl 9 _[_]ᵛᴺˢ
 _[_]ᵛᴺˢ : Var Γ A a → NSSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 vz [ γᴺˢ ⁺ ]ᵛᴺˢ = coeₚ (ap-NTm (sym p-⁺ᵀ) (symᵈ q-⁺)) (var vz)
 vs bᵛ [ γᴺˢ ⁺ ]ᵛᴺˢ =
@@ -115,76 +116,79 @@ data NSub (Δ Γ : Con) (γ : Sub Δ Γ) : Set where
   wk : Wk Δ Γ γ → NSub Δ Γ γ
   nssub : NSSub Δ Γ γ → NSub Δ Γ γ
 
+infixl 9 _[_]ᵀᴺ
 _[_]ᵀᴺ : NTy Γ i A → NSub Δ Γ γ → NTy Δ i (A [ γ ]ᵀ)
 Aᴺ [ wk γʷ ]ᵀᴺ = Aᴺ [ γʷ ]ᵀᴺʷ
 Aᴺ [ nssub γᴺˢ ]ᵀᴺ = Aᴺ [ γᴺˢ ]ᵀᴺˢ
 
+infixl 9 _[_]ᵗᴺ
 _[_]ᵗᴺ : NTm Γ A a → NSub Δ Γ γ → NTm Δ (A [ γ ]ᵀ) (a [ γ ]ᵗ)
 aᴺ [ wk γʷ ]ᵗᴺ = aᴺ [ γʷ ]ᵗᴺʷ
 aᴺ [ nssub γᴺˢ ]ᵗᴺ = aᴺ [ γᴺˢ ]ᵗᴺˢ
 
+infixl 10 _⁺ᴺ
 _⁺ᴺ : NSub Δ Γ γ → NSub (Δ ▹ A [ γ ]ᵀ) (Γ ▹ A) (γ ⁺)
 wk γʷ ⁺ᴺ = wk (γʷ ⁺)
 nssub γᴺˢ ⁺ᴺ = nssub (γᴺˢ ⁺)
 
 module norm where
+  open DM
   open DModel
 
   M : DModel
-  M .Conᴹ _ = ⊤
-  M .Subᴹ _ _ = NSub _ _
+  M .sorts .Conᴹ _ = ⊤
+  M .sorts .Subᴹ _ _ = NSub _ _
+  M .sorts .Tyᴹ _ _ A = Lift (NTy _ _ A)
+  M .sorts .Tmᴹ _ _ a = Lift (NTm _ _ a)
 
-  M .Tyᴹ _ _ A = Lift (NTy _ _ A)
-  M ._[_]ᵀᴹ (lift Aᴺ) γᴺ = lift (Aᴺ [ γᴺ ]ᵀᴺ)
+  M .core ._[_]ᵀᴹ (lift Aᴺ) γᴺ = lift (Aᴺ [ γᴺ ]ᵀᴺ)
+  M .core ._[_]ᵗᴹ (lift aᴺ) γᴺ = lift (aᴺ [ γᴺ ]ᵗᴺ)
 
-  M .Tmᴹ _ _ a = Lift (NTm _ _ a)
-  M ._[_]ᵗᴹ (lift aᴺ) γᴺ = lift (aᴺ [ γᴺ ]ᵗᴺ)
+  M .core .◇ᴹ = ⋆
+  M .core ._▹ᴹ_ _ _ = ⋆
 
-  M .◇ᴹ = ⋆
-  M ._▹ᴹ_ _ _ = ⋆
+  M .core .pᴹ = wk p
+  M .core .qᴹ = lift (var vz)
 
-  M .pᴹ = wk p
-  M .qᴹ = lift (var vz)
+  M .core ._⁺ᴹ = _⁺ᴺ
+  M .core .p-⁺ᵀᴹ = refl
 
-  M ._⁺ᴹ = _⁺ᴺ
-  M .p-⁺ᵀᴹ = refl
+  M .core .p-⁺ᵗᴹ = refl
+  M .core .q-⁺ᴹ = refl
 
-  M .p-⁺ᵗᴹ = refl
-  M .q-⁺ᴹ = refl
+  M .core .⟨_⟩ᴹ (lift aᴺ) = nssub ⟨ aᴺ ⟩
+  M .core .p-⟨⟩ᵀᴹ = refl
 
-  M .⟨_⟩ᴹ (lift aᴺ) = nssub ⟨ aᴺ ⟩
-  M .p-⟨⟩ᵀᴹ = refl
+  M .core .p-⟨⟩ᵗᴹ = refl
+  M .core .q-⟨⟩ᴹ = refl
 
-  M .p-⟨⟩ᵗᴹ = refl
-  M .q-⟨⟩ᴹ = refl
+  M .core .⟨⟩-[]ᵀᴹ = refl
+  M .core .▹-ηᵀᴹ = refl
 
-  M .⟨⟩-[]ᵀᴹ = refl
-  M .▹-ηᵀᴹ = refl
+  M .types .Uᴹ i = lift (Uᴺ i)
+  M .types .U-[]ᴹ = refl
 
-  M .Uᴹ i = lift (Uᴺ i)
-  M .U-[]ᴹ = refl
+  M .types .Elᴹ (lift αᴺ) = lift (Elᴺ αᴺ)
+  M .types .El-[]ᴹ = refl
 
-  M .Elᴹ (lift αᴺ) = lift (Elᴺ αᴺ)
-  M .El-[]ᴹ = refl
+  M .types .cᴹ (lift Aᴺ) = lift (cᴺ Aᴺ)
+  M .types .c-[]ᴹ = refl
 
-  M .cᴹ (lift Aᴺ) = lift (cᴺ Aᴺ)
-  M .c-[]ᴹ = refl
+  M .types .U-βᴹ = refl
+  M .types .U-ηᴹ = refl
 
-  M .U-βᴹ = refl
-  M .U-ηᴹ = refl
+  M .types .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
+  M .types .Π-[]ᴹ = refl
 
-  M .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
-  M .Π-[]ᴹ = refl
-
-  M .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) =
+  M .types .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) =
     lift (appᴺ Aᴺ Bᴺ fᴺ aᴺ)
-  M .app-[]ᴹ = refl
+  M .types .app-[]ᴹ = refl
 
-  M .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) = lift (lamᴺ Aᴺ Bᴺ bᴺ)
-  M .lam-[]ᴹ = refl
+  M .types .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) = lift (lamᴺ Aᴺ Bᴺ bᴺ)
+  M .types .lam-[]ᴹ = refl
 
-  M .Π-βᴹ = refl
-  M .Π-ηᴹ = refl
+  M .types .Π-βᴹ = refl
+  M .types .Π-ηᴹ = refl
 
   open Ind M public
 
@@ -196,5 +200,3 @@ normᵀ A = norm.⟦ A ⟧ᵀ .lower
 
 normᵗ : (a : Tm Γ A) → NTm Γ A a
 normᵗ a = norm.⟦ a ⟧ᵗ .lower
-
--- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -} -- -}
