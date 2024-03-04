@@ -1,0 +1,22 @@
+Type theory in type theory using single substitutions
+
+The well-typed quotiented (intrinsic) syntax of type theory can be
+defined as the initial category with families (CwF) with extra
+structure corresponding to the type formers. The initial model is
+implemented in type theory by a quotient inductive-inductive type. In
+this talk we describe a simpler alternative to CwFs using single
+substitutions and single weakenings. These are not composable, so the
+syntax is not based on a category (the families are still there). In
+addition to computation and uniqueness rules, the equations we have
+are all naturality equations (also called substitution laws such as
+"(app t u)[γ] = app (t[γ]) (u[γ])"), there are five equations
+describing interaction of variables and single
+substitutions/weakenings, and four extra equations for types. The
+rules for CwF are provable from our rules by induction on the single
+substitution syntax. We have more models than CwFs, the situation is
+similar to the correspondence between combinatory logic and lambda
+calculus. Our single substitution calculus is a simpler variant of
+Voevodsky's B-systems (while his C-systems correspond to CwFs). We
+formalised a type theory with a universe and Pi types based on single
+substitutions in Agda, and derived the rules for CwF using the
+technique of alpha-normalisation.
