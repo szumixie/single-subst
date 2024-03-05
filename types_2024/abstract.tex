@@ -1,0 +1,212 @@
+% easychair.tex,v 3.5 2017/03/15
+
+\documentclass{easychair}
+%\documentclass[EPiC]{easychair}
+%\documentclass[EPiCempty]{easychair}
+%\documentclass[debug]{easychair}
+%\documentclass[verbose]{easychair}
+%\documentclass[notimes]{easychair}
+%\documentclass[withtimes]{easychair}
+%\documentclass[a4paper]{easychair}
+%\documentclass[letterpaper]{easychair}
+
+\usepackage{doc}
+\usepackage{proof}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{newtx}
+
+% use this if you have a long article and want to create an index
+% \usepackage{makeidx}
+
+% In order to save space or manage large tables or figures in a
+% landcape-like text, you can use the rotating and pdflscape
+% packages. Uncomment the desired from the below.
+%
+% \usepackage{rotating}
+% \usepackage{pdflscape}
+
+%% Front Matter
+%%
+% Regular title as in the article class.
+%
+\title{Type theory in type theory using single substitutions}
+
+% Authors are joined by \and. Their affiliations are given by \inst, which indexes
+% into the list defined using \institute
+%
+\author{
+Ambrus Kaposi\inst{1}
+\and
+Szumi Xie\inst{1}
+}
+
+% Institutes for affiliations are also joined by \and,
+\institute{
+   Eötvös Loránd University,
+   Budapest, Hungary, 
+   \email{\{akaposi|szumi\}@inf.elte.hu}
+}
+
+%  \authorrunning{} has to be set for the shorter version of the authors' names;
+% otherwise a warning will be rendered in the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \authorrunning
+% will be rejected by EasyChair
+
+\authorrunning{Kaposi, Xie}
+
+% \titlerunning{} has to be set to either the main title or its shorter
+% version for the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \titlerunning
+% will be rejected by EasyChair
+\titlerunning{Type theory in type theory using single substitutions}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\Ra}{\Rightarrow}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Var}{\mathsf{Var}}
+\newcommand{\var}{\mathsf{var}}
+\newcommand{\Tm}{\mathsf{Tm}}
+\newcommand{\Ty}{\mathsf{Ty}}
+\newcommand{\Sub}{\mathsf{Sub}}
+\newcommand{\U}{\mathsf{U}}
+\newcommand{\El}{\mathsf{El}}
+\renewcommand{\c}{\mathsf{c}}
+\newcommand{\lam}{\mathsf{lam}}
+\newcommand{\app}{\mathsf{app}}
+\newcommand{\oldapp}{\mathbin{\cdot}}
+\renewcommand{\tt}{\mathsf{tt}}
+\newcommand{\Br}{\mathsf{Br}}
+\newcommand{\aps}{\mathsf{aps}}
+\newcommand{\ap}{\mathsf{ap}}
+\newcommand{\mkBrPi}{\mathsf{mkBr}{\Pi}}
+\newcommand{\Gel}{\mathsf{Gel}}
+\newcommand{\gel}{\mathsf{gel}}
+\newcommand{\ungel}{\mathsf{ungel}}
+\renewcommand{\sp}{\hspace{1.5em}}
+\newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}} %from the book
+\newcommand{\Set}{\mathsf{Set}}
+\newcommand{\ext}{\mathop{\triangleright}}
+\newcommand{\R}{\mathsf{R}}
+\newcommand{\p}{\mathsf{p}}
+\renewcommand{\S}{\mathsf{S}}
+\newcommand{\vz}{\mathsf{vz}}
+\newcommand{\vs}{\mathsf{vs}}
+
+In this abstract we define type theory in a minimalistic way: we aim
+for an intrinsic, that is, well-typed and quotiented definition of the
+syntax, that is as small as possible in terms of needed operations and
+equations for the substitution calculus. We only introduce operations
+that are \emph{forced} upon us. We aim for a language with $\Pi$
+types, and it turns out that all the essential ingredients are forced
+upon us when we want to introduce the usual rules for $\Pi$ types
+(abstraction, application, $\beta$ and $\eta$).
+
+We need variables in our language, so we introduce sorts of contexts,
+types and variables.
+\[
+ \Con : \Set \hspace{6em} \Ty : \Con\ra\Set \hspace{6em} \Var : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Set  \\
+\]
+Contexts are either empty or extended with a type.
+\[
+\diamond : \Con \hspace{6em} \blank\ext\blank : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Con
+\]
+We define variables as well-typed De Bruijn indices, but to express
+these we need to weaken types: e.g.\ the zero De Bruijn index $\vz$
+has a weakened type. We introduce a new sort for substitutions $\Sub$,
+am instantiation operation $\blank[\blank]$ on types, and a weakening
+substitution $\p$. For now, $\Sub$ seems like an overkill because we
+are only using $\blank[\p]$, but it will come handy soon.
+\[
+\Sub: \Con\ra\Con\ra\Set \hspace{3em} \blank[\blank] : \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta \hspace{3em} \p : \Sub\,(\Gamma\ext A)\,\Gamma \hspace{3em}
+\]
+\[
+\vz : \Var\,(\Gamma\ext A)\,(A[\p]) \hspace{3em} \vs : \Var\,\Gamma\,A\ra\Var\,(\Gamma\ext B)\,(A[\p])
+\]
+Now we introduce $\Pi$ types together with an equation on how
+instantiation with $\p$ acts on them. This is tricky: as $\Pi$ binds a
+new variable in its second argument, we need a new version of the
+weakening substitution which leaves the last variable untouched. This
+is why we introduce lifting of a substitution $\blank^{+}$, and now we
+can state a general instantiation rule for $\Pi$ which works not only
+for $\p$, but arbitrary substitutions.
+\begin{alignat*}{10}
+& \Pi:(A:\Ty\,\Gamma)\ra\Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \hspace{3em} && \blank^+ : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
+& \Pi[] : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+])
+\end{alignat*}
+In addition to having variables, we need a sort of terms which
+includes variables and lambda abstraction.
+\[
+\Tm : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Set \hspace{1.8em} \var : \Var\,\Gamma\,A\ra\Tm\,\Gamma\,A \hspace{1.8em} \lam : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B)  \\
+\]
+To express application, we need single substitutions as well because
+the argument of the function appears in the return type. In addition
+to $\p$ and $\blank^+$, $\langle\blank\rangle$ is the third and last
+operation for creating substitutions.
+\[
+\langle\blank\rangle : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \hspace{5em} \blank\cdot\blank: \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle])
+\]
+Now we would like to express the $\beta$ computation rule, but for
+this we also need to be able to instantiate terms (in addition to
+types).
+\[
+\blank[\blank] : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \hspace{3em} \Pi\beta : \lam\,t\cdot a = t[\langle a\rangle] 
+\]
+Now that we introduced instantiation of terms, we have to revisit all
+of our terms and provide rules on how to instantiate them: first of
+all, we need instantiation rules for $\lam$ and
+$\blank\cdot\blank$. The rule $\lam[]$ is well-typed because of
+$\Pi[]$, however ${\cdot}[]$ is not well-typed on its own and requires
+a new equation $[\langle\rangle]$.
+\[
+\lam[] : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \hspace{1em} [\langle\rangle] : A[\langle a\rangle][\gamma] = A[\gamma^+][\langle a[\gamma]\rangle] \hspace{1em} {\cdot}[] : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma])
+\]
+Then we need instantiation rules for variables, we list these by case
+distinction on the substitution: weakening of a variable increases the
+index by one. When instantiating with lifted substitutions and single
+substitutions, we have to do case distinction on the De Bruijn index
+whether it is zero or successor. For the latter two cases, we need
+type equations (named $[\p][^+]$ and $[\p][\langle\rangle]$) to
+typeckeck the term equations.\vspace{-1.5em}
+\begin{alignat*}{10}
+  & && \var\,x[\p] = \var\,(\vs\,x) \\
+  & [\p][^+] : A[\p][\gamma^+] = A[\gamma][\p] \hspace{4em}&& \var\,\vz[\gamma^+] = \var\,\vz \hspace{4em} && \var\,(\vs\,x)[\gamma^+] = \var\,x[\gamma][\p] \\
+  & [\p][\langle\rangle] : A[\p][\langle a\rangle] = A && \var\,\vz[\langle a\rangle] = a &&  \var\,(\vs\,x)[\langle a\rangle] = \var\,x
+\end{alignat*}
+Finally, to typecheck the $\Pi\eta$ rule, we need our last equation on
+types.
+\[
+[^+][\langle\rangle] : A[p^+][\langle\var\,\vz\rangle] = A \hspace{6em}\Pi\eta : t = \lam\,(t[\p]\cdot\var\,\vz)
+\]
+This concludes all the rules for type theory with $\Pi$: we summarise
+as follows: there are three kinds of substitutions (single weakening,
+single substitution, lifted substitution), we have instantiation rule
+for each operation, there are 5 equations describing how instantiation
+acts on variables, and 4 equations which describe general properties
+of instantiation on types. The rest of the rules are specific to our
+single type former $\Pi$: the only extra requirement is that each
+operation should come equipped with an instantiation rule ($\Pi[]$,
+$\lam[]$, ${\cdot}[]$). Perhaps surprisingly, this is enough to define
+the syntax: there is no need for $\Con$ and $\Sub$ to a form a
+category, no need for parallel substitutions, empty substitution,
+parallel weakenings, or combinations of these.
+
+We can add more type formers...
+
+Show how to derive CwF.
+
+
+\label{sect:bib}
+\bibliographystyle{plainurl}
+%\bibliographystyle{alpha}
+%\bibliographystyle{unsrt}
+%\bibliographystyle{abbrv}
+\bibliography{b}
+
+%------------------------------------------------------------------------------
+\end{document}
+
