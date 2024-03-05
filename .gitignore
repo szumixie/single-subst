@@ -1,2 +1,11 @@
 *~
 *.agdai
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.hd
+*.log
+*.out
+*.pdf
