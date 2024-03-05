@@ -36,9 +36,9 @@
 % into the list defined using \institute
 %
 \author{
-Ambrus Kaposi\inst{1}
+Ambrus Kaposi
 \and
-Szumi Xie\inst{1}
+Szumi Xie
 }
 
 % Institutes for affiliations are also joined by \and,
@@ -99,26 +99,29 @@ Szumi Xie\inst{1}
 
 In this abstract we define type theory in a minimalistic way: we aim
 for an intrinsic, that is, well-typed and quotiented definition of the
-syntax, that is as small as possible in terms of needed operations and
-equations for the substitution calculus. We only introduce operations
-that are \emph{forced} upon us. We aim for a language with $\Pi$
-types, and it turns out that all the essential ingredients are forced
-upon us when we want to introduce the usual rules for $\Pi$ types
-(abstraction, application, $\beta$ and $\eta$).
+syntax, that is as small as possible in terms of number of operations
+and equations for the substitution calculus. We only introduce
+operations that are forced upon us. We aim for a language with $\Pi$
+types, and it turns out that we have to add all the ingredients of the
+substitution calculus while introducing the usual rules for $\Pi$
+types (abstraction, application, $\beta$ and $\eta$). When adding more
+type formers, we don't need to extend the substitution calculus
+anymore.
 
 We need variables in our language, so we introduce sorts of contexts,
 types and variables.
 \[
  \Con : \Set \hspace{6em} \Ty : \Con\ra\Set \hspace{6em} \Var : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Set  \\
 \]
-Contexts are either empty or extended with a type.
+Contexts are either empty or are built from a context extended with a
+type.
 \[
 \diamond : \Con \hspace{6em} \blank\ext\blank : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Con
 \]
 We define variables as well-typed De Bruijn indices, but to express
 these we need to weaken types: e.g.\ the zero De Bruijn index $\vz$
 has a weakened type. We introduce a new sort for substitutions $\Sub$,
-am instantiation operation $\blank[\blank]$ on types, and a weakening
+an instantiation operation $\blank[\blank]$ on types, and a weakening
 substitution $\p$. For now, $\Sub$ seems like an overkill because we
 are only using $\blank[\p]$, but it will come handy soon.
 \[
@@ -133,7 +136,7 @@ new variable in its second argument, we need a new version of the
 weakening substitution which leaves the last variable untouched. This
 is why we introduce lifting of a substitution $\blank^{+}$, and now we
 can state a general instantiation rule for $\Pi$ which works not only
-for $\p$, but arbitrary substitutions.
+for $\p$, but arbitrary substitutions (including lifted ones).
 \begin{alignat*}{10}
 & \Pi:(A:\Ty\,\Gamma)\ra\Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \hspace{3em} && \blank^+ : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
 & \Pi[] : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+])
@@ -156,22 +159,22 @@ types).
 \[
 \blank[\blank] : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \hspace{3em} \Pi\beta : \lam\,t\cdot a = t[\langle a\rangle] 
 \]
-Now that we introduced instantiation of terms, we have to revisit all
-of our terms and provide rules on how to instantiate them: first of
-all, we need instantiation rules for $\lam$ and
+Now that we have instantiation of terms, we need to revisit all
+operations producing terms and provide rules on how to instantiate
+them: first of all, we need instantiation rules for $\lam$ and
 $\blank\cdot\blank$. The rule $\lam[]$ is well-typed because of
 $\Pi[]$, however ${\cdot}[]$ is not well-typed on its own and requires
 a new equation $[\langle\rangle]$.
 \[
 \lam[] : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \hspace{1em} [\langle\rangle] : A[\langle a\rangle][\gamma] = A[\gamma^+][\langle a[\gamma]\rangle] \hspace{1em} {\cdot}[] : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma])
 \]
-Then we need instantiation rules for variables, we list these by case
-distinction on the substitution: weakening of a variable increases the
-index by one. When instantiating with lifted substitutions and single
+Then we need instantiation rules for variables, we list these for each
+possible substitution: weakening of a variable increases the index by
+one; when instantiating with lifted substitutions and single
 substitutions, we have to do case distinction on the De Bruijn index
 whether it is zero or successor. For the latter two cases, we need
 type equations (named $[\p][^+]$ and $[\p][\langle\rangle]$) to
-typeckeck the term equations.\vspace{-1.5em}
+typeckeck the term equations.
 \begin{alignat*}{10}
   & && \var\,x[\p] = \var\,(\vs\,x) \\
   & [\p][^+] : A[\p][\gamma^+] = A[\gamma][\p] \hspace{4em}&& \var\,\vz[\gamma^+] = \var\,\vz \hspace{4em} && \var\,(\vs\,x)[\gamma^+] = \var\,x[\gamma][\p] \\
@@ -180,25 +183,67 @@ typeckeck the term equations.\vspace{-1.5em}
 Finally, to typecheck the $\Pi\eta$ rule, we need our last equation on
 types.
 \[
-[^+][\langle\rangle] : A[p^+][\langle\var\,\vz\rangle] = A \hspace{6em}\Pi\eta : t = \lam\,(t[\p]\cdot\var\,\vz)
+[\p^+][\langle\vz\rangle] : A[\p^+][\langle\var\,\vz\rangle] = A \hspace{6em}\Pi\eta : t = \lam\,(t[\p]\cdot\var\,\vz)
 \]
-This concludes all the rules for type theory with $\Pi$: we summarise
+This concludes all the rules for type theory with $\Pi$. We summarise
 as follows: there are three kinds of substitutions (single weakening,
-single substitution, lifted substitution), we have instantiation rule
-for each operation, there are 5 equations describing how instantiation
-acts on variables, and 4 equations which describe general properties
-of instantiation on types. The rest of the rules are specific to our
-single type former $\Pi$: the only extra requirement is that each
-operation should come equipped with an instantiation rule ($\Pi[]$,
-$\lam[]$, ${\cdot}[]$). Perhaps surprisingly, this is enough to define
-the syntax: there is no need for $\Con$ and $\Sub$ to a form a
-category, no need for parallel substitutions, empty substitution,
-parallel weakenings, or combinations of these.
+single substitution, lifted substitution), we have 5 equations
+describing how instantiation acts on variables, and 4 equations which
+describe general properties of instantiation on types. The rest of the
+rules are specific to our single type former $\Pi$: the only extra
+requirement is that each operation is equipped with an instantiation
+rule ($\Pi[]$, $\lam[]$, ${\cdot}[]$). Perhaps surprisingly, this is
+enough to define the syntax: there is no need for $\Con$ and $\Sub$ to
+a form a category, no need for parallel substitutions, empty
+substitution, parallel weakenings, or other combinations of these.
 
-We can add more type formers...
+When adding new type formers, we only need the rules for the type
+former, and an extra instantiation (naturality) rule for each
+operation. For example, a Coquand-universe can be added by $\U :
+\Ty\,\Gamma$, $\El:\Tm\,\Gamma\,\U\ra\Ty\,\Gamma$,
+$\c:\Ty\,\Gamma\ra\Tm\,\Gamma\,\U$, $\U\beta : \El\,(\c\,A) = A$,
+$\U\eta : \c\,(\El\,a) = a$, and three instantiation rules (note that
+we need indexing to avoid inconsistency). In \cite{sogat}, we showed
+that any second-order generalised algebraic theory (SOGAT) has a
+single substitution presentation.
 
-Show how to derive CwF.
+In the syntax (initial model, quotient inductive-inductive type) of
+the above theory, all the rules of categories with families (CwF
+\cite{DBLP:journals/corr/abs-1904-00827}) are admissible. That is, by
+induction on the single substitution syntax, we can define parallel
+substitutions (lists of terms) which are composable and form a
+category; we can define instantiation by parallel substitutions for
+types and terms, these have the usual universal property of
+comprehension. The main ingredient for this construction is the notion
+of $\alpha$-normal form: a kind of normal form which is still
+quotiented by $\Pi\beta$, $\Pi\eta$, but does not include explicit
+substitutions. If a type is in $\alpha$-normal form, we know whether
+it is $\Pi$, $\U$, or $\El$ of a term. If a term is in $\alpha$-normal
+form, we know whether it is a variable, a $\lam$, an application or a
+code for a type (note that any function on an $\alpha$-normal has to
+respect $\Pi\beta$, $\Pi\eta$, $\U\beta$, $\U\eta$). We prove
+$\alpha$-normalisation (every term has a unique $\alpha$-normal form)
+and then use induction on $\alpha$-normal forms to define parallel
+instantiation and prove its properties.
 
+We formalised the single substitution calculus with an infinite
+hierarchy of types closed under $\Pi$ and $\U$ as a quotient
+inductive-inductive type in Agda, proved $\alpha$-normalisation for
+it, and derived all the rules for the parallel substitution calculus
+(CwF equipped with $\Pi$ types and $\U$).
+
+It is clear that the rules for the single substitution calculus are
+all derivable from the CwF-rules. The other direction is however not
+true: there are more models of the single substitution calculus than
+the parallel substitution calculus. The situation is analogous to the
+relationship of combinatory logic and lambda calculus: the former has
+more models, but the syntaxes are isomorphic
+\cite{DBLP:conf/fscd/AltenkirchKSV23}. Our single substitution
+calculus is a minimalistic version of B-systems
+\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} (C-systems are their
+parallel substitution analogue): B-systems include telescopes and more
+equations than our single substitution calculus, making them
+equivalent to C-systems.
 
 \label{sect:bib}
 \bibliographystyle{plainurl}
