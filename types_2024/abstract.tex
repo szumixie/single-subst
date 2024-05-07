@@ -97,19 +97,26 @@ Szumi Xie
 \newcommand{\vz}{\mathsf{vz}}
 \newcommand{\vs}{\mathsf{vs}}
 
-In this abstract we define type theory in a minimalistic way: we aim
-for an intrinsic, that is, well-typed and quotiented definition of the
-syntax, that is as small as possible in terms of number of operations
-and equations for the substitution calculus. We only introduce
-operations that are forced upon us. We aim for a language with $\Pi$
-types, and it turns out that we have to add all the ingredients of the
-substitution calculus while introducing the usual rules for $\Pi$
-types (abstraction, application, $\beta$ and $\eta$). When adding more
-type formers, we don't need to extend the substitution calculus
-anymore.
+What is the syntax of Martin-Löf type theory? In this abstract, we
+give a minimalistic answer to this question. We aim to define the
+syntax of type theory only using operations that are unavoidable. We
+would also like to eschew boilerplate by only defining well-typed terms
+which are quotiented by conversion
+\cite{DBLP:conf/popl/AltenkirchK16}. This means that type theory is a
+generalised algebraic theory (GAT), its syntax is a quotient
+inductive-inductive type (QIIT). Usual such definitions of type theory are
+based on categories: category with families \cite{DBLP:journals/corr/abs-1904-00827}, locally cartesian closed
+category \cite{Seely1984-SEELCC,DBLP:journals/mscs/ClairambaultD14}, contextual category \cite{DBLP:journals/apal/Cartmell86,initiality-agda}, C systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}, etc. In this abstract we
+show that categories are not necessary for defining the GAT of type
+theory. A category-free definition of type theory is B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} which
+includes telescopes with complex operations and equations. In our
+definition we avoid these as well. In this abstract we give a
+tutorial-style introduction to our minimalistic definition of type
+theory, no prior knowledge of the metatheory of type theory is
+required. We introduce the operations in a naive, logical order.
 
 We need variables in our language, so we introduce sorts of contexts,
-types and variables.
+types (which depend on a context) and variables (which are in a context and have a type).
 \[
  \Con : \Set \hspace{6em} \Ty : \Con\ra\Set \hspace{6em} \Var : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Set  \\
 \]
@@ -122,7 +129,7 @@ We define variables as well-typed De Bruijn indices, but to express
 these we need to weaken types: e.g.\ the zero De Bruijn index $\vz$
 has a weakened type. We introduce a new sort for substitutions $\Sub$,
 an instantiation operation $\blank[\blank]$ on types, and a weakening
-substitution $\p$. For now, $\Sub$ seems like an overkill because we
+substitution $\p$. For now, a separate sort $\Sub$ seems like an overkill because we
 are only using $\blank[\p]$, but it will come handy soon.
 \[
 \Sub: \Con\ra\Con\ra\Set \hspace{3em} \blank[\blank] : \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta \hspace{3em} \p : \Sub\,(\Gamma\ext A)\,\Gamma \hspace{3em}
@@ -169,7 +176,7 @@ a new equation $[\langle\rangle]$.
 \lam[] : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \hspace{1em} [\langle\rangle] : A[\langle a\rangle][\gamma] = A[\gamma^+][\langle a[\gamma]\rangle] \hspace{1em} {\cdot}[] : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma])
 \]
 Then we need instantiation rules for variables, we list these for each
-possible substitution: weakening of a variable increases the index by
+possible substitution $\Sub$: weakening of a variable increases the index by
 one; when instantiating with lifted substitutions and single
 substitutions, we have to do case distinction on the De Bruijn index
 whether it is zero or successor. For the latter two cases, we need
@@ -185,7 +192,7 @@ types.
 \[
 [\p^+][\langle\vz\rangle] : A[\p^+][\langle\var\,\vz\rangle] = A \hspace{6em}\Pi\eta : t = \lam\,(t[\p]\cdot\var\,\vz)
 \]
-This concludes all the rules for type theory with $\Pi$. We summarise
+This concludes all the rules for type theory with $\Pi$ (this type theory is actually empty because there are no base types, but is enough to illustrate our method). We summarise
 as follows: there are three kinds of substitutions (single weakening,
 single substitution, lifted substitution), we have 5 equations
 describing how instantiation acts on variables, and 4 equations which
@@ -195,7 +202,7 @@ requirement is that each operation is equipped with an instantiation
 rule ($\Pi[]$, $\lam[]$, ${\cdot}[]$). Perhaps surprisingly, this is
 enough to define the syntax: there is no need for $\Con$ and $\Sub$ to
 a form a category, no need for parallel substitutions, empty
-substitution, parallel weakenings, or other combinations of these.
+substitution, parallel weakenings, telescopes, or combinations of these.
 
 When adding new type formers, we only need the rules for the type
 former, and an extra instantiation (naturality) rule for each
@@ -203,11 +210,11 @@ operation. For example, a Coquand-universe can be added by $\U :
 \Ty\,\Gamma$, $\El:\Tm\,\Gamma\,\U\ra\Ty\,\Gamma$,
 $\c:\Ty\,\Gamma\ra\Tm\,\Gamma\,\U$, $\U\beta : \El\,(\c\,A) = A$,
 $\U\eta : \c\,(\El\,a) = a$, and three instantiation rules (note that
-we need indexing to avoid inconsistency). In \cite{sogat}, we showed
-that any second-order generalised algebraic theory (SOGAT) has a
+we would need indexing $\U$ and $\Ty$ by universe levels to avoid inconsistency). In \cite{sogat}, we showed
+that any second-order generalised algebraic theory has a
 single substitution presentation.
 
-In the syntax (initial model, quotient inductive-inductive type) of
+In the syntax (initial model, QIIT) of
 the above theory, all the rules of categories with families (CwF
 \cite{DBLP:journals/corr/abs-1904-00827}) are admissible. That is, by
 induction on the single substitution syntax, we can define parallel
@@ -220,30 +227,27 @@ quotiented by $\Pi\beta$, $\Pi\eta$, but does not include explicit
 substitutions. If a type is in $\alpha$-normal form, we know whether
 it is $\Pi$, $\U$, or $\El$ of a term. If a term is in $\alpha$-normal
 form, we know whether it is a variable, a $\lam$, an application or a
-code for a type (note that any function on an $\alpha$-normal has to
+code for a type (note that any function on an $\alpha$-normal type/term has to
 respect $\Pi\beta$, $\Pi\eta$, $\U\beta$, $\U\eta$). We prove
 $\alpha$-normalisation (every term has a unique $\alpha$-normal form)
 and then use induction on $\alpha$-normal forms to define parallel
 instantiation and prove its properties.
 
-We formalised single substitution calculus with an infinite hierarchy
-of types closed under $\Pi$ and $\U$ as a quotient inductive-inductive
-type in Agda, proved $\alpha$-normalisation, and derived all the rules
-for parallel substitutions (CwF equipped with $\Pi$ types and $\U$):
-\url{https://bitbucket.org/akaposi/single}.
+We formalised a single substitution calculus with an infinite hierarchy
+of types closed under $\Pi$ and $\U$ as a QIIT in Agda, proved
+$\alpha$-normalisation, and derived all the rules for parallel
+substitutions (CwF equipped with $\Pi$ types and $\U$):
+\url{https://bitbucket.org/akaposi/single}. In the formalisation, we
+use $\mathsf{sProp}$-valued equality and the syntax is postulated as a
+QIIT with rewrite rules for its $\beta$ laws.
 
 It is clear that the rules for the single substitution calculus are
 all derivable from the CwF-rules. The other direction is however not
 true: there are more models of the single substitution calculus than
-the parallel substitution calculus. The situation is analogous to the
-relationship of combinatory logic and lambda calculus: the former has
-more models, but the syntaxes are isomorphic
-\cite{DBLP:conf/fscd/AltenkirchKSV23}. Our single substitution
-calculus is a minimalistic version of B-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} (C-systems are their
-parallel substitution analogue): B-systems include telescopes and more
-equations than our single substitution calculus, making them
-equivalent to C-systems.
+the parallel substitution calculus, but the syntaxes are
+isomorphic. The situation is analogous to the relationship of
+combinatory logic and lambda calculus: their syntaxes are isomorphic,
+but the former has more models \cite{DBLP:conf/fscd/AltenkirchKSV23}.
 
 \label{sect:bib}
 \bibliographystyle{plainurl}
