@@ -17,7 +17,7 @@ private variable
   i : ℕ
   Γ Δ Θ : Con
   A B : Ty Γ i
-  a a₀ a₁ b : Tm Γ A
+  a a₀ a₁ b α : Tm Γ A
 
 data Tms : Con → Con → Set
 
@@ -226,3 +226,26 @@ qᵗ = coe (ap-Tm (ap-[]ᵀ (sym []ᵀ-idᵗ) ∙ sym ([]ᵀ-∘pᵗ idᵗ))) q
 
 ▹-ηᵗ : (pᵗ , qᵗ) ≡ idᵗ {Γ ▹ A}
 ▹-ηᵗ = refl
+
+U-[]ᵗ  : (γᵗ : Tms Δ Γ) → U i [ γᵗ ]ᵀᵗ ≡ U i
+U-[]ᵗ γᵗ = U-[]* ⌞ γᵗ ⌟
+
+El-[]ᵗ : (γᵗ : Tms Δ Γ) → El α [ γᵗ ]ᵀᵗ ≡ El (coe (ap-Tm (U-[]ᵗ γᵗ)) (α [ γᵗ ]ᵗᵗ))
+El-[]ᵗ γᵗ = El-[]* ⌞ γᵗ ⌟
+
+c-[]ᵗ  : (γᵗ : Tms Δ Γ) → c A [ γᵗ ]ᵗᵗ ≡[ ap-Tm (U-[]ᵗ γᵗ) ] c (A [ γᵗ ]ᵀᵗ)
+c-[]ᵗ γᵗ = c-[]* ⌞ γᵗ ⌟
+
+_⁺ᵗ : (γᵗ : Tms Δ Γ) → Tms (Δ ▹ A [ γᵗ ]ᵀᵗ) (Γ ▹ A)
+_⁺ᵗ {Δ = Δ}{A = A} γᵗ = γᵗ ∘pᵗ , coe (ap-Tm (sym ([]ᵀ-∘pᵗ γᵗ))) (q {Δ}{A = A [ γᵗ ]ᵀᵗ})
+
+Π-[]ᵗ : (γᵗ : Tms Δ Γ) → Π A B [ γᵗ ]ᵀᵗ ≡ Π (A [ γᵗ ]ᵀᵗ) (B [ γᵗ ⁺ᵗ ]ᵀᵗ)
+Π-[]ᵗ γᵗ = Π-[]* ⌞ γᵗ ⌟ ∙ ap-Π {!!}
+{-
+app-[] :
+  app f a [ γ ]ᵗ ≡[ ap-Tm ⟨⟩-[]ᵀ ]
+  app (coe (ap-Tm Π-[]) (f [ γ ]ᵗ)) (a [ γ ]ᵗ)
+lam-[] : lam b [ γ ]ᵗ ≡[ ap-Tm Π-[] ] lam (b [ γ ⁺ ]ᵗ)
+-}
+
+-- TODO
