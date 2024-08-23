@@ -349,7 +349,7 @@ module SSC→CwF (M : SSC) where
 
   []-∘pₜ :
     (b : Tm Γ B) (γ : Tms Δ Γ) → (Tm (Δ ▹ A) B ∋ b [ γ ∘pₜ ]ₜ) ≡ b [ γ ]ₜ [ p ]
-  []-∘pₜ b εₜ = sym (εₛ-[] _ _)
+  []-∘pₜ b εₜ = refl
   []-∘pₜ b (γ ,ₜ z) = begin
     b [ T→SS (γ ∘pₜ) ⁺ₛ ]ₛ [ ⟨ z [ p ] ⟩ ]   ≡⟨ cong (λ x → x [ ⟨ z [ p ] ⟩ ]) ([]-⁺ₛ _ (T→SS (γ ∘pₜ)) (T→SS γ ∘ₛ ⌜ p ⌝) λ b → []-∘pₜ _ γ) ⟩
     b [ T→SS γ ⁺ₛ ]ₛ [ p ⁺ ] [ ⟨ z [ p ] ⟩ ] ≡˘⟨ ⟨⟩-[] _ _ _ ⟩

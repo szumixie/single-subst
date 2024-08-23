@@ -2,7 +2,8 @@
   --without-K
   --prop
   --rewriting
-  --confluence-check #-}
+  --confluence-check
+#-}
 
 module TT.SSC.Syntax where
 
@@ -212,8 +213,12 @@ opaque
   apᵈ-app refl refl refl refl refl = refl
 
   apᵈ-lam :
+    (B₀₁ : B₀ ≡ B₁) → b₀ ≡[ ap-Tm B₀₁ ] b₁ → lam b₀ ≡[ ap-Tm (ap-Π B₀₁) ] lam b₁
+  apᵈ-lam refl refl = refl
+
+  apᵈ-lam₄ :
     (Γ₀₁ : Γ₀ ≡ Γ₁)
     (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) (B₀₁ : B₀ ≡[ ap-Ty (ap-▹ Γ₀₁ A₀₁) ] B₁) →
     b₀ ≡[ ap-Tm₂ (ap-▹ Γ₀₁ A₀₁) B₀₁ ] b₁ →
     lam b₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-Π Γ₀₁ A₀₁ B₀₁) ] lam b₁
-  apᵈ-lam refl refl refl refl = refl
+  apᵈ-lam₄ refl refl refl refl = refl

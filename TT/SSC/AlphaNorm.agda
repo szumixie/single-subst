@@ -3,7 +3,8 @@
   --prop
   --rewriting
   --confluence-check
-  --postfix-projections #-}
+  --postfix-projections
+#-}
 
 module TT.SSC.AlphaNorm where
 

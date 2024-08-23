@@ -2,7 +2,8 @@
   --without-K
   --prop
   --rewriting
-  --confluence-check #-}
+  --confluence-check
+#-}
 
 module TT.SSC.Ind where
 

@@ -3,7 +3,8 @@
   --prop
   --rewriting
   --confluence-check
-  --hidden-argument-puns #-}
+  --hidden-argument-puns
+#-}
 
 module TT.SSC.Lift where
 
@@ -140,7 +141,7 @@ module []ᵛ→⁺^
       symᵈ (app-[]* (γ*₁ ⁺^*))
     []ᵛ→⁺^ᵗ₀ Ω-γ*₀₁ (lamᴺ Aᴺ _ bᴺ) =
       lam-[]* (γ*₀ ⁺^*) ∙ᵈ
-      apᵈ-lam
+      apᵈ-lam₄
         (ap-++ Ω-γ*₀₁)
         ([]ᵛ→⁺^ᵀ₀ Ω-γ*₀₁ Aᴺ)
         ([]ᵛ→⁺^ᵀᵗ₀ (ap-▹ᵀˡ Ω-γ*₀₁ ([]ᵛ→⁺^ᵀ₀ Ω-γ*₀₁ Aᴺ)) bᴺ)
