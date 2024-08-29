@@ -11,9 +11,9 @@ open import TT.Lib
 open import TT.SSC.Syntax
 
 private variable
-  i j : ℕ
-  Γ Δ : Con
-  γ : Sub Δ Γ
+  i i₀ i₁ j : ℕ
+  Γ Γ₀ Γ₁ Δ Δ₀ Δ₁ : Con
+  γ γ₀ γ₁ : Sub Δ Γ
   A A₀ A₁ B B₀ B₁ : Ty Γ i
   a a₀ a₁ b f α : Tm Γ A
 
@@ -160,7 +160,7 @@ module DM where
 
 record DModel : Set₁ where
   no-eta-equality
-  open DM
+  open DM using (Sorts; Core; Types)
 
   field
     sorts : Sorts
@@ -170,6 +170,34 @@ record DModel : Set₁ where
   open Sorts sorts public
   open Core core public
   open Types types public
+
+  private variable
+    Γᴹ Γᴹ₀ Γᴹ₁ Δᴹ₀ Δᴹ₁ : Conᴹ Γ
+    Aᴹ₀ Aᴹ₁ : Tyᴹ Γᴹ i A
+
+  opaque
+    unfolding coe
+
+    ap-Conᴹ : Γ₀ ≡ Γ₁ → Conᴹ Γ₀ ≡ Conᴹ Γ₁
+    ap-Conᴹ refl = refl
+
+    ap-Subᴹ₅ :
+      (Δ₀₁ : Δ₀ ≡ Δ₁) → Δᴹ₀ ≡[ ap-Conᴹ Δ₀₁ ] Δᴹ₁ →
+      (Γ₀₁ : Γ₀ ≡ Γ₁) → Γᴹ₀ ≡[ ap-Conᴹ Γ₀₁ ] Γᴹ₁ →
+      γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁ → Subᴹ Δᴹ₀ Γᴹ₀ γ₀ ≡ Subᴹ Δᴹ₁ Γᴹ₁ γ₁
+    ap-Subᴹ₅ refl refl refl refl refl = refl
+
+    ap-Tyᴹ₄ :
+      (Γ₀₁ : Γ₀ ≡ Γ₁) → Γᴹ₀ ≡[ ap-Conᴹ Γ₀₁ ] Γᴹ₁ → (i₀₁ : i₀ ≡ i₁) →
+      A₀ ≡[ ap-Ty₂ Γ₀₁ i₀₁ ] A₁ → Tyᴹ Γᴹ₀ i₀ A₀ ≡ Tyᴹ Γᴹ₁ i₁ A₁
+    ap-Tyᴹ₄ refl refl refl refl = refl
+
+    ap-Tmᴹ₆ :
+      (Γ₀₁ : Γ₀ ≡ Γ₁) (Γᴹ₀₁ : Γᴹ₀ ≡[ ap-Conᴹ Γ₀₁ ] Γᴹ₁) (i₀₁ : i₀ ≡ i₁) →
+      (A₀₁ : A₀ ≡[ ap-Ty₂ Γ₀₁ i₀₁ ] A₁) →
+      Aᴹ₀ ≡[ ap-Tyᴹ₄ Γ₀₁ Γᴹ₀₁ i₀₁ A₀₁ ] Aᴹ₁ →
+      a₀ ≡[ ap-Tm₃ Γ₀₁ i₀₁ A₀₁ ] a₁ → Tmᴹ Γᴹ₀ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ₁ Aᴹ₁ a₁
+    ap-Tmᴹ₆ refl refl refl refl refl refl = refl
 
 module Ind (M : DModel) where
   open DModel M
@@ -182,8 +210,38 @@ module Ind (M : DModel) where
   ⟦ ◇ ⟧ᶜ = ◇ᴹ
   ⟦ Γ ▹ A ⟧ᶜ = ⟦ Γ ⟧ᶜ ▹ᴹ ⟦ A ⟧ᵀ
 
+  opaque
+    unfolding coe
+    ap-⟦⟧ᶜ : (Γ₀₁ : Γ₀ ≡ Γ₁) → ⟦ Γ₀ ⟧ᶜ ≡[ ap-Conᴹ Γ₀₁ ] ⟦ Γ₁ ⟧ᶜ
+    ap-⟦⟧ᶜ refl = refl
+
+    ap-⟦⟧ᵀ :
+      (Γ₀₁ : Γ₀ ≡ Γ₁) (i₀₁ : i₀ ≡ i₁) (A₀₁ : A₀ ≡[ ap-Ty₂ Γ₀₁ i₀₁ ] A₁) →
+      ⟦ A₀ ⟧ᵀ ≡[ ap-Tyᴹ₄ Γ₀₁ (ap-⟦⟧ᶜ Γ₀₁) i₀₁ A₀₁ ] ⟦ A₁ ⟧ᵀ
+    ap-⟦⟧ᵀ refl refl refl = refl
+
+  postulate
+    ⟦⟧ᵀ-coe :
+      {e : Ty Γ₀ i₀ ≡ Ty Γ₁ i₁} →
+      ⟦ coe e A₀ ⟧ᵀ ↝
+      coe (ap-Tyᴹ₄ (Ty-inj-Γ e) (ap-⟦⟧ᶜ (Ty-inj-Γ e)) (Ty-inj-i e) refl) ⟦ A₀ ⟧ᵀ
+    {-# REWRITE ⟦⟧ᵀ-coe #-}
+
   postulate
     ⟦_⟧ᵗ : (a : Tm Γ A) → Tmᴹ ⟦ Γ ⟧ᶜ ⟦ A ⟧ᵀ a
+    ⟦⟧ᵗ-coe :
+      {e : Tm Γ₀ A₀ ≡ Tm Γ₁ A₁} →
+      ⟦ coe e a₀ ⟧ᵗ ↝
+      coe
+        (ap-Tmᴹ₆
+          (Tm-inj-Γ e)
+          (ap-⟦⟧ᶜ (Tm-inj-Γ e))
+          (Tm-inj-i e)
+          (Tm-inj-A e)
+          (ap-⟦⟧ᵀ (Tm-inj-Γ e) (Tm-inj-i e) (Tm-inj-A e))
+          refl)
+        ⟦ a₀ ⟧ᵗ
+    {-# REWRITE ⟦⟧ᵗ-coe #-}
 
   ⟦_⟧ˢ : (γ : Sub Δ Γ) → Subᴹ ⟦ Δ ⟧ᶜ ⟦ Γ ⟧ᶜ γ
 

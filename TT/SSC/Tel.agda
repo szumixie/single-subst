@@ -67,11 +67,11 @@ opaque
   ▹ᵀˡ-inj-Ω refl = refl
 
   ▹ᵀˡ-inj-i :
-    (Ω▹A₀₁ : (Ω₀ ▹ A₀ ∈ Ty (Γ ++ Ω₀) i₀) ≡ (Ω₁ ▹ A₁ ∈ Ty (Γ ++ Ω₁) i₁)) →
-    i₀ ≡ i₁
+    {A₀ : Ty (Γ ++ Ω₀) i₀} {A₁ : Ty (Γ ++ Ω₁) i₁} →
+    (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁) → i₀ ≡ i₁
   ▹ᵀˡ-inj-i refl = refl
 
   ▹ᵀˡ-inj-A :
-    (Ω▹A₀₁ : (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁)) →
-    A₀ ≡[ ap-Ty₂ (ap-++ (▹ᵀˡ-inj-Ω Ω▹A₀₁)) (▹ᵀˡ-inj-i Ω▹A₀₁) ] A₁
+    (e : (Ω₀ ▹ A₀) ≡ (Ω₁ ▹ A₁)) →
+    A₀ ≡[ ap-Ty₂ (ap-++ (▹ᵀˡ-inj-Ω e)) (▹ᵀˡ-inj-i e) ] A₁
   ▹ᵀˡ-inj-A refl = refl

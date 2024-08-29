@@ -174,7 +174,7 @@ module _ {a : Tm Γ A} {γ : Sub Δ Γ} where
     apᵈ-[]ᵗ p-⟨⟩ᵀ p-⟨⟩ᵗ ∙ᵈ symᵈ p-⟨⟩ᵗ ∙ᵈ apᵈ-[]ᵗ (sym p-⁺ᵀ) (symᵈ p-⁺ᵗ)
 
   open []ᵛ→⁺^ (⌜ ⟨ a ⟩ ⌝ ∘ ⌜ γ ⌝) (⌜ γ ⁺ ⌝ ∘ ⌜ ⟨ a [ γ ]ᵗ ⟩ ⌝) ⟨⟩-[]ᵀ ⟨⟩-[]ᵛ
-    public
+    public using ()
     renaming ([]ᵛ→[]ᵀˡ to ⟨⟩-[]ᵀˡ; []ᵛ→⁺^ᵀ to ⟨⟩-[]ᵀ-⁺^; []ᵛ→⁺^ᵗ to ⟨⟩-[]ᵗ-⁺^)
 
 ⟨⟩-[]ᵗ* :
@@ -190,5 +190,5 @@ module _ {A : Ty Γ i} where
   ▹-ηᵛ vz = symᵈ q-⟨⟩ ∙ᵈ apᵈ-[]ᵗ (sym p-⁺ᵀ) (symᵈ q-⁺)
   ▹-ηᵛ (vs cᵛ) = symᵈ p-⟨⟩ᵗ ∙ᵈ apᵈ-[]ᵗ (sym p-⁺ᵀ) (symᵈ p-⁺ᵗ)
 
-  open []ᵛ→⁺^ id (⌜ p ⁺ ⌝ ∘ ⌜ ⟨ q ⟩ ⌝) ▹-ηᵀ ▹-ηᵛ public
+  open []ᵛ→⁺^ id (⌜ p ⁺ ⌝ ∘ ⌜ ⟨ q ⟩ ⌝) ▹-ηᵀ ▹-ηᵛ public using ()
     renaming ([]ᵛ→[]ᵀˡ to ▹-ηᵀˡ; []ᵛ→⁺^ᵀ to ▹-ηᵀ-⁺^; []ᵛ→⁺^ᵗ to ▹-ηᵗ-⁺^)

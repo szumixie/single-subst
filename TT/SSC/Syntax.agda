@@ -56,14 +56,8 @@ opaque
   ap-Ty : Γ₀ ≡ Γ₁ → Ty Γ₀ i ≡ Ty Γ₁ i
   ap-Ty refl = refl
 
-  ap-Ty₂ : Γ₀ ≡ Γ₁ → i₀ ≡ i₁ → Ty Γ₀ i₀ ≡ Ty Γ₁ i₁
-  ap-Ty₂ refl refl = refl
-
   ap-Tm : (A₀₁ : A₀ ≡ A₁) → Tm Γ A₀ ≡ Tm Γ A₁
   ap-Tm refl = refl
-
-  ap-Tm₂ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁
-  ap-Tm₂ refl refl = refl
 
 postulate
   p-⁺ᵀ : B [ p ]ᵀ [ γ ⁺ ]ᵀ ≡ B [ γ ]ᵀ [ p ]ᵀ ∈ Ty (Δ ▹ A [ γ ]ᵀ) j
@@ -117,6 +111,17 @@ opaque
   ap-Sub : Δ₀ ≡ Δ₁ → Γ₀ ≡ Γ₁ → Sub Δ₀ Γ₀ ≡ Sub Δ₁ Γ₁
   ap-Sub refl refl = refl
 
+  postulate
+    Sub-inj-Δ : Sub Δ₀ Γ₀ ≡ Sub Δ₁ Γ₁ → Δ₀ ≡ Δ₁
+    Sub-inj-Γ : Sub Δ₀ Γ₀ ≡ Sub Δ₁ Γ₁ → Γ₀ ≡ Γ₁
+
+  ap-Ty₂ : Γ₀ ≡ Γ₁ → i₀ ≡ i₁ → Ty Γ₀ i₀ ≡ Ty Γ₁ i₁
+  ap-Ty₂ refl refl = refl
+
+  postulate
+    Ty-inj-Γ : Ty Γ₀ i₀ ≡ Ty Γ₁ i₁ → Γ₀ ≡ Γ₁
+    Ty-inj-i : Ty Γ₀ i₀ ≡ Ty Γ₁ i₁ → i₀ ≡ i₁
+
   ap-[]ᵀ : A₀ ≡ A₁ → A₀ [ γ ]ᵀ ≡ A₁ [ γ ]ᵀ
   ap-[]ᵀ refl = refl
 
@@ -130,6 +135,20 @@ opaque
     (Δ₀₁ : Δ₀ ≡ Δ₁) → γ₀ ≡[ ap-Sub Δ₀₁ Γ₀₁ ] γ₁ →
     A₀ [ γ₀ ]ᵀ ≡[ ap-Ty Δ₀₁ ] A₁ [ γ₁ ]ᵀ
   apᵈ-[]ᵀ refl refl refl refl = refl
+
+  ap-Tm₂ : (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁
+  ap-Tm₂ refl refl = refl
+
+  ap-Tm₃ :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) (i₀₁ : i₀ ≡ i₁) →
+    A₀ ≡[ ap-Ty₂ Γ₀₁ i₀₁ ] A₁ → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁
+  ap-Tm₃ refl refl refl = refl
+
+  postulate
+    Tm-inj-Γ : Tm Γ₀ A₀ ≡ Tm Γ₁ A₁ → Γ₀ ≡ Γ₁
+    Tm-inj-i : {A₀ : Ty Γ₀ i₀} {A₁ : Ty Γ₁ i₁} → Tm Γ₀ A₀ ≡ Tm Γ₁ A₁ → i₀ ≡ i₁
+    Tm-inj-A :
+      (e : Tm Γ₀ A₀ ≡ Tm Γ₁ A₁) → A₀ ≡[ ap-Ty₂ (Tm-inj-Γ e) (Tm-inj-i e) ] A₁
 
   apᵈ-[]ᵗ :
     (A₀₁ : A₀ ≡ A₁) →

@@ -142,14 +142,14 @@ module norm where
   M .sorts .Tyᴹ _ _ A = Lift (NTy _ _ A)
   M .sorts .Tmᴹ _ _ a = Lift (NTm _ _ a)
 
-  M .core ._[_]ᵀᴹ (lift Aᴺ) γᴺ = lift (Aᴺ [ γᴺ ]ᵀᴺ)
-  M .core ._[_]ᵗᴹ (lift aᴺ) γᴺ = lift (aᴺ [ γᴺ ]ᵗᴺ)
+  M .core ._[_]ᵀᴹ (lift Aᴺ) γᴺ .lower = Aᴺ [ γᴺ ]ᵀᴺ
+  M .core ._[_]ᵗᴹ (lift aᴺ) γᴺ .lower = aᴺ [ γᴺ ]ᵗᴺ
 
   M .core .◇ᴹ = ⋆
   M .core ._▹ᴹ_ _ _ = ⋆
 
   M .core .pᴹ = wk p
-  M .core .qᴹ = lift (var vz)
+  M .core .qᴹ .lower = var vz
 
   M .core ._⁺ᴹ = _⁺ᴺ
   M .core .p-⁺ᵀᴹ = refl
@@ -166,26 +166,26 @@ module norm where
   M .core .⟨⟩-[]ᵀᴹ = refl
   M .core .▹-ηᵀᴹ = refl
 
-  M .types .Uᴹ i = lift (Uᴺ i)
+  M .types .Uᴹ i .lower = Uᴺ i
   M .types .U-[]ᴹ = refl
 
-  M .types .Elᴹ (lift αᴺ) = lift (Elᴺ αᴺ)
+  M .types .Elᴹ (lift αᴺ) .lower = Elᴺ αᴺ
   M .types .El-[]ᴹ = refl
 
-  M .types .cᴹ (lift Aᴺ) = lift (cᴺ Aᴺ)
+  M .types .cᴹ (lift Aᴺ) .lower = cᴺ Aᴺ
   M .types .c-[]ᴹ = refl
 
   M .types .U-βᴹ = refl
   M .types .U-ηᴹ = refl
 
-  M .types .Πᴹ (lift Aᴺ) (lift Bᴺ) = lift (Πᴺ Aᴺ Bᴺ)
+  M .types .Πᴹ (lift Aᴺ) (lift Bᴺ) .lower = Πᴺ Aᴺ Bᴺ
   M .types .Π-[]ᴹ = refl
 
-  M .types .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) =
-    lift (appᴺ Aᴺ Bᴺ fᴺ aᴺ)
+  M .types .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) .lower =
+    appᴺ Aᴺ Bᴺ fᴺ aᴺ
   M .types .app-[]ᴹ = refl
 
-  M .types .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) = lift (lamᴺ Aᴺ Bᴺ bᴺ)
+  M .types .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) .lower = lamᴺ Aᴺ Bᴺ bᴺ
   M .types .lam-[]ᴹ = refl
 
   M .types .Π-βᴹ = refl
@@ -193,8 +193,7 @@ module norm where
 
   open Ind M public
 
-normˢ : (γ : Sub Δ Γ) → NSub Δ Γ γ
-normˢ γ = norm.⟦ γ ⟧ˢ
+open norm public using () renaming (⟦_⟧ˢ to normˢ)
 
 normᵀ : (A : Ty Γ i) → NTy Γ i A
 normᵀ A = norm.⟦ A ⟧ᵀ .lower

@@ -2,15 +2,16 @@
   --without-K
   --prop
   --rewriting
-  --confluence-check #-}
+  --confluence-check
+#-}
 
 module TT.Lib where
 
 open import Agda.Primitive public
 
 private variable
-  ℓ ℓ₁ ℓ₂ : Level
-  A A₀ A₁ B : Set ℓ
+  ℓ : Level
+  A A₀ A₁ : Set ℓ
   P₀ P₁ : Prop ℓ
   a a₀ a₁ a₂ a₃ : A
 
@@ -57,9 +58,6 @@ opaque
   coe : A₀ ≡ A₁ → A₀ → A₁
   coe = coe₀
 
-  coe-refl : coe refl a ≡ a
-  coe-refl = refl
-
 private variable
   A₀₁ A₁₂ A₂₁ A₃₂ : A₀ ≡ A₁
 
@@ -86,9 +84,6 @@ opaque
   undep : a₀ ≡[ refl ] a₁ → a₀ ≡ a₁
   undep a₀₁ = a₀₁
 
-  merger : a₀ ≡[ A₀₁ ] coe A₂₁ a₂ → a₀ ≡[ A₀₁ ∙ sym A₂₁ ] a₂
-  merger {A₀₁ = refl} {A₂₁ = refl} a₀₂ = a₀₂
-
   splitl : a₀ ≡[ A₀₁ ∙ A₁₂ ] a₂ → coe A₀₁ a₀ ≡[ A₁₂ ] a₂
   splitl {A₀₁ = refl} a₀₂ = a₀₂
 
@@ -98,6 +93,9 @@ opaque
   splitlr : a₀ ≡[ A₀₁ ∙ A₁₂ ∙ sym A₃₂ ] a₃ → coe A₀₁ a₀ ≡[ A₁₂ ] coe A₃₂ a₃
   splitlr {A₀₁ = refl} {A₁₂ = refl} {A₃₂ = refl} a₀₃ = a₀₃
 
+  merger : a₀ ≡[ A₀₁ ] coe A₂₁ a₂ → a₀ ≡[ A₀₁ ∙ sym A₂₁ ] a₂
+  merger {A₀₁ = refl} {A₂₁ = refl} a₀₂ = a₀₂
+
 record ⊤ : Set where
   eta-equality
   constructor ⋆
@@ -105,3 +103,10 @@ record ⊤ : Set where
 data ℕ : Set where
   zero : ℕ
   suc : ℕ → ℕ
+
+record Iso (A B : Set ℓ) : Set ℓ where
+  field
+    to : A → B
+    from : B → A
+    invl : {a : A} → from (to a) ≡ a
+    invr : {b : B} → to (from b) ≡ b

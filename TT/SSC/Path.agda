@@ -12,7 +12,7 @@ open import TT.SSC.Syntax
 
 private variable
   i j : ℕ
-  Γ Γ₀ Γ₁ Δ Δ₀ Δ₁ Θ Θ₀ Θ₁ : Con
+  Γ Γ₀ Γ₁ Δ Δ₀ Δ₁ Θ : Con
   γ : Sub Δ Γ
   A A₀ A₁ B : Ty Γ i
   a a₀ a₁ b f α : Tm Γ A
