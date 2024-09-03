@@ -11,6 +11,7 @@ module TT.Isomorphism where
 open import TT.Lib
 import TT.CwF.Syntax as CwF
 import TT.SSC.Syntax as SSC
+import TT.SSC.Parallel as SSC
 open import TT.SSC-CwF
 open import TT.CwF-SSC
 open import TT.SSC-CwF-SSC
@@ -19,7 +20,7 @@ open Iso
 
 private variable
   i : ℕ
-  Γ : SSC.Con
+  Γ Δ : SSC.Con
   A : SSC.Ty Γ i
 
 isoᶜ : Iso SSC.Con CwF.Con
@@ -39,3 +40,9 @@ isoᵗ .to = S→Cᵗ
 isoᵗ .from a = coe (SSC.ap-Tm₂ S→C→Sᶜ S→C→Sᵀ) (C→Sᵗ a)
 isoᵗ .invl = S→C→Sᵗ
 isoᵗ .invr = C→S→Cᵗ
+
+isoˢ : Iso (SSC.Tms Δ Γ) (CwF.Sub (S→Cᶜ Δ) (S→Cᶜ Γ))
+isoˢ .to = T→C
+isoˢ .from γ = coe (SSC.ap-Tms S→C→Sᶜ S→C→Sᶜ) (C→T γ)
+isoˢ .invl = T→C→T
+isoˢ .invr = undep (apᵈ-T→C (sym S→C→Sᶜ) (sym S→C→Sᶜ) (splitl reflᵈ) ∙ᵈ C→T→C)

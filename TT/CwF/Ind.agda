@@ -322,19 +322,21 @@ module Ind (M : DModel) where
 
   opaque
     unfolding coe
-    ap-⟦⟧ᶜ : (Γ₀₁ : Γ₀ ≡ Γ₁) → ⟦ Γ₀ ⟧ᶜ ≡[ ap-Conᴹ Γ₀₁ ] ⟦ Γ₁ ⟧ᶜ
-    ap-⟦⟧ᶜ refl = refl
+    apᵈ-⟦⟧ᶜ : (Γ₀₁ : Γ₀ ≡ Γ₁) → ⟦ Γ₀ ⟧ᶜ ≡[ ap-Conᴹ Γ₀₁ ] ⟦ Γ₁ ⟧ᶜ
+    apᵈ-⟦⟧ᶜ refl = refl
 
-    ap-⟦⟧ᵀ :
+    apᵈ-⟦⟧ᵀ :
       (Γ₀₁ : Γ₀ ≡ Γ₁) (i₀₁ : i₀ ≡ i₁) (A₀₁ : A₀ ≡[ ap-Ty₂ Γ₀₁ i₀₁ ] A₁) →
-      ⟦ A₀ ⟧ᵀ ≡[ ap-Tyᴹ₄ Γ₀₁ (ap-⟦⟧ᶜ Γ₀₁) i₀₁ A₀₁ ] ⟦ A₁ ⟧ᵀ
-    ap-⟦⟧ᵀ refl refl refl = refl
+      ⟦ A₀ ⟧ᵀ ≡[ ap-Tyᴹ₄ Γ₀₁ (apᵈ-⟦⟧ᶜ Γ₀₁) i₀₁ A₀₁ ] ⟦ A₁ ⟧ᵀ
+    apᵈ-⟦⟧ᵀ refl refl refl = refl
 
   postulate
     ⟦⟧ᵀ-coe :
       {e : Ty Γ₀ i₀ ≡ Ty Γ₁ i₁} →
       ⟦ coe e A₀ ⟧ᵀ ↝
-      coe (ap-Tyᴹ₄ (Ty-inj-Γ e) (ap-⟦⟧ᶜ (Ty-inj-Γ e)) (Ty-inj-i e) refl) ⟦ A₀ ⟧ᵀ
+      coe
+        (ap-Tyᴹ₄ (Ty-inj-Γ e) (apᵈ-⟦⟧ᶜ (Ty-inj-Γ e)) (Ty-inj-i e) refl)
+        ⟦ A₀ ⟧ᵀ
     {-# REWRITE ⟦⟧ᵀ-coe #-}
 
   postulate
@@ -345,9 +347,9 @@ module Ind (M : DModel) where
       coe
         (ap-Subᴹ₅
           (Sub-inj-Δ e)
-          (ap-⟦⟧ᶜ (Sub-inj-Δ e))
+          (apᵈ-⟦⟧ᶜ (Sub-inj-Δ e))
           (Sub-inj-Γ e)
-          (ap-⟦⟧ᶜ (Sub-inj-Γ e))
+          (apᵈ-⟦⟧ᶜ (Sub-inj-Γ e))
           refl)
         ⟦ γ₀ ⟧ˢ
     {-# REWRITE ⟦⟧ˢ-coe  #-}
@@ -368,10 +370,10 @@ module Ind (M : DModel) where
       coe
         (ap-Tmᴹ₆
           (Tm-inj-Γ e)
-          (ap-⟦⟧ᶜ (Tm-inj-Γ e))
+          (apᵈ-⟦⟧ᶜ (Tm-inj-Γ e))
           (Tm-inj-i e)
           (Tm-inj-A e)
-          (ap-⟦⟧ᵀ (Tm-inj-Γ e) (Tm-inj-i e) (Tm-inj-A e))
+          (apᵈ-⟦⟧ᵀ (Tm-inj-Γ e) (Tm-inj-i e) (Tm-inj-A e))
           refl)
         ⟦ a₀ ⟧ᵗ
     {-# REWRITE ⟦⟧ᵗ-coe #-}

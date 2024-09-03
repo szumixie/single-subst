@@ -15,6 +15,7 @@ open import TT.SSC.Path
 open import TT.SSC.Tel
 open import TT.SSC.Lift
 open import TT.SSC.Parallel
+import TT.CwF.Syntax as C
 open import TT.SSC-CwF
 open import TT.CwF-SSC
 
@@ -35,9 +36,9 @@ module S→C→S where
     where
     eta-equality
     field
-      ty : A [ coe (ap-Tms refl Γᴹ) (C→Sˢ (S→Cˢ γ)) ]ᵀᵗ ≡[ ap-Ty Δᴹ ] A [ γ ]ᵀ
+      ty : A [ coe (ap-Tms refl Γᴹ) (C→T (S→Cˢ γ)) ]ᵀᵗ ≡[ ap-Ty Δᴹ ] A [ γ ]ᵀ
       tm :
-        a [ coe (ap-Tms refl Γᴹ) (C→Sˢ (S→Cˢ γ)) ]ᵗᵗ ≡[ ap-Tm₂ Δᴹ ty ] a [ γ ]ᵗ
+        a [ coe (ap-Tms refl Γᴹ) (C→T (S→Cˢ γ)) ]ᵗᵗ ≡[ ap-Tm₂ Δᴹ ty ] a [ γ ]ᵗ
 
   open Subᴹ
 
@@ -65,9 +66,9 @@ module S→C→S where
     apᵈ-[]ᵀᵗᵣ
       (ap-▹ Δᴹ (apᵈ-[]ᵀᵗ Γᴹ Aᴹ Δᴹ refl))
       (splitl (apᵈ-⁺ᵗ Δᴹ Γᴹ refl Aᴹ)) ∙ᵈ
-    dep ([]ᵀ-⁺ᵗ (coe _ (C→Sˢ (S→Cˢ γ)))) ∙ᵈ
+    dep ([]ᵀ-⁺ᵗ (coe _ (C→T (S→Cˢ γ)))) ∙ᵈ
     []ᵛ→⁺^ᵀ
-      ⌞ coe _ (C→Sˢ (S→Cˢ γ)) ⌟
+      ⌞ coe _ (C→T (S→Cˢ γ)) ⌟
       ⌜ γ ⌝
       (undep (apᵈ-[]ᵀᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .ty))
       (λ _ → apᵈ-[]ᵗᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .tm)
@@ -76,9 +77,9 @@ module S→C→S where
     apᵈ-[]ᵗᵗᵣ
       (ap-▹ Δᴹ (apᵈ-[]ᵀᵗ Γᴹ Aᴹ Δᴹ refl))
       (splitl (apᵈ-⁺ᵗ Δᴹ Γᴹ refl Aᴹ)) ∙ᵈ
-    []ᵗ-⁺ᵗ (coe _ (C→Sˢ (S→Cˢ γ))) ∙ᵈ
+    []ᵗ-⁺ᵗ (coe _ (C→T (S→Cˢ γ))) ∙ᵈ
     []ᵛ→⁺^ᵗ
-      ⌞ coe _ (C→Sˢ (S→Cˢ γ)) ⌟
+      ⌞ coe _ (C→T (S→Cˢ γ)) ⌟
       ⌜ γ ⌝
       (undep (apᵈ-[]ᵀᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .ty))
       (λ _ → apᵈ-[]ᵗᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .tm)
@@ -130,9 +131,10 @@ module S→C→S where
 
 private variable
   i : ℕ
-  Γ : Con
+  Γ Δ : Con
   A : Ty Γ i
   a : Tm Γ A
+  γᵗ : Tms Δ Γ
 
 S→C→Sᶜ : C→Sᶜ (S→Cᶜ Γ) ≡ Γ
 S→C→Sᶜ {Γ = Γ} = S→C→S.⟦ Γ ⟧ᶜ .lower
@@ -142,3 +144,8 @@ S→C→Sᵀ {A = A} = S→C→S.⟦ A ⟧ᵀ .lower
 
 S→C→Sᵗ : C→Sᵗ (S→Cᵗ a) ≡[ ap-Tm₂ S→C→Sᶜ S→C→Sᵀ ] a
 S→C→Sᵗ {a = a} = S→C→S.⟦ a ⟧ᵗ .lower
+
+T→C→T : C→T (T→C γᵗ) ≡[ ap-Tms S→C→Sᶜ S→C→Sᶜ ] γᵗ
+T→C→T {Γ} {γᵗ = ε} = dep (ap-C→T (T→C-ε Γ)) ∙ᵈ apᵈ-ε S→C→Sᶜ
+T→C→T {γᵗ = γᵗ , a} =
+  dep (ap-C→T (T→C-, γᵗ a)) ∙ᵈ apᵈ-, S→C→Sᶜ S→C→Sᶜ T→C→T S→C→Sᵀ (splitl S→C→Sᵗ)

@@ -416,6 +416,16 @@ opaque
     a [ γᵗ₀ ]ᵗᵗ ≡[ ap-Tm₂ Δ₀₁ (apᵈ-[]ᵀᵗᵣ Δ₀₁ γᵗ₀₁) ] a [ γᵗ₁ ]ᵗᵗ
   apᵈ-[]ᵗᵗᵣ refl refl = refl
 
+  apᵈ-ε : (Γ₀₁ : Γ₀ ≡ Γ₁) → ε ≡[ ap-Tms Γ₀₁ refl ] ε
+  apᵈ-ε refl = refl
+
+  apᵈ-, :
+    (Δ₀₁ : Δ₀ ≡ Δ₁) (Γ₀₁ : Γ₀ ≡ Γ₁) (γᵗ₀₁ : γᵗ₀ ≡[ ap-Tms Δ₀₁ Γ₀₁ ] γᵗ₁) →
+    (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
+    a₀ ≡[ ap-Tm₂ Δ₀₁ (apᵈ-[]ᵀᵗ Γ₀₁ A₀₁ Δ₀₁ γᵗ₀₁) ] a₁ →
+    (γᵗ₀ , a₀) ≡[ ap-Tms Δ₀₁ (ap-▹ Γ₀₁ A₀₁) ] (γᵗ₁ , a₁)
+  apᵈ-, refl refl refl refl refl = refl
+
   apᵈ-pᵗ :
     (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
     pᵗ ≡[ ap-Tms (ap-▹ Γ₀₁ A₀₁) Γ₀₁ ] pᵗ

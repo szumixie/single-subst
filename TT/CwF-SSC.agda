@@ -11,6 +11,7 @@ module TT.CwF-SSC where
 open import TT.Lib
 open import TT.SSC.Syntax
 open import TT.SSC.Parallel
+import TT.CwF.Syntax as C
 open import TT.CwF.Ind
 
 module C→S where
@@ -81,4 +82,11 @@ module C→S where
   open Ind M public
 
 open C→S public using ()
-  renaming (⟦_⟧ᶜ to C→Sᶜ; ⟦_⟧ˢ to C→Sˢ; ⟦_⟧ᵀ to C→Sᵀ; ⟦_⟧ᵗ to C→Sᵗ)
+  renaming (⟦_⟧ᶜ to C→Sᶜ; ⟦_⟧ˢ to C→T; ⟦_⟧ᵀ to C→Sᵀ; ⟦_⟧ᵗ to C→Sᵗ)
+
+private variable
+  Γ Δ : C.Con
+  γ₀ γ₁ : C.Sub Δ Γ
+
+ap-C→T : γ₀ ≡ γ₁ → C→T γ₀ ≡ C→T γ₁
+ap-C→T refl = refl
