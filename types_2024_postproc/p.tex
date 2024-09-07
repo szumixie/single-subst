@@ -1,56 +1,58 @@
-\documentclass[a4paper]{article}
+\documentclass[sigplan,10pt,anonymous,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
-\usepackage{cite}
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{hyperref}
+\newcommand{\Ty}{\mathsf{Ty}}
+\newcommand{\Tm}{\mathsf{Tm}}
+\newcommand{\p}{\mathsf{p}}
+\newcommand{\q}{\mathsf{q}}
+\newcommand{\ext}{\mathop{\triangleright}}
 
 \begin{document}
 
 \title{Type theory in type theory with single substitutions}
 \author{Ambrus Kaposi and Szumi Xie}
 \date{\today}
-\maketitle
 
 \begin{abstract}
-Type theory can be described as a generalised algebraic theory which
+Type theory can be described as a generalised algebraic theory. This
 automatically gives a notion of model and the existence of the syntax
 as the initial model, which is a quotient inductive-inductive
-type. Such descriptions include Ehrhard's definition of model,
-categories with families (CwF), contextual categories, Awodey's
-natural models, C-systems and B-systems. With the exception of
-B-systems, these notions are based on a parallel substitution calculus
-where substitutions form a category. In this paper we define a single
-substitution calculus (SSC) for type theory and show that the SSC
-syntax and the CwF syntax are isomorphic for a theory with dependent
-function space and universe. SSC only includes single substitutions
-and single weakenings, and six equations relating these. Four
-equations describe how to substitute variables, and two more equations
-are needed to typecheck these four equations. SSC provides a simple,
-minimalistic alternative to parallel substitution calculi or B-systems
-for defining type theory. All the results in this paper were
-formalised in Agda.
+type. Algebraic definitions of type theory include Ehrhard's
+definition of model, categories with families (CwFs), contextual
+categories, Awodey's natural models, C-systems, B-systems. With the
+exception of B-systems, these notions are based on a parallel
+substitution calculus where substitutions form a category. In this
+paper we define a single substitution calculus (SSC) for type theory
+and show that the SSC syntax and the CwF syntax are isomorphic for a
+theory with dependent function space and a hierarchy of universes. SSC
+only includes single substitutions and single weakenings, and eight
+equations relating these: four equations describe how to substitute
+variables, and there are four equations on types which are needed to
+typecheck other equations. All the other equations are substitution
+(naturality) rules or computation rules for different type
+formers. SSC provides a simple, minimalistic alternative to parallel
+substitution calculi or B-systems for defining type theory. SSC
+relates to CwF as extensional combinatory calculus relates to lambda
+calculus. All the results in this paper were formalised in Agda.
 \end{abstract}
+
+\maketitle
 
 \section{Introduction}
 
-\cite{singleTypes}
-\cite{coquandEhrhard}
-
-What is type theory? This term can refer to formal systems (languages,
-type systems, type theories) or to the field of study of type
-theories. In this paper, we will give an answer to this question in
-the form of a concrete formal system. We aim for simplicity and ease
-of understanding: we only require a working knowledge of Agda, a
-functional programming language which is an implementation of type
-theory. Our metatheory in which this paper is written is thus type
-theory, and everything is formalised in Agda.
+What is type theory? Here we refer to type theory as a particular
+formal system based on Martin-Löf's original definition
+\cite{martinlof73predicative}, and not to the field studying type
+systems (e.g.\ \cite{DBLP:books/daglib/0005958}). When
+answering this question, we aim for simplicity and ease of
+understanding. We only require a working knowledge of an
+implementation of type theory such as Agda. Our metatheory in which
+this paper is written is thus type theory, and everything is
+formalised in Agda.
 
 The traditional way of defining a programming language formally
-\cite{DBLP:books/daglib/0005958,DBLP:books/cu/Ha2016,Pierce:SF1,plfa22.08}
-is comprised of three steps: (i) definition of the presyntax
-(abstract syntax trees, ASTs) as a formal grammar; (ii) specification of
+\cite{DBLP:books/cu/Ha2016,Pierce:SF2,plfa22.08} is comprised of three
+steps: (i) definition of the presyntax (abstract syntax trees, ASTs)
+as a formal grammar; (ii) specification of
 well-formedness/well-typedness relations saying which ASTs are
 well-behaved; (iii) specification of rewriting/conversion relations
 explaining how programs are executed. Instead of following this route,
@@ -58,45 +60,102 @@ we use the intrinsic approach
 \cite{DBLP:conf/csl/AltenkirchR99,DBLP:conf/popl/AltenkirchK16}: (i)
 we define ASTs as an inductive type instead of production rules of a
 grammar; (ii) terms are indexed by (object theoretic) types, thus only
-allowing ASTs to be plugged together in well-typed ways; (iii) terms
-are quotiented by conversion rules, making convertible terms
-equal. Inductive types which allow such mutual indexing and
-quotienting are called quotient inductive-inductive types (QIITs
-\cite{DBLP:journals/pacmpl/KaposiKA19}). As Agda does not support them
-directly, we postulate their constructors and induction principle and add the
-computation rules using rewrite rules \cite{DBLP:conf/types/Cockx19}.
+allowing ASTs to be built in well-typed ways; (iii) terms are
+quotiented by conversion rules, making convertible terms equal. The
+advantage of the intrinsic approach that it provides shorter, easier
+to understand, less technical definitions, and there is no separation
+between syntax and semantics. Type theory is a generalised algebraic
+theory (GAT \cite{DBLP:journals/apal/Cartmell86}), the notion of model
+is direct, and the syntax is simply the initial model. GATs are
+generalisations of single-sorted algebraic theories (such as monoids,
+groups) to multiple sorts where later sorts can be indexed over
+previous sorts. A typical example is categories with a sorts of
+objects and a sort of morphisms double-indexed over objects. The
+initial model of a GAT is a quotient inductive-inductive type (QIIT
+\cite{DBLP:journals/pacmpl/KaposiKA19}). QIITs are a general family of
+inductive types where multiple types are defined mutually, later types
+can be indexed over previous ones, and equality constructors are also
+allowed, generalising quotients. The elimination principle of the QIIT
+corresponds to a structural induction principle for the QIIT and is
+equivalent to the statement that the syntax is the initial model
+\cite{DBLP:journals/pacmpl/KaposiKA19}, that is, there is a unique
+morphism from the syntax to any other model.
 
-A QIIT is also the initial algebra/model of a generalised algebraic
-theory (GAT \cite{DBLP:journals/apal/Cartmell86}). The induction principle of
-the QIIT is equivalent to having a unique morphism into any model
-\cite{DBLP:journals/pacmpl/KaposiKA19}. There are several ways to
-define type theory as a GAT: categories with families (CwFs
-\cite{DBLP:journals/corr/abs-1904-00827}), contextual categories
-\cite{DBLP:journals/apal/Cartmell86}, natural models
-\cite{DBLP:journals/mscs/Awodey18}, C-systems and B-systems
-\cite{ahrens_emmenegger_north_rijke_2023}. When extracting a QIIT from
-a GAT, with the exception of B-systems, we obtain parallel
-substitution calculi. Like B-systems, in this paper we define type
-theory using \emph{single substitutions}. Our definition is simpler
-than B-systems, but it is closely related to it. It is a minimalistic
-presentation where every operation and equation is well-motivated (see
-Section \ref{sec:SSC}). However, when we want to use our syntax (for
-example, if we want to prove canonicity or normalisation for our
-theory), it is much more convenient to use parallel substitution
-calculi such as CwFs. We first show how to get rid of explicit
-substitutions from the syntax using the technique of
-$\alpha$-normalisation (Section \ref{sec:alpha}). Then we show how to
-derive the rules of a CwF from our syntax (Section
-\ref{sec:cwf}). Finally, we show that our syntax is isomorphic to the
-CwF-style syntax (Section \ref{sec:iso}). We list related work and
-conclude in Section \ref{sec:conclusion}.
+There are several ways to define type theory as a GAT. For example,
+Thomas Ehrhard's calculus \cite{ehrhard,coquandEhrhard}, Dybjer's
+categories with families (CwFs
+\cite{DBLP:conf/types/Dybjer95,Castellan2021}), contextual categories
+or C-systems
+\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
+natural models \cite{DBLP:journals/mscs/Awodey18}, B-systems
+\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. These are providing the
+basic substitution calculus part of the theory, and individual type
+formers (such as function space or product types) have to be specified
+separately. With the exception of B-systems, the listed definitions
+are all based on parallel substitution calculi, where contexts and
+substitutions form a category. Like B-systems, in this paper we define
+type theory using \emph{single substitutions}. Single substitutions
+don't compose, so they do not form a category. Our definition is
+simpler than B-systems, but it is closely related to it. It is a
+minimalistic presentation where every operation and equation is
+well-motivated (see Section \ref{sec:ssc}). In addition to its
+pedagogical value due to its simplicity, our definition might
+contribute in the future to a possible coherent syntax for type
+theory, see Section \ref{sec:conclusion}.
+
+Our theory is in fact a bit too minimalistic to be workable: for
+example, consider a term $b$ which depends on a context $\Gamma$ and
+an extra variable of type $A$, that is, $b : \Tm\,(\Gamma\ext
+A)\,B$. We can weaken $b$ so that we add an extra $A$ variable
+\emph{before} the last one obtaining $b[\p^+] : Tm\,(\Gamma\ext A\ext
+A[\p])\,(B[\p])$ where $\p$ is the weakening substitution. Then, we
+instantiate the last $A[\p]$ variable in the context by the previous
+$A$ obtaining $b[\p^+][\langle\q\rangle]$ where $\q$ is De Bruijn
+index $0$. We cannot derive $b[\p^+][\langle\q\rangle] = b$ in an
+arbitrary model, but this equation is admissible in the \emph{syntax}.
+% p⁺  : Sub (Γ▹A▹A[p]) (Γ▹A)
+% ⟨q⟩ : Sub (Γ▹A) (Γ▹A▹A[p])
+This is analogous to e.g.\ parametricity results
+\cite{DBLP:journals/jfp/BernardyJP12}, which do not hold in an
+arbitrary model, but they hold for syntactic terms. In fact, all the
+operations and equations of the parallel substitution calculus (CwF)
+are admissible in our syntax, moreover the set of single substitution
+based syntactic terms are isomorphic to the set of CwF-based
+terms. Every CwF-based model is also a model of our single
+substitution calculus, but not the other way: there are more
+SSC-models than CwF-models. The situation is analogous to that of
+extensional combinatory calculus and lambda calculus
+\cite{DBLP:conf/fscd/AltenkirchKSV23}: the syntactic terms form
+isomorphic sets, but there are more combinatory models than lambda
+calculus models.
+
+TODO: rewrite from here. Add: discussion of type formers, SOGATs and say that we only do this
+for an example t.t. and not for all of them. We conjecture that for
+any SOGAT, the SSC and CwF-based syntaxes are equivalent.
+
+The summary of the above discussion: we define a new minimal syntax
+for type theory which is equivalent to the original syntax, but
+
+We first show how to get rid of explicit substitutions from the syntax
+using the technique of $\alpha$-normalisation (Section
+\ref{sec:alpha}). Then we show how to derive the rules of a CwF from
+our syntax (Section \ref{sec:cwf}). Finally, we show that our syntax
+is isomorphic to the CwF-style syntax (Section \ref{sec:iso}). We list
+related work and conclude in Section \ref{sec:conclusion}.
 
 Our main contribution is the novel definition of a minimalistic single
 substitution calculus, the $\alpha$-normalisation algorithm which can
 be useful for other explicit substitution calculi, and finally our
 proof of equivalence with the CwF-style syntax.
 
+% TODO: say that this is the paper version of the \cite{singleTypes}
+% paper
+
 \subsection{Formalisation}
+
+As Agda does not support them directly, we postulate their
+constructors and induction principle and add the computation rules
+using rewrite rules \cite{DBLP:conf/types/Cockx19}.
 
 Notation and formalisation techniques.
 
@@ -113,7 +172,8 @@ In this section we show that a category with families (CwF) equipped
 with a hierarchy of Coquand-universes and $\Pi$ types can be derived
 from the single substitution syntax defined in \autoref{sec:ssc}.
 
-\section{Related work and conclusion}
+\section{Conclusions}
+\label{sec:conclusion}
 
 In this paper we introduced a new single substitution calculus which
 can be seen as a minimalistic variant of B-systems. We illustrate its
