@@ -4,6 +4,8 @@
 \newcommand{\Set}{\mathsf{Set}}
 \newcommand{\Ty}{\mathsf{Ty}}
 \newcommand{\Tm}{\mathsf{Tm}}
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Sub}{\mathsf{Sub}}
 \newcommand{\p}{\mathsf{p}}
 \newcommand{\q}{\mathsf{q}}
 \newcommand{\ext}{\mathop{\triangleright}}
@@ -13,6 +15,7 @@
 \newcommand{\U}{\mathsf{U}}
 \newcommand{\El}{\mathsf{El}}
 \newcommand{\cd}{\mathsf{c}}
+\newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}} %from the book
 
 \begin{document}
 
@@ -135,7 +138,21 @@ calculus and lambda calculus \cite{DBLP:conf/fscd/AltenkirchKSV23}:
 the syntactic terms form isomorphic sets, but there are more
 combinatory models than lambda calculus models.
 
-In this paper, we define the SSC and show how it can be extended with
+We define the parallel substitution calculus operations by induction
+on the SSC-syntax. One of our constructors is the instantiation
+operation of single substitutions: $\blank[\blank] :
+\Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta$, and similarly for
+terms. When doing induction on terms, we always have to provide a
+method for these constructors, but this can be difficult as
+substitutions don't compose. This is why we derive a new induction
+principle which works on $\alpha$-normal forms. Just as $\beta$-normal
+forms don't distinguish between $\beta$-equal terms, $\alpha$-normal
+forms don't include explicit substitutions, all the variables are
+instantiated. $\alpha$-normal forms are not usual normal forms in the
+sense that they are still quotiented by the computation/uniqueness
+rules like $\beta$/$\eta$ for function space.
+
+In this paper, we define the SSC and extend it with
 $\Pi$ types and a hierarchy of Coquand-universes
 \cite{coquandUniverse}. The rules for type formers are the same as for
 CwFs, the difference is only in the substitution calculus part. More
@@ -157,35 +174,35 @@ We conjecture that the methods of in this paper can be used to show
 that for any SOGAT, the two first-order presentations give isomorphic
 syntaxes.
 
-TODO: say something about alpha-normalisation.
-
 To summarise, our contributions are the following:
 \begin{itemize}
 \item A new generalised algebraic presentation of type theory in the
-  form of a minimalistic single substitution calculus.
+  form of a minimalistic single substitution calculus (SSC).
 \item The $\alpha$-normalisation technique which is useful for working
   with explicit substitution calculi.
-\item The proof of equivalence with the parallel, CwF-based syntax.
+\item The proof of equivalence of the SSC-syntax with the CwF-based
+  syntax.
 \end{itemize}
 
 \subsection{Structure of the paper}
 
-In Section \ref{sec:ssc}, we introduce 
-
-We first show how to get rid of explicit substitutions from the syntax
-using the technique of $\alpha$-normalisation (Section
-\ref{sec:alpha}). Then we show how to derive the rules of a CwF from
-our syntax (Section \ref{sec:cwf}). Finally, we show that our syntax
-is isomorphic to the CwF-style syntax (Section \ref{sec:iso}). We list
-related work and conclude in Section \ref{sec:conclusion}.
-
-We only require a working knowledge of an implementation of type
-theory such as Agda. Our metatheory in which this paper is written is
-thus type theory, and everything is formalised in Agda.
+In Section \ref{sec:ssc}, we introduce the single substitution
+calculus only relying on a working knowledge of an implementation of
+type theory such as Agda, no prior experience with the metatheory of
+type theory is required. We first show how to get rid of explicit
+substitutions from the syntax using the technique of
+$\alpha$-normalisation (Section \ref{sec:alpha}), and we use this to
+prove several admissible equations. Then we show how to derive the
+rules of a CwF from our syntax (Section \ref{sec:cwf}). Finally, we
+show that our syntax is isomorphic to the CwF-style syntax (Section
+\ref{sec:iso}). We conclude in Section \ref{sec:conclusion}.
 
 \subsection{Related work}
 
+Most formalisation of type theory use low-level 
+
 Algebraic formalisations of type theory: Brunerie
+
 \cite{initiality-agda} \cite{DBLP:conf/popl/AltenkirchK16},
 normalisation, shallow embedding canonicity, gluing. Low level
 formalisations: Abel, Loic, metacoq. They can be seen as unfolding the
@@ -197,6 +214,9 @@ Other SSC: 90s French, Thorsten thesis, B-systems, Luksa paper.
 % paper
 
 \subsection{Formalisation}
+
+Our metatheory in which this paper is
+written is thus type theory, and everything is formalised in Agda.
 
 As Agda does not support them directly, we postulate their
 constructors and induction principle and add the computation rules
@@ -212,13 +232,22 @@ Contents of the TYPES abstract, but with more details.
 Show examples of using the calculus, and where we need to derive more
 stuff.
 
-\section{Deriving parallel substituions}
+\section{$\alpha$-normalisation}
+\label{sec:alpha}
+
+$\alpha$-normal forms could also be called substitution normal forms.
+
+\section{Isomorphism}
+\label{sec:cwf}
 
 In this section we show that a category with families (CwF) equipped
 with a hierarchy of Coquand-universes and $\Pi$ types can be derived
 from the single substitution syntax defined in \autoref{sec:ssc}.
 
+TODO: show that the SSC operations are derivable from CwF.
+
 \section{Isomorphism}
+\label{sec:iso}
 
 \section{Conclusions}
 \label{sec:conclusion}
