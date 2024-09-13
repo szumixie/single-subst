@@ -341,6 +341,36 @@ Notation and formalisation techniques.
 \label{sec:ssc}
 
 Contents of the TYPES abstract, but with more details.
+\begin{alignat*}{10}
+& \Con && : \Set \\
+& \Ty && : \Con\ra\N\ra\Set \\
+& \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set \\
+& \diamond && : \Con \\
+& \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Con \\
+& \Sub && : \Con\ra\Con\ra\Set \\
+& \blank[\blank] && : \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta \\
+& \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \\
+& \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
+& \q && : \Tm\,(\Gamma\ext A)\,(A[\p]) \\
+& \Pi && : (A:\Ty\,\Gamma)\ra\Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
+& \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
+& \Pi[] && : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+]) \\
+& \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
+& \lam[] && : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \\
+& \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
+& \blank\cdot\blank && : \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle]) \\
+& \Pi\beta && : \lam\,t\cdot a = t[\langle a\rangle] \\
+& [\langle\rangle] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
+& {\cdot}[] && : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma]) \\
+& [\p][^+] && : B[\p][\gamma^+] = B[\gamma][\p] \\
+& [\p][^+] && : b[\p][\gamma^+] = b[\gamma][\p] \\
+& \q[^+] && : \q[\gamma^+] = \q \\
+& [\p][\langle\rangle] && : B[\p][\langle a\rangle] = B \\
+& [\p][\langle\rangle] && : b[\p ][\langle a\rangle] = b \\
+& \q[\langle\rangle] && : \q[\langle a\rangle] = a \\
+& [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B \\
+& \Pi\eta && : t = \lam\,(t[\p]\cdot\q) \\
+\end{alignat*}
 
 Show examples of using the calculus, and where we need to derive more
 stuff.
