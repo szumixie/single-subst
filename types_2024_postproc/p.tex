@@ -56,6 +56,99 @@ formal system based on Martin-Löf's original definition
 systems (e.g.\ \cite{DBLP:books/daglib/0005958}). When answering this
 question, we aim for simplicity and ease of understanding.
 
+Type theory is a language which can be described as a second-order
+generalised algebraic theory (SOGAT
+\cite{DBLP:conf/fscd/KaposiX24}). Some properties of this description:
+\begin{enumerate}
+\item[(i)] It is an intrinsic presentation
+  \cite{DBLP:conf/csl/AltenkirchR99,DBLP:conf/popl/AltenkirchK16} as
+  opposed to extrinsic. That is, we only consider well-formed,
+  well-scoped and well-typed abstract syntax trees, there are no
+  meaningless terms.
+\item[(ii)] Terms are quotiented by the conversion relation.
+\item[(iii)] Every operation is stable under substitution.
+\end{enumerate}
+For example, type theory with $\Pi$ types and universes {\`a} la
+Coquand \cite{coquandUniverse} is specified by the following SOGAT.
+\begin{alignat*}{10}
+  & \Ty && : \N\ra\Set \\
+  & \Tm && : \Ty\,i\ra\Set \\
+  & \Pi && : (A:\Ty\,i)\ra(\Tm\,A\ra\Ty\,i)\ra\Ty\,i \\
+  & \app && : \Tm\,(\Pi\,A\,B)\cong((a:\Tm\,A)\ra\,\Tm\,(B\,a)): \lam \\
+  & \U && : (i:\N)\ra\Ty\,(1+i) \\
+  & \El && : \Tm\,(\U\,i)\cong\Ty\,i : \cd
+\end{alignat*}
+We use implicit arguments, e.g.\ $\Tm$ takes the $i:\N$ implicitly,
+and $\app$ takes $i$, $A$ and $B$ implicitly. $f : X \cong Y : g$
+denotes an isomorphism, that is, $f : X\ra Y$, $g:Y\ra X$ with
+$g\,(f\,x) = x$ and $f\,(g\,y) = y$ for all $x$, $y$. Note that $\Pi$
+and $\lam$ are second-order functions. We say that $\Pi$ binds a
+$\Tm$-variable in its second $\Ty$-argument. Every binder is
+represented by a second-order function, and as a result, we don't need
+to talk about contexts and substitutions when describing the theory:
+we re-use the binding features of the metatheory to describe those of
+our object theory (this technique is also called higher-order abstract
+syntax \cite{DBLP:conf/lics/Hofmann99} or logical framework
+\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2}). There
+is no good notion of homomorphism between second-order models, thus
+the semantics of a SOGAT is given by a first order generalised
+algebraic theory (GAT \cite{DBLP:journals/apal/Cartmell86}). GATs are
+generalisations of single-sorted algebraic theories (such as monoids,
+groups) to multiple sorts where later sorts can be indexed over
+previous sorts, and the usual results from universal algebra (e.g.\ a
+category of models with finite limits and initial object, free and
+co-free models) carry over to GATs
+\cite{andras,DBLP:phd/hal/Moeneclaey22}. An example of a GAT is the
+theory of categories where there is a sort for objects and a sort for
+morphisms double-indexed over objects.
+
+Kaposi and Xie \cite{DBLP:conf/fscd/KaposiX24} present two different
+first order semantics for any SOGAT: one based on parallel
+substitutions, and one based on single substitutions.
+
+In the parallel semantics, the GAT always starts with a category with
+a terminal object, objects of the category are called contexts,
+morphisms are substitutions. Every sort and operation of the SOGAT
+gives rise to an operation in the GAT which is indexed by
+contexts. The sorts moreoever come with functorial instantiation
+(sometimes called substitution) operations, and all the operations are
+natural with respect to instantiation. For those sorts which are bound
+by an operation, we have context extension, meaning that contexts can
+carry variables of that sort (in other words, the sort is given by a
+locally representable presheaf). The parallel semantics of the GAT
+\begin{alignat*}{10}
+  & \Ty && : \Set \\
+  & \Tm && : \Ty \ra\Set 
+\end{alignat*}
+is the GAT of categories with families (CwFs
+\cite{DBLP:conf/types/Dybjer95,Castellan2021}). To define the notion
+of model of a language (given by a SOGAT) is to take its parallel
+substitution semantics, which is a GAT, and that induces a notion of
+model. The syntax of the language is the initial model, which exists
+for every GAT \cite{DBLP:journals/pacmpl/KaposiKA19}. This is an
+intrinsic definition of syntax (only well-typed terms), which is
+quotiented by the equations in the SOGAT, which describe conversion
+for the language.
+
+The single substitution semantics is an alternative GAT xxx
+
+
+
+
+
+In a type-theoretic metatheory,
+the initial model of a GAT is a quotient inductive-inductive type
+(QIIT \cite{DBLP:journals/pacmpl/KaposiKA19}). QIITs are a general
+family of inductive types where multiple types are defined mutually,
+later types can be indexed over previous ones, and equality
+constructors are also allowed, generalising quotients. The elimination
+principle of the QIIT corresponds to a structural induction principle
+and is equivalent to the statement that the syntax is the initial
+model \cite{DBLP:journals/pacmpl/KaposiKA19}, that is, there is a
+unique morphism from the syntax to any other model.
+
+conversion to GAT, algebra, models
+
 The traditional way of defining a programming language formally
 \cite{DBLP:books/cu/Ha2016,Pierce:SF2,plfa22.08} is comprised of three
 steps: (i) definition of the presyntax (abstract syntax trees, ASTs)
@@ -66,28 +159,15 @@ explaining how programs are executed. Instead of following this route,
 we use the intrinsic approach
 \cite{DBLP:conf/csl/AltenkirchR99,DBLP:conf/popl/AltenkirchK16}: (i)
 we define ASTs as an inductive type instead of production rules of a
-grammar; (ii) terms are indexed by (object theoretic) types, thus only
-allowing ASTs to be built in well-typed ways; (iii) terms are
-quotiented by conversion rules, making convertible terms equal. The
-advantage of the intrinsic approach is that it provides shorter,
-easier to understand, less technical definitions, and there is no
-mismatch between syntax and semantics. Type theory is a generalised
-algebraic theory (GAT \cite{DBLP:journals/apal/Cartmell86}), the
-notion of model is direct, and the syntax is simply the initial
-model. GATs are generalisations of single-sorted algebraic theories
-(such as monoids, groups) to multiple sorts where later sorts can be
-indexed over previous sorts. An example is categories with a sort of
-objects and a sort of morphisms double-indexed over objects. In a
-type-theoretic metatheory, the initial model of a GAT is a quotient
-inductive-inductive type (QIIT
-\cite{DBLP:journals/pacmpl/KaposiKA19}). QIITs are a general family of
-inductive types where multiple types are defined mutually, later types
-can be indexed over previous ones, and equality constructors are also
-allowed, generalising quotients. The elimination principle of the QIIT
-corresponds to a structural induction principle and is
-equivalent to the statement that the syntax is the initial model
-\cite{DBLP:journals/pacmpl/KaposiKA19}, that is, there is a unique
-morphism from the syntax to any other model.
+grammar; (ii) types are part of the definition and terms are indexed
+by them, thus only allowing ASTs to be built in well-typed ways; (iii)
+terms are quotiented by conversion rules, making convertible terms
+equal. Compared to the traditional extrinsic approach, the intrinsic approach provides
+shorter, less technical definitions, and there
+is no mismatch between syntax and semantics. Type theory is a
+generalised algebraic theory (GAT
+\cite{DBLP:journals/apal/Cartmell86}), the notion of model is direct,
+and the syntax is simply the initial model. 
 
 There are several ways to define type theory as a GAT. For example,
 Thomas Ehrhard's calculus \cite{ehrhard,coquandEhrhard}, Dybjer's
@@ -96,47 +176,70 @@ categories with families (CwFs
 or C-systems
 \cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
 natural models \cite{DBLP:journals/mscs/Awodey18}, B-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. These are providing the
-basic substitution calculus part of the theory, and individual type
-formers (such as function space or product types) have to be specified
-separately. With the exception of B-systems, the listed definitions
-all define a parallel substitution calculus, where contexts and
-substitutions form a category. Like B-systems, in this paper we define
-type theory as a single substitution calculus (SSC). Single
-substitutions don't compose, so they do not form a category. Our
-definition is simpler than B-systems, but it is closely related to
-it. It is a minimalistic presentation where every operation and
-equation is well-motivated (see Section \ref{sec:ssc}). In addition to
-its pedagogical value due to its simplicity, our definition might
-contribute in the future to a possible coherent syntax for type
-theory, see Section \ref{sec:conclusion}.
+\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.  With the exception of
+B-systems, the listed notions all define a parallel substitution
+calculus, where contexts and substitutions form a category. Like
+B-systems, in this paper we define a single substitution calculus
+(SSC). Single substitutions don't compose, so they do not form a
+category. Our definition is simpler than B-systems, but it is closely
+related to it. It is a minimalistic presentation where every operation
+and equation is well-motivated (see Section \ref{sec:ssc}). In
+addition to its pedagogical value due to its simplicity, in the future
+it might give rise to new models or contribute to a possible coherent
+syntax for type theory, see Section \ref{sec:conclusion}.
 
-Our theory is in some sense too minimalistic: for example, consider a
+CwFs, C-systems, B-systems and our SSC only provide the basic
+substitution calculus part of the theory, and individual type formers
+(such as function space or product types) have to be specified
+separately. There is a systematic way to do this: non-substructural
+programming languages can be specified as second-order generalised
+algebraic theories (SOGATs \cite{DBLP:conf/fscd/KaposiX24}), which are
+GATs allowing second-order operations. For example, type theory with
+$\Pi$ and a family of 
+
+Kaposi and Xie \cite{DBLP:conf/fscd/KaposiX24} showed that any SOGAT
+has two kinds of GAT semantics, one based on a parallel substitution
+calculus, and another based on a single substitution calculus. The
+parallel substitution GAT semantics of the SOGAT containing only the
+sorts of types and terms ($\Ty : \Set, \Tm : \Ty\ra\Set$) is simply
+the GAT of CwFs. The single substitution semantics of the same SOGAT
+is the SSC in this paper. 
+
+SOGAT stuff
+
+Our SSC is in some sense too minimalistic: for example, consider a
 term $b$ which depends on a context $\Gamma$ and an extra variable of
-type $A$, that is, $b : \Tm\,(\Gamma\ext A)\,B$. We can weaken $b$ so
+type $A$, that is, $b : \Tm\,(\Gamma\ext A)\,B$. We weaken $b$ so
 that we add an extra $A$ variable \emph{before} the last one obtaining
-$b[\p^+] : \Tm\,(\Gamma\ext A\ext A[\p])\,(B[\p])$ where $\p$ is
+$
+b[\p^+] : \Tm\,(\Gamma\ext A\ext A[\p])\,(B[\p])
+$
+where $\p$ is
 weakening at the end of the context, and $\p^+$ is weakening just
 before the last variable in the context. Then, we instantiate the last
 $A[\p]$ variable in the context by the previous $A$ obtaining
-$b[\p^+][\langle\q\rangle] : \Tm\,(\Gamma\ext A)\,B$ where $\q$ is De
-Bruijn index $0$. We cannot derive $b[\p^+][\langle\q\rangle] = b$ in
+$b[\p^+][\langle\q\rangle] : \Tm\,(\Gamma\ext A)\,B$ where $\q$ denotes the last
+variable in the context (a.k.a\ De Bruijn index $0$).
+We cannot derive $b[\p^+][\langle\q\rangle] = b$ in
 an arbitrary model, but this equation holds in the syntax.
 % p⁺  : Sub (Γ▹A▹A[p]) (Γ▹A)
 % ⟨q⟩ : Sub (Γ▹A) (Γ▹A▹A[p])
 This is analogous to e.g.\ parametricity results
 \cite{DBLP:journals/jfp/BernardyJP12}, which do not hold in an
-arbitrary model, but they hold for syntactic terms. In fact, all the
+arbitrary model, but they hold in the syntax. In fact, we can show
+that the syntax xxx
+
+In fact, all the
 operations and equations of the parallel substitution calculus (CwF)
-are admissible in our syntax, moreover the set of SSC-based syntactic
-terms are isomorphic to the set of CwF-based terms. In contrast with
-B-systems which are equivalent to CwFs, our SSC-models do not form
-CwF-based models. Every CwF-based model is a model of our SSC, but not
-the other way: there are more SSC-models than CwF-models. The
-situation is analogous to the relationship of extensional combinatory
-calculus and lambda calculus \cite{DBLP:conf/fscd/AltenkirchKSV23}:
-the syntactic terms form isomorphic sets, but there are more
-combinatory models than lambda calculus models.
+are admissible in the syntax of SSC, moreover the set of syntactic SSC
+terms are isomorphic to the set of CwF terms. In contrast with
+B-systems which are equivalent to CwFs, our SSCs do not form
+CwFs. Every CwF-based model is a model of our SSC, but not the other
+way: there are more SSC-models than CwF-models. The situation is
+analogous to the relationship of extensional combinatory calculus and
+lambda calculus \cite{DBLP:conf/fscd/AltenkirchKSV23}: the syntactic
+terms form isomorphic sets, but there are more combinatory models than
+lambda calculus models.
 
 We define the parallel substitution calculus operations by induction
 on the SSC-syntax. One of our constructors is the instantiation
@@ -160,16 +263,8 @@ generally, every second-order generalised algebraic theory (SOGAT) has
 a parallel and a single substition-based first order presentation
 \cite{DBLP:conf/fscd/KaposiX24}. Here we prove that the syntaxes of
 the parallel and the single substitution calculi are isomorphic for
-the following SOGAT (we use implicit arguments and $\cong$ denotes
-isomorphism):
-\begin{alignat*}{10}
-  & \Ty && : \N\ra\Set \\
-  & \Tm && : \Ty\,i\ra\Set \\
-  & \Pi && : (A:\Ty\,i)\ra(\Tm\,A\ra\Ty\,i)\ra\Ty\,i \\
-  & \app && : \Tm\,(\Pi\,A\,B)\cong((a:\Tm\,A)\ra\,\Tm\,(B\,a)): \lam \\
-  & \U && : (i:\N)\ra\Ty\,(1+i) \\
-  & \El && : \Tm\,(\U\,i)\cong\Ty\,i : \cd
-\end{alignat*}
+the following SOGAT 
+
 We conjecture that the methods of in this paper can be used to show
 that for any SOGAT, the two first-order presentations give isomorphic
 syntaxes.
@@ -199,9 +294,27 @@ show that our syntax is isomorphic to the CwF-style syntax (Section
 
 \subsection{Related work}
 
-Most formalisation of type theory use low-level 
+In the 1990s single substitution calculi for type theory were popular,
+but usually in the extrinsic setting, see e.g.\ the thesis of
+Altenkirch \cite{alti:phd93}. B-systems were introduced by Voevodsky
+\cite{voevodsky2014bsystems} as an algebraic way of describing type
+theories close to the notations using typing judgements. Using our
+notations B-systems can be described as follows. B-frame.
+
+
+Ehrhard
+
+we use Sub, but we could have used telescopes
+
+\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}
+
+contextual sCwF and contextual SSC with fct types
+
+Formalisations of type theory use low-level 
 
 Algebraic formalisations of type theory: Brunerie
+
+Initiality conjecture.
 
 \cite{initiality-agda} \cite{DBLP:conf/popl/AltenkirchK16},
 normalisation, shallow embedding canonicity, gluing. Low level
@@ -249,8 +362,17 @@ TODO: show that the SSC operations are derivable from CwF.
 \section{Isomorphism}
 \label{sec:iso}
 
+\section{Minimisation}
+
+\section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
+
 \section{Conclusions}
 \label{sec:conclusion}
+
+Why are we still looking at alternative ways of defining type theory?
+Closer to the syntax/implementation, easier to understand/implement,
+fewer equations, hence easier to define models, coherent syntax?
+
 
 In this paper we introduced a new single substitution calculus which
 can be seen as a minimalistic variant of B-systems. We illustrate its
