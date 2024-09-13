@@ -7,6 +7,8 @@
 
 module TT.SSC.Examples where
 
+-- basic examples using our single substitution syntax
+
 open import TT.Lib
 open import TT.SSC.Syntax
 
@@ -23,6 +25,7 @@ postulate
   Liftβ   : ∀{i Γ}{A : Ty Γ i}{a : Tm Γ A} → un (mk a) ≡ a
   Liftη   : ∀{i Γ}{A : Ty Γ i}{a : Tm Γ (Lift' A)} → mk (un a) ≡ a
   Lift-[] : ∀{i Γ}{A : Ty Γ i}{Δ}{γ : Sub Δ Γ} → Lift' A [ γ ]ᵀ ≡ Lift' (A [ γ ]ᵀ)
+--  mk[]    : TODO
 
 ap-Lift : ∀{i Γ}{A₀ A₁ : Ty Γ i} → A₀ ≡ A₁ → Lift' A₀ ≡ Lift' A₁
 ap-Lift refl = refl
@@ -30,9 +33,14 @@ ap-Lift refl = refl
 idFun : Tm ◇ (Π (U zero) (Lift' (El' p q ⇒ El' p q)))
 idFun = lam (mk (lam q))
 
-idFunβ : ∀{A : Ty ◇ zero}{a : Tm ◇ A} → app (un (coe (ap-Tm (Lift-[] ∙ ap-Lift Π-[])) (app (idFun) (c A)))) (coe (ap-Tm (sym U-β ∙ ap-El {!!} ∙ sym El-[])) a) ≡ {!!}
+-- coe (ap ... e) q = q
+
+idFunβ : ∀{A : Ty ◇ zero}{a : Tm ◇ A} → app (un (coe (ap-Tm (Lift-[] ∙ ap-Lift Π-[])) (app (idFun) (c A)))) (coe (ap-Tm (sym U-β ∙ ap-El (undep (splitr {!!})) ∙ sym El-[])) a) ≡ {!!}
 idFunβ = {!!}
 
 -- difficulties working with single substitutions:
--- * cannot simply weaken things into arbitrary contexts
+-- * cannot simply weaken closed things into arbitrary contexts
 -- * 
+
+-- TODO: dependent function composition, S, K, maybe dependent versions, with their substitution rules
+-- Church encoding of Bool
