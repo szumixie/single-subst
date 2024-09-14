@@ -127,6 +127,23 @@ module DM where
         U-ηᴹ : αᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep U-η) ] cᴹ (Elᴹ αᴹ)
 
       field
+        Liftᴹ : Tyᴹ Γᴹ i A → Tyᴹ Γᴹ (suc i) (Lift A)
+        Lift-[]ᴹ : Liftᴹ Aᴹ [ γᴹ ]ᵀᴹ ≡[ ap-Tyᴹ Lift-[] ] Liftᴹ (Aᴹ [ γᴹ ]ᵀᴹ)
+
+        lowerᴹ : Tmᴹ Γᴹ (Liftᴹ Aᴹ) a → Tmᴹ Γᴹ Aᴹ (lower a)
+        lower-[]ᴹ :
+          lowerᴹ aᴹ [ γᴹ ]ᵗᴹ ≡[ ap-Tmᴹ refl reflᵈ (dep lower-[]) ]
+          lowerᴹ (coe (ap-Tmᴹ Lift-[] Lift-[]ᴹ refl) (aᴹ [ γᴹ ]ᵗᴹ))
+
+        liftᴹ : Tmᴹ Γᴹ Aᴹ a → Tmᴹ Γᴹ (Liftᴹ Aᴹ) (lift a)
+        lift-[]ᴹ :
+          liftᴹ aᴹ [ γᴹ ]ᵗᴹ ≡[ ap-Tmᴹ Lift-[] Lift-[]ᴹ lift-[] ]
+          liftᴹ (aᴹ [ γᴹ ]ᵗᴹ)
+
+        Lift-βᴹ : lowerᴹ (liftᴹ aᴹ) ≡[ ap-Tmᴹ refl reflᵈ (dep Lift-β) ] aᴹ
+        Lift-ηᴹ : liftᴹ (lowerᴹ aᴹ) ≡[ ap-Tmᴹ refl reflᵈ (dep Lift-η) ] aᴹ
+
+      field
         Πᴹ : (Aᴹ : Tyᴹ Γᴹ i A) → Tyᴹ (Γᴹ ▹ᴹ Aᴹ) i B → Tyᴹ Γᴹ i (Π A B)
         Π-[]ᴹ :
           Πᴹ Aᴹ Bᴹ [ γᴹ ]ᵀᴹ ≡[ ap-Tyᴹ Π-[] ] Πᴹ (Aᴹ [ γᴹ ]ᵀᴹ) (Bᴹ [ γᴹ ⁺ᴹ ]ᵀᴹ)
@@ -266,6 +283,13 @@ module Ind (M : DModel) where
     {-# REWRITE ⟦⟧-El #-}
     ⟦⟧-c : ⟦ c A ⟧ᵗ ↝ cᴹ ⟦ A ⟧ᵀ
     {-# REWRITE ⟦⟧-c #-}
+
+    ⟦⟧-Lift : ⟦ Lift A ⟧ᵀ ↝ Liftᴹ ⟦ A ⟧ᵀ
+    {-# REWRITE ⟦⟧-Lift #-}
+    ⟦⟧-lower : ⟦ lower a ⟧ᵗ ↝ lowerᴹ ⟦ a ⟧ᵗ
+    {-# REWRITE ⟦⟧-lower #-}
+    ⟦⟧-lift : ⟦ lift a ⟧ᵗ ↝ liftᴹ ⟦ a ⟧ᵗ
+    {-# REWRITE ⟦⟧-lift #-}
 
     ⟦⟧-Π : ⟦ Π A B ⟧ᵀ ↝ Πᴹ ⟦ A ⟧ᵀ ⟦ B ⟧ᵀ
     {-# REWRITE ⟦⟧-Π #-}

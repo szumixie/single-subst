@@ -67,6 +67,18 @@ module C→S where
   M .types .U-βᴹ = dep U-β
   M .types .U-ηᴹ = dep U-η
 
+  M .types .Liftᴹ = Lift
+  M .types .Lift-[]ᴹ {γᴹ = γᵗ} = dep (Lift-[]ᵗ γᵗ)
+
+  M .types .lowerᴹ = lower
+  M .types .lower-[]ᴹ {γᴹ = γᵗ} = dep (lower-[]ᵗ γᵗ)
+
+  M .types .liftᴹ = lift
+  M .types .lift-[]ᴹ {γᴹ = γᵗ} = lift-[]ᵗ γᵗ
+
+  M .types .Lift-βᴹ = dep Lift-β
+  M .types .Lift-ηᴹ = dep Lift-η
+
   M .types .Πᴹ = Π
   M .types .Π-[]ᴹ {γᴹ = γᵗ} = dep (Π-[]ᵗ γᵗ)
 

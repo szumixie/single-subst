@@ -87,6 +87,19 @@ postulate
   U-η : α ≡ c (El α)
 
 postulate
+  Lift : Ty Γ i → Ty Γ (suc i)
+  Lift-[] : Lift A [ γ ]ᵀ ≡ Lift (A [ γ ]ᵀ)
+
+  lower : Tm Γ (Lift A) → Tm Γ A
+  lower-[] : lower a [ γ ]ᵗ ≡ lower (coe (ap-Tm Lift-[]) (a [ γ ]ᵗ))
+
+  lift : Tm Γ A → Tm Γ (Lift A)
+  lift-[] : lift a [ γ ]ᵗ ≡[ ap-Tm Lift-[] ] lift (a [ γ ]ᵗ)
+
+  Lift-β : lower (lift a) ≡ a
+  Lift-η : lift (lower a) ≡ a
+
+postulate
   Π : (A : Ty Γ i) → Ty (Γ ▹ A) i → Ty Γ i
   Π-[] : Π A B [ γ ]ᵀ ≡ Π (A [ γ ]ᵀ) (B [ γ ⁺ ]ᵀ)
 
@@ -211,6 +224,24 @@ opaque
     (Γ₀₁ : Γ₀ ≡ Γ₁) →
     A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → c A₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-U Γ₀₁) ] c A₁
   apᵈ-c refl refl = refl
+
+  apᵈ-Lift :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) → A₀ ≡[ ap-Ty Γ₀₁ ] A₁ → Lift A₀ ≡[ ap-Ty Γ₀₁ ] Lift A₁
+  apᵈ-Lift refl refl = refl
+
+  ap-lower : a₀ ≡ a₁ → lower a₀ ≡ lower a₁
+  ap-lower refl = refl
+
+  apᵈ-lower :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) →
+    a₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-Lift Γ₀₁ A₀₁) ] a₁ →
+    lower a₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] lower a₁
+  apᵈ-lower refl refl refl = refl
+
+  apᵈ-lift :
+    (Γ₀₁ : Γ₀ ≡ Γ₁) (A₀₁ : A₀ ≡[ ap-Ty Γ₀₁ ] A₁) → a₀ ≡[ ap-Tm₂ Γ₀₁ A₀₁ ] a₁ →
+    lift a₀ ≡[ ap-Tm₂ Γ₀₁ (apᵈ-Lift Γ₀₁ A₀₁) ] lift a₁
+  apᵈ-lift refl refl refl = refl
 
   apᵈ-Π :
     (Γ₀₁ : Γ₀ ≡ Γ₁)

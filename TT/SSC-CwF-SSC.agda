@@ -43,26 +43,27 @@ module S→C→S where
   open Subᴹ
 
   M : DModel
-  M .sorts .Conᴹ Γ = Lift (C→Sᶜ (S→Cᶜ Γ) ≡ Γ)
-  M .sorts .DM.Subᴹ (lift Δᴹ) (lift Γᴹ) γ = Subᴹ Δᴹ Γᴹ γ
-  M .sorts .Tyᴹ (lift Γᴹ) i A = Lift (C→Sᵀ (S→Cᵀ A) ≡[ ap-Ty Γᴹ ] A)
-  M .sorts .Tmᴹ (lift Γᴹ) (lift Aᴹ) a = Lift (C→Sᵗ (S→Cᵗ a) ≡[ ap-Tm₂ Γᴹ Aᴹ ] a)
+  M .sorts .Conᴹ Γ = Liftₚ (C→Sᶜ (S→Cᶜ Γ) ≡ Γ)
+  M .sorts .DM.Subᴹ (liftₚ Δᴹ) (liftₚ Γᴹ) γ = Subᴹ Δᴹ Γᴹ γ
+  M .sorts .Tyᴹ (liftₚ Γᴹ) i A = Liftₚ (C→Sᵀ (S→Cᵀ A) ≡[ ap-Ty Γᴹ ] A)
+  M .sorts .Tmᴹ (liftₚ Γᴹ) (liftₚ Aᴹ) a =
+    Liftₚ (C→Sᵗ (S→Cᵗ a) ≡[ ap-Tm₂ Γᴹ Aᴹ ] a)
 
-  M .core ._[_]ᵀᴹ {Γᴹ = lift Γᴹ} (lift Aᴹ) γᴹ .lower =
+  M .core ._[_]ᵀᴹ {Γᴹ = liftₚ Γᴹ} (liftₚ Aᴹ) γᴹ .lowerₚ =
     dep (ap-[]ᵀᵗ₃ Γᴹ Aᴹ refl) ∙ᵈ γᴹ .ty
-  M .core ._[_]ᵗᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} (lift aᴹ) γᴹ .lower =
+  M .core ._[_]ᵗᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} (liftₚ aᴹ) γᴹ .lowerₚ =
     apᵈ-[]ᵗᵗ₄ Γᴹ Aᴹ aᴹ refl ∙ᵈ γᴹ .tm
 
-  M .core .◇ᴹ .lower = refl
-  M .core ._▹ᴹ_ (lift Γᴹ) (lift Aᴹ) .lower = ap-▹ Γᴹ Aᴹ
+  M .core .◇ᴹ .lowerₚ = refl
+  M .core ._▹ᴹ_ (liftₚ Γᴹ) (liftₚ Aᴹ) .lowerₚ = ap-▹ Γᴹ Aᴹ
 
-  M .core .pᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} .ty =
+  M .core .pᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} .ty =
     apᵈ-[]ᵀᵗᵣ (ap-▹ Γᴹ Aᴹ) (splitl (apᵈ-pᵗ Γᴹ Aᴹ)) ∙ᵈ dep []ᵀ-pᵗ
-  M .core .pᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} .tm =
+  M .core .pᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} .tm =
     apᵈ-[]ᵗᵗᵣ (ap-▹ Γᴹ Aᴹ) (splitl (apᵈ-pᵗ Γᴹ Aᴹ)) ∙ᵈ []ᵗ-pᵗ
-  M .core .qᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} .lower = splitl (apᵈ-q Γᴹ Aᴹ)
+  M .core .qᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} .lowerₚ = splitl (apᵈ-q Γᴹ Aᴹ)
 
-  M .core ._⁺ᴹ {Δᴹ = lift Δᴹ} {Γᴹ = lift Γᴹ} {γ = γ} {i} {A} {Aᴹ = lift Aᴹ} γᴹ .ty =
+  M .core ._⁺ᴹ {Δᴹ = liftₚ Δᴹ} {Γᴹ = liftₚ Γᴹ} {γ = γ} {i} {A} {Aᴹ = liftₚ Aᴹ} γᴹ .ty =
     apᵈ-[]ᵀᵗᵣ
       (ap-▹ Δᴹ (apᵈ-[]ᵀᵗ Γᴹ Aᴹ Δᴹ refl))
       (splitl (apᵈ-⁺ᵗ Δᴹ Γᴹ refl Aᴹ)) ∙ᵈ
@@ -73,7 +74,7 @@ module S→C→S where
       (undep (apᵈ-[]ᵀᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .ty))
       (λ _ → apᵈ-[]ᵗᵗᵣ (sym Δᴹ) (splitl {A₀₁ = ap-Tms Δᴹ Γᴹ} refl) ∙ᵈ γᴹ .tm)
       (◇ ▹ A)
-  M .core ._⁺ᴹ {Δᴹ = lift Δᴹ} {Γᴹ = lift Γᴹ} {γ = γ} {i} {A} {Aᴹ = lift Aᴹ} γᴹ .tm =
+  M .core ._⁺ᴹ {Δᴹ = liftₚ Δᴹ} {Γᴹ = liftₚ Γᴹ} {γ = γ} {i} {A} {Aᴹ = liftₚ Aᴹ} γᴹ .tm =
     apᵈ-[]ᵗᵗᵣ
       (ap-▹ Δᴹ (apᵈ-[]ᵀᵗ Γᴹ Aᴹ Δᴹ refl))
       (splitl (apᵈ-⁺ᵗ Δᴹ Γᴹ refl Aᴹ)) ∙ᵈ
@@ -89,9 +90,9 @@ module S→C→S where
   M .core .p-⁺ᵗᴹ = refl
   M .core .q-⁺ᴹ = refl
 
-  M .core .⟨_⟩ᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} (lift aᴹ) .ty =
+  M .core .⟨_⟩ᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} (liftₚ aᴹ) .ty =
     apᵈ-[]ᵀᵗᵣ Γᴹ (splitl (apᵈ-⟨⟩ᵗ Γᴹ Aᴹ aᴹ)) ∙ᵈ dep []ᵀ-⟨⟩ᵗ
-  M .core .⟨_⟩ᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} (lift aᴹ) .tm =
+  M .core .⟨_⟩ᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} (liftₚ aᴹ) .tm =
     apᵈ-[]ᵗᵗᵣ Γᴹ (splitl (apᵈ-⟨⟩ᵗ Γᴹ Aᴹ aᴹ)) ∙ᵈ []ᵗ-⟨⟩ᵗ
 
   M .core .p-⟨⟩ᵀᴹ = refl
@@ -101,26 +102,40 @@ module S→C→S where
   M .core .⟨⟩-[]ᵀᴹ = refl
   M .core .▹-ηᵀᴹ = refl
 
-  M .types .Uᴹ {Γᴹ = lift Γᴹ} i .lower = apᵈ-U Γᴹ
+  M .types .Uᴹ {Γᴹ = liftₚ Γᴹ} i .lowerₚ = apᵈ-U Γᴹ
   M .types .U-[]ᴹ = refl
 
-  M .types .Elᴹ {Γᴹ = lift Γᴹ} (lift αᴹ) .lower = apᵈ-El Γᴹ αᴹ
+  M .types .Elᴹ {Γᴹ = liftₚ Γᴹ} (liftₚ αᴹ) .lowerₚ = apᵈ-El Γᴹ αᴹ
   M .types .El-[]ᴹ = refl
 
-  M .types .cᴹ {Γᴹ = lift Γᴹ} (lift Aᴹ) .lower = apᵈ-c Γᴹ Aᴹ
+  M .types .cᴹ {Γᴹ = liftₚ Γᴹ} (liftₚ Aᴹ) .lowerₚ = apᵈ-c Γᴹ Aᴹ
   M .types .c-[]ᴹ = refl
 
   M .types .U-βᴹ = refl
   M .types .U-ηᴹ = refl
 
-  M .types .Πᴹ {Γᴹ = lift Γᴹ} (lift Aᴹ) (lift Bᴹ) .lower = apᵈ-Π Γᴹ Aᴹ Bᴹ
+  M .types .Liftᴹ {Γᴹ = liftₚ Γᴹ} (liftₚ Aᴹ) .lowerₚ = apᵈ-Lift Γᴹ Aᴹ
+  M .types .Lift-[]ᴹ = refl
+
+  M .types .lowerᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} (liftₚ aᴹ) .lowerₚ =
+    apᵈ-lower Γᴹ Aᴹ aᴹ
+  M .types .lower-[]ᴹ = refl
+
+  M .types .liftᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} (liftₚ aᴹ) .lowerₚ =
+    apᵈ-lift Γᴹ Aᴹ aᴹ
+  M .types .lift-[]ᴹ = refl
+
+  M .types .Lift-βᴹ = refl
+  M .types .Lift-ηᴹ = refl
+
+  M .types .Πᴹ {Γᴹ = liftₚ Γᴹ} (liftₚ Aᴹ) (liftₚ Bᴹ) .lowerₚ = apᵈ-Π Γᴹ Aᴹ Bᴹ
   M .types .Π-[]ᴹ = refl
 
-  M .types .appᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} {Bᴹ = lift Bᴹ} (lift fᴹ) (lift aᴹ) .lower =
+  M .types .appᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} {Bᴹ = liftₚ Bᴹ} (liftₚ fᴹ) (liftₚ aᴹ) .lowerₚ =
     splitl (apᵈ-app Γᴹ Aᴹ Bᴹ fᴹ aᴹ)
   M .types .app-[]ᴹ = refl
 
-  M .types .lamᴹ {Γᴹ = lift Γᴹ} {Aᴹ = lift Aᴹ} {Bᴹ = lift Bᴹ} (lift bᴹ) .lower =
+  M .types .lamᴹ {Γᴹ = liftₚ Γᴹ} {Aᴹ = liftₚ Aᴹ} {Bᴹ = liftₚ Bᴹ} (liftₚ bᴹ) .lowerₚ =
     apᵈ-lam₄ Γᴹ Aᴹ Bᴹ bᴹ
   M .types .lam-[]ᴹ = refl
 
@@ -137,13 +152,13 @@ private variable
   γᵗ : Tms Δ Γ
 
 S→C→Sᶜ : C→Sᶜ (S→Cᶜ Γ) ≡ Γ
-S→C→Sᶜ {Γ = Γ} = S→C→S.⟦ Γ ⟧ᶜ .lower
+S→C→Sᶜ {Γ = Γ} = S→C→S.⟦ Γ ⟧ᶜ .lowerₚ
 
 S→C→Sᵀ : C→Sᵀ (S→Cᵀ A) ≡[ ap-Ty S→C→Sᶜ ] A
-S→C→Sᵀ {A = A} = S→C→S.⟦ A ⟧ᵀ .lower
+S→C→Sᵀ {A = A} = S→C→S.⟦ A ⟧ᵀ .lowerₚ
 
 S→C→Sᵗ : C→Sᵗ (S→Cᵗ a) ≡[ ap-Tm₂ S→C→Sᶜ S→C→Sᵀ ] a
-S→C→Sᵗ {a = a} = S→C→S.⟦ a ⟧ᵗ .lower
+S→C→Sᵗ {a = a} = S→C→S.⟦ a ⟧ᵗ .lowerₚ
 
 T→C→T : C→T (T→C γᵗ) ≡[ ap-Tms S→C→Sᶜ S→C→Sᶜ ] γᵗ
 T→C→T {Γ} {γᵗ = ε} = dep (ap-C→T (T→C-ε Γ)) ∙ᵈ apᵈ-ε S→C→Sᶜ

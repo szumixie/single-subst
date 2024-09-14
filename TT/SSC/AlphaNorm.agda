@@ -29,11 +29,15 @@ data NTm : (Γ : Con) (A : Ty Γ i) → Tm Γ A → Prop
 data NTy where
   Uᴺ : (i : ℕ) → NTy Γ (suc i) (U i)
   Elᴺ : NTm Γ (U i) α → NTy Γ i (El α)
+  Liftᴺ : NTy Γ i A → NTy Γ (suc i) (Lift A)
   Πᴺ : NTy Γ i A → NTy (Γ ▹ A) i B → NTy Γ i (Π A B)
 
 data NTm where
   var : Var Γ A a → NTm Γ A a
   cᴺ : NTy Γ i A → NTm Γ (U i) (c A)
+
+  lowerᴺ : NTy Γ i A → NTm Γ (Lift A) a → NTm Γ A (lower a)
+  liftᴺ : NTy Γ i A → NTm Γ A a → NTm Γ (Lift A) (lift a)
 
   appᴺ :
     NTy Γ i A → NTy (Γ ▹ A) i B →
@@ -69,11 +73,19 @@ module []ᴺᴾ
   Uᴺ i [ γᴾ ]ᵀᴺᴾ = coeₚ (ap-NTy (sym U-[])) (Uᴺ i)
   Elᴺ αᴺ [ γᴾ ]ᵀᴺᴾ =
     coeₚ (ap-NTy (sym El-[])) (Elᴺ (coeₚ (ap-NTm U-[] refl) (αᴺ [ γᴾ ]ᵗᴺᴾ)))
+  Liftᴺ Aᴺ [ γᴾ ]ᵀᴺᴾ = coeₚ (ap-NTy (sym Lift-[])) (Liftᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
   Πᴺ Aᴺ Bᴺ [ γᴾ ]ᵀᴺᴾ =
     coeₚ (ap-NTy (sym Π-[])) (Πᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (Bᴺ [ γᴾ ⁺ᴾ ]ᵀᴺᴾ))
 
   var aᵛ [ γᴾ ]ᵗᴺᴾ = aᵛ [ γᴾ ]ᵛᴾ
   cᴺ Aᴺ [ γᴾ ]ᵗᴺᴾ = coeₚ (ap-NTm (sym U-[]) (symᵈ c-[])) (cᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ))
+
+  lowerᴺ Aᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm refl (dep (sym lower-[])))
+      (lowerᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (coeₚ (ap-NTm Lift-[] refl) (aᴺ [ γᴾ ]ᵗᴺᴾ)))
+  liftᴺ Aᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
+    coeₚ (ap-NTm (sym Lift-[])
+      (symᵈ lift-[])) (liftᴺ (Aᴺ [ γᴾ ]ᵀᴺᴾ) (aᴺ [ γᴾ ]ᵗᴺᴾ))
 
   appᴺ Aᴺ Bᴺ fᴺ aᴺ [ γᴾ ]ᵗᴺᴾ =
     coeₚ (ap-NTm (sym ⟨⟩-[]ᵀ) (symᵈ app-[]))
@@ -139,17 +151,17 @@ module norm where
   M : DModel
   M .sorts .Conᴹ _ = ⊤
   M .sorts .Subᴹ _ _ = NSub _ _
-  M .sorts .Tyᴹ _ _ A = Lift (NTy _ _ A)
-  M .sorts .Tmᴹ _ _ a = Lift (NTm _ _ a)
+  M .sorts .Tyᴹ _ _ A = Liftₚ (NTy _ _ A)
+  M .sorts .Tmᴹ _ _ a = Liftₚ (NTm _ _ a)
 
-  M .core ._[_]ᵀᴹ (lift Aᴺ) γᴺ .lower = Aᴺ [ γᴺ ]ᵀᴺ
-  M .core ._[_]ᵗᴹ (lift aᴺ) γᴺ .lower = aᴺ [ γᴺ ]ᵗᴺ
+  M .core ._[_]ᵀᴹ (liftₚ Aᴺ) γᴺ .lowerₚ = Aᴺ [ γᴺ ]ᵀᴺ
+  M .core ._[_]ᵗᴹ (liftₚ aᴺ) γᴺ .lowerₚ = aᴺ [ γᴺ ]ᵗᴺ
 
   M .core .◇ᴹ = ⋆
   M .core ._▹ᴹ_ _ _ = ⋆
 
   M .core .pᴹ = wk p
-  M .core .qᴹ .lower = var vz
+  M .core .qᴹ .lowerₚ = var vz
 
   M .core ._⁺ᴹ = _⁺ᴺ
   M .core .p-⁺ᵀᴹ = refl
@@ -157,7 +169,7 @@ module norm where
   M .core .p-⁺ᵗᴹ = refl
   M .core .q-⁺ᴹ = refl
 
-  M .core .⟨_⟩ᴹ (lift aᴺ) = nssub ⟨ aᴺ ⟩
+  M .core .⟨_⟩ᴹ (liftₚ aᴺ) = nssub ⟨ aᴺ ⟩
   M .core .p-⟨⟩ᵀᴹ = refl
 
   M .core .p-⟨⟩ᵗᴹ = refl
@@ -166,26 +178,38 @@ module norm where
   M .core .⟨⟩-[]ᵀᴹ = refl
   M .core .▹-ηᵀᴹ = refl
 
-  M .types .Uᴹ i .lower = Uᴺ i
+  M .types .Uᴹ i .lowerₚ = Uᴺ i
   M .types .U-[]ᴹ = refl
 
-  M .types .Elᴹ (lift αᴺ) .lower = Elᴺ αᴺ
+  M .types .Elᴹ (liftₚ αᴺ) .lowerₚ = Elᴺ αᴺ
   M .types .El-[]ᴹ = refl
 
-  M .types .cᴹ (lift Aᴺ) .lower = cᴺ Aᴺ
+  M .types .cᴹ (liftₚ Aᴺ) .lowerₚ = cᴺ Aᴺ
   M .types .c-[]ᴹ = refl
 
   M .types .U-βᴹ = refl
   M .types .U-ηᴹ = refl
 
-  M .types .Πᴹ (lift Aᴺ) (lift Bᴺ) .lower = Πᴺ Aᴺ Bᴺ
+  M .types .Liftᴹ (liftₚ A) .lowerₚ = Liftᴺ A
+  M .types .Lift-[]ᴹ = refl
+
+  M .types .lowerᴹ {Aᴹ = liftₚ Aᴺ} (liftₚ aᴺ) .lowerₚ = lowerᴺ Aᴺ aᴺ
+  M .types .lower-[]ᴹ = refl
+
+  M .types .liftᴹ {Aᴹ = liftₚ Aᴺ} (liftₚ aᴺ) .lowerₚ = liftᴺ Aᴺ aᴺ
+  M .types .lift-[]ᴹ = refl
+
+  M .types .Lift-βᴹ = refl
+  M .types .Lift-ηᴹ = refl
+
+  M .types .Πᴹ (liftₚ Aᴺ) (liftₚ Bᴺ) .lowerₚ = Πᴺ Aᴺ Bᴺ
   M .types .Π-[]ᴹ = refl
 
-  M .types .appᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift fᴺ) (lift aᴺ) .lower =
+  M .types .appᴹ {Aᴹ = liftₚ Aᴺ} {Bᴹ = liftₚ Bᴺ} (liftₚ fᴺ) (liftₚ aᴺ) .lowerₚ =
     appᴺ Aᴺ Bᴺ fᴺ aᴺ
   M .types .app-[]ᴹ = refl
 
-  M .types .lamᴹ {Aᴹ = lift Aᴺ} {Bᴹ = lift Bᴺ} (lift bᴺ) .lower = lamᴺ Aᴺ Bᴺ bᴺ
+  M .types .lamᴹ {Aᴹ = liftₚ Aᴺ} {Bᴹ = liftₚ Bᴺ} (liftₚ bᴺ) .lowerₚ = lamᴺ Aᴺ Bᴺ bᴺ
   M .types .lam-[]ᴹ = refl
 
   M .types .Π-βᴹ = refl
@@ -196,7 +220,7 @@ module norm where
 open norm public using () renaming (⟦_⟧ˢ to normˢ)
 
 normᵀ : (A : Ty Γ i) → NTy Γ i A
-normᵀ A = norm.⟦ A ⟧ᵀ .lower
+normᵀ A = norm.⟦ A ⟧ᵀ .lowerₚ
 
 normᵗ : (a : Tm Γ A) → NTm Γ A a
-normᵗ a = norm.⟦ a ⟧ᵗ .lower
+normᵗ a = norm.⟦ a ⟧ᵗ .lowerₚ

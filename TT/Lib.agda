@@ -27,13 +27,13 @@ the _ a = a
 
 syntax the A a = a ∈ A
 
-record Lift (P : Prop ℓ) : Set ℓ where
+record Liftₚ (P : Prop ℓ) : Set ℓ where
   eta-equality
-  constructor lift
+  constructor liftₚ
   field
-    lower : P
+    lowerₚ : P
 
-open Lift public
+open Liftₚ public
 
 infix 4 _≡_
 data _≡_ {A : Set ℓ} (a : A) : A → Prop ℓ where
