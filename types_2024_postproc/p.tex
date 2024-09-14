@@ -1,5 +1,8 @@
 \documentclass[sigplan,10pt,anonymous,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
 \newcommand{\ra}{\rightarrow}
 \newcommand{\Ra}{\Rightarrow}
 \newcommand{\Set}{\mathsf{Set}}
@@ -251,7 +254,7 @@ To summarise, our contributions are the following:
 
 \subsection{Structure of the paper}
 
-In Section \ref{sec:ssc}, we introduce the single substitution
+TODO. In Section \ref{sec:ssc}, we introduce the single substitution
 calculus only relying on a working knowledge of an implementation of
 type theory such as Agda, no prior experience with the metatheory of
 type theory is required. We first show how to get rid of explicit
@@ -268,54 +271,87 @@ In the 1990s single substitution calculi for type theory were popular,
 but usually in the extrinsic setting, see e.g.\ the thesis of
 Altenkirch \cite{alti:phd93}. B-systems were introduced by Voevodsky
 \cite{voevodsky2014bsystems} as an algebraic way of describing type
-theories close to the notations using typing judgements. Using our
-notations B-systems can be described as follows. B-frame.
+theories close to the notations using typing judgements. B-systems are
+a generalised algebraic (intrinsic) presentation of type theory using
+single substitutions. xxx
 
-There are several ways to define type theory as a GAT. For example,
-Thomas Ehrhard's calculus \cite{ehrhard,coquandEhrhard}, Dybjer's
-categories with families (CwFs
-\cite{DBLP:conf/types/Dybjer95,Castellan2021}), contextual categories
-or C-systems
-\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
-natural models \cite{DBLP:journals/mscs/Awodey18}, B-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.  With the exception of
-B-systems, the listed notions all define a parallel substitution
-calculus, where contexts and substitutions form a category.
+\begin{tikzpicture}
+  \node (b0) at (0,0) {$\top\cong B_0$};
+  \node (b1) at (2,0) {$B_1$};
+  \node (b2) at (4,0) {$B_2$};
+  \node (b3) at (6,0) {$\dots$};
+  \node (c1) at (3,1) {$\tilde{B}_1$};
+  \node (c2) at (5,1) {$\tilde{B}_1$};
+  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{ft}_0$} (b0);
+  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{ft}_1$} (b1);
+  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{ft}_2$} (b2);
+  \draw[->,font=\scriptsize] (c1) edge node[above] {$\partial_1$} (b1);
+  \draw[->,font=\scriptsize] (c2) edge node[above] {$\partial_2$} (b2);
+\end{tikzpicture}
 
-
-Ehrhard
+Using our
+notations B-systems can be described as follows. B-frame. TODO
 
 we use Sub, but we could have used telescopes
 
-contextual sCwF and contextual SSC with fct types
+The first generalised algebraic presentation of type theory was Thomas
+Ehrhard's calculus \cite{ehrhard,coquandEhrhard} which featured a
+parallel substitution calculus with $\p$, $\blank^+$ and
+$\langle\blank\rangle$ operations, just like in our calculus. Our
+single substitution calculus is essentially Ehrhard's calculus with
+the categorical composition and identity operations
+removed. Categories with families (CwFs
+\cite{DBLP:conf/types/Dybjer95,Castellan2021}) feature $\p$, $\q$,
+$\blank,\blank$ operations which makes it more apparent that
+substitutions are simple lists of terms. CwFs are equivalent to
+Ehrhard's calculus, and so are contextual categories/C-systems
+\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
+the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18} and
+B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
 
-Formalisations of type theory use low-level 
+Kaposi and Luksa \cite{} defined a telescopic single substitution
+calculus for simple type theory, it can be seen as a simply typed
+version of B-systems. They show that the category of contextual models
+of their calculus is equivalent to the category of contextual simply
+typed CwFs with function space. Their equivalence result holds even
+without the presence of function space. In the presence of function
+space, the same equivalence holds for the simply typed version of our
+substitution calculus, see the formalisation accompanying this paper.
 
-Algebraic formalisations of type theory: Brunerie
+Most formalisations of type theory are extrinsic
+\cite{pujet,abel,metacoq}: they define the syntax as abstract syntax
+trees, and equip it with typing and conversion relations. A higher
+level representation is working in setoid hell
+\cite{chapman09eatitself}: terms are intrinsically well-typed, but
+conversion is still an explicit relation. For formalising the
+GAT-level syntax, one needs a stronger metatheory than ordinary Agda
+or Coq: the metatheory has to support quotient inductive-inductive
+types (QIITs \cite{DBLP:journals/pacmpl/KaposiKA19}), in other words,
+initial models of GATs. Altenkirch and Kaposi
+\cite{DBLP:conf/popl/AltenkirchK16} formalised the syntax of type
+theory using postulated QIITs in Agda, together with parametricity and
+normalisation \cite{lmcs:4005} proofs. Brunerie and de Boer
+\cite{initiality-agda} constructed the initial contextual category in
+Agda using postulated quotients. QIITs are supported by the cubical
+set model \cite{} and the setoid model \cite{kaposi-qiit-setoid}, thus
+Cubical Agda \cite{} and setoid/observational type theory
+\cite{setoid,loicThesis} support QIITs. For example, in Cubical Agda,
+set-truncated and groupoid-truncated syntaxes of type theory have been
+formalised \cite{cohtt}. Without QIITs, tricks such as shallow
+embedding the syntax can be used to formalise metatheoretic results
+about type theory such as gluing
+\cite{kaposi_et_al:LIPIcs:2019:10532}, and its special cases
+canonicity and parametricity \cite{kaposi-shallow}.
 
-Initiality conjecture.
-
-\cite{initiality-agda} \cite{DBLP:conf/popl/AltenkirchK16},
-normalisation, shallow embedding canonicity, gluing. Low level
-formalisations: Abel, Loic, metacoq. They can be seen as unfolding the
-more abstract thing in a (weak) setoid model.
-
-Other SSC: 90s French, Thorsten thesis, B-systems, Luksa paper.
+At the level of abstraction of SOGATs, the difference between single
+and parallel substitution calculi are not visible. However, the
+metatheory of type theory can be still investigated in this abstract
+setting, via the methods of Synthethic Tait Computability
+\cite{DBLP:phd/us/Sterling22} or internal sconing
+\cite{DBLP:conf/fscd/BocquetKS23}.
 
 % TODO: say that this is the paper version of the \cite{singleTypes}
 % paper
-
-In a type-theoretic metatheory,
-the initial model of a GAT is a quotient inductive-inductive type
-(QIIT \cite{DBLP:journals/pacmpl/KaposiKA19}). QIITs are a general
-family of inductive types where multiple types are defined mutually,
-later types can be indexed over previous ones, and equality
-constructors are also allowed, generalising quotients. The elimination
-principle of the QIIT corresponds to a structural induction principle
-and is equivalent to the statement that the syntax is the initial
-model \cite{DBLP:journals/pacmpl/KaposiKA19}, that is, there is a
-unique morphism from the syntax to any other model.
-
 
 \subsection{Metatheory and formalisation}
 
@@ -598,6 +634,11 @@ the SOGAT (\ref{eq:tt})).
 Show examples of using the calculus, and where we need to derive more
 stuff.
 
+no need for parallel substitutions, empty substitution, parallel
+weakenings, telescopes, or combinations of these.
+
+say that we assume the QIIT version of this.
+
 \section{$\alpha$-normalisation}
 \label{sec:alpha}
 
@@ -615,6 +656,8 @@ TODO: show that the SSC operations are derivable from CwF.
 \section{Minimisation}
 
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
+
+termification in the shallow paper is shown equationally complete
 
 \section{Conclusions}
 \label{sec:conclusion}
