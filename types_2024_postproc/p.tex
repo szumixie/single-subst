@@ -1,6 +1,7 @@
 \documentclass[sigplan,10pt,anonymous,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
 \newcommand{\ra}{\rightarrow}
+\newcommand{\Ra}{\Rightarrow}
 \newcommand{\Set}{\mathsf{Set}}
 \newcommand{\Ty}{\mathsf{Ty}}
 \newcommand{\Tm}{\mathsf{Tm}}
@@ -16,6 +17,9 @@
 \newcommand{\El}{\mathsf{El}}
 \newcommand{\cd}{\mathsf{c}}
 \newcommand{\blank}{\mathord{\hspace{1pt}\text{--}\hspace{1pt}}} %from the book
+\renewcommand{\tt}{\mathsf{tt}}
+\newcommand{\fst}{\mathsf{fst}}
+\newcommand{\snd}{\mathsf{snd}}
 
 \begin{document}
 
@@ -149,9 +153,10 @@ the motivations of Voevodsky for developing B-systems
 semantics of (\ref{eq:tytm}) is simpler and has more models than
 B-systems. GAT presentations of type theory are important for defining
 models, our presentation gives a new notion of model, which in the
-future might contribute to definitions of new models. Because our
-single substitution GAT does not involve a category, it might be
-easier to adapt it in a higher dimensional setting, see Section
+future might contribute to definitions of new models. It can also
+influence implementations of type theory. Because our single
+substitution GAT does not involve a category, it might be easier to
+adapt it to a higher dimensional setting, see Section
 \ref{sec:conclusion}.
 
 The single substitution semantics of (\ref{eq:tytm}) is in some sense
@@ -209,9 +214,29 @@ computation/uniqueness rules like $\beta$/$\eta$ for function
 space. To derive the new induction principle for the syntax, we first
 prove $\alpha$-normalisation.
 
-if we have U,Pi, we can minimise the syntax
-
-if we have U,Pi,Sigma, then SSC semantics of (1)+Sigma -> PSC semantics of (1)+Sigma.
+In the particular theory (\ref{eq:tt}), every type is represented by a
+term. In the first order single substitution calculus, this can be
+used to adapt some equations and remove some others, obtaining a more
+minimalistic, but equivalent GAT. Theory (\ref{eq:tt}) can be extended
+with unit and $\Sigma$ types, more precisely with the following rules.
+\begin{equation}\label{eq:sigma}
+  \begin{alignedat}{10}
+    & \top && : \Ty\,i \\
+    & \tt && : \Tm\,\top \\
+    & \top\eta && : t = \tt \\
+    & \Sigma && : (A:\Ty\,i)\ra(\Tm\,A\ra\Ty\,i)\ra\Ty\,i \\
+    & \fst,\snd && : \Tm\,(\Sigma\,A\,B)\cong(a:\Tm\,A)\times\,\Tm\,(B\,a): \blank,\blank
+\end{alignedat}
+\end{equation}
+Using the same insight about types and the universe, the fact that
+dependences can be represented by function spaces, and that
+collections of dependencies can be collected using $\Sigma$ types, we
+can actually derive a parallel model from a single substitution model.
+TODO: universe levels are a problem (maybe not if we use iterated
+function space instead of $\Sigma$); the resulting CwF is not the same as
+the free CwF over the SSC. Bootstrapping a CwF.
+CwF -> SSC -> CwF = termification, that is equationally complete, see shallow paper, so we get an isomorphic CwF
+SSC -> CwF -> SSC = we get a stronger thing than what we started with.
 
 To summarise, our contributions are the following:
 \begin{itemize}
@@ -308,36 +333,266 @@ Prop.
 \section{Single substitution syntax}
 \label{sec:ssc}
 
-Contents of the TYPES abstract, but with more details.
+In this section, we introduce the syntax of type theory with function
+space and universes in a minimalistic way, only introducing operations
+that are unavoidable. We eschew boilerplate by only defining
+well-formed, well-scoped, well-typed terms that are quotiented by
+conversion. This means that the equalities that hold between terms are
+the ways we can convert terms to each other when running them as
+programs. We give a tutorial-style introduction to the syntax, we do
+not assume prior knowledge of the metatheory of type theory. The
+definition of type theory that we obtain is the same as the single
+substitution GAT semantics \cite{DBLP:conf/fscd/KaposiX24} of the
+SOGAT (\ref{eq:tt}).
+
+First of all, we need a sort of terms which have to be indexed by
+types because we only want well-typed terms. Both types and terms can
+include variables, and to keep track of the currently available
+variables, we also index them by contexts: a context is a list of
+types, the length is the number of available variables, and we add new
+variables at the end (that is, they are snoc-lists and not
+cons-lists). Types are also indexed by their universe level, this is a
+technical requirement for avoiding Russell's paradox. The index $i$ is
+an implicit argument of $\Tm$.
 \begin{alignat*}{10}
 & \Con && : \Set \\
 & \Ty && : \Con\ra\N\ra\Set \\
-& \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set \\
+& \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set
+\end{alignat*}
+Just as lists have two constructors, there are two ways to form
+contexts: the empty context $\diamond$ and context extension $\ext$
+which is like the snoc operation for lists. Context extension takes a
+type which can have variables in the context preceeding the type.
+\begin{alignat*}{10}
 & \diamond && : \Con \\
-& \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\ra\Con \\
+& \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con
+\end{alignat*}
+We will refer to variables by their distance from the end of the
+context. We would like to describe the operation providing the last
+variable in a context, the zero De Bruijn index, we denote it by $\q :
+\Tm\,(\Gamma\ext A)\,A'$. It is a term in an extended context, and it
+should have type $A$, but the issue is that $A : \Ty\,\Gamma$, and $A'
+: \Ty\,(\Gamma\ext A)$. We need a way to weaken the type $A$ to obtain
+such an $A'$. For this, we will introduce an operation $\blank[\p] :
+\Ty\,\Gamma\,i\ra\Ty\,(\Gamma\ext A)\,i$ and define $A' := A[\p]$. Instead
+of introducing just $\blank[\p]$, we generalise a bit and add a new
+sort $\Sub$ which for now only has the single element $\p$ and the
+operation $\blank[\blank]$ is called \emph{instantiation}. We
+instantiate the type with the weakening in
+$\Sub\,\Delta\,\Gamma$. Elements of $\Sub$ will be in general called
+substitutions, hence the name, but for now, we only have single end-of
+context weakenings in $\Sub$. $\Delta$ is called the domain, $\Gamma$
+the codomain of a $\Sub\,\Delta\,\Gamma$.
+\begin{alignat*}{10}
 & \Sub && : \Con\ra\Con\ra\Set \\
-& \blank[\blank] && : \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta \\
-& \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \\
 & \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
-& \q && : \Tm\,(\Gamma\ext A)\,(A[\p]) \\
-& \Pi && : (A:\Ty\,\Gamma)\ra\Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
-& \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
-& \Pi[] && : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+]) \\
-& \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
-& \lam[] && : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \\
-& \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
-& \blank\cdot\blank && : \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle]) \\
-& \Pi\beta && : \lam\,t\cdot a = t[\langle a\rangle] \\
-& [\langle\rangle] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
-& {\cdot}[] && : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma]) \\
+& \blank[\blank] && : \Ty\,\Gamma\,i\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta\,i \\
+& \q && : \Tm\,(\Gamma\ext A)\,(A[\p])
+\end{alignat*}
+The operations $\p$ and $\q$ take three implicit parameters, $\Gamma$,
+$i$ and $A$, while $\blank[\blank]$ takes $\Gamma$, $i$ and $\Delta$
+implicitly. Still, we only have the last variable $\q$ in the context,
+we don't have e.g.\ the last but one variable in $\Tm\,(\Gamma\ext
+A\ext B)\,(A[\p][\p])$ where we had to weaken $A$ twice to make it fit
+with its context. To obtain more variables, we also allow weakening of
+terms, more precisely, we introduce an instantiation operation for
+terms with an overloaded notation.
+\begin{alignat*}{10}
+& \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma])
+\end{alignat*}
+Note that this is a dependent function as the type of the resulting
+term has to be weakened the same way as the term itself. Now we can
+define all variables counting from the end of the context (De Bruijn
+indices \cite{debruijn}): $0 := \q$, $1 := \q[\p]$, $2 := \q[\p][\p]$,
+$3 := \q[\p][\p][\p]$, and so on.
+
+Next we add dependent function space $\Pi$: the domain of a dependent
+function is a type in some context $\Gamma$, and the codomain can also
+refer to a variable in the domain, so we extend the context of the
+codomain type with the type of the domain. For simplicity, both types
+are at the same level.
+\begin{alignat*}{10}
+& \Pi && : (A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i
+\end{alignat*}
+The nondependent function space $\blank\Ra\blank :
+\Ty\,\Gamma\,i\ra\Ty\,\Gamma\,i\ra\Ty\,\Gamma\,i$ is a special case of $\Pi$
+and we define it as the abbreviation $A\Ra B := \Pi\,A\,(B[\p])$.
+
+Because we introduced weakening, we now have to explain what happens
+to a $\Pi$ type once we weaken it. Assume $A : \Ty\,\Gamma\,i$,
+$B:\Ty\,(\Gamma\ext A)\,i$ and we have $\p:\Sub\,(\Gamma\ext
+C)\,\Gamma$. Then we say $(\Pi\,A\,B)[\p] = \Pi\,(A[\p])\,(B[\p'])$,
+but $B$ cannot be weakened by $\p$ because there we need $\p' :
+\Sub\,(\Gamma\ext C\ext A[\p])\,(\Gamma\ext A)$. So $p'$ has to be a
+new kind of weakening which adds a new variable in the last but one
+position. But then we need an equation also for $(\Pi\,A\,B)[\p']$,
+introducing a new weakening which adds a new variable in the last but
+two position, and so on. We solve all of these issues by allowing the
+\emph{lifting} of a weakening: $\gamma^+$ will be the same as the
+weakening $\gamma : \Sub\,\Delta\,\Gamma$, except that it will add an
+extra variable both at the end of the domain and codomain
+context.
+\begin{alignat*}{10}
+& \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A)
+\end{alignat*}
+Note that $A$ is an implicit argument of $\blank^+$, and that it has
+to be instantiated by the weakening $\gamma$ in the domain context in
+order to fit in. Now we can explain how instantiation acts on $\Pi$ by
+the following equation.
+\begin{alignat*}{10}
+& \Pi[] && : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+])
+\end{alignat*}
+The above equation has 6 implicit arguments, namely $\Gamma$, $i$,
+$A$, $B$, $\Delta$ and $\gamma$.  This rule works for any weakening,
+no matter how many $\blank^+$s have been applied to it. As of now, all
+elements of $\Sub$ have the form
+\begin{alignat*}{10}
+  & \p^{+^n} : \Sub\, && (\Gamma\ext A\ext B_1[\p]\ext B_2[\p^+]\ext\dots\ext B_n[\p^{+^{n-1}}]) \\
+  & && (\Gamma\ext B_1\ext B_2\ext\dots\ext B_n).
+\end{alignat*}
+where $+^n$ means the $n$-times iteration of $\blank^+$.
+
+Now that we have weakenings of the form $\gamma^+$, we have to say how
+they act on variables, that is, terms of the form
+$\q[\p]\dots[\p]$. We express this using two rules: we say what
+$\q[\gamma^+]$ computes to, and what $b[\p][\gamma^+]$ computes to
+where $b$ is an arbitrary term. $\q[\gamma^+]$ should be the same as
+$\q$ (with different implicit arguments as the $\q$ in
+$\q[\gamma^+]$), as the weakening happens somewhere in the middle of
+the context, so the index of the variable remains unchanged. However,
+assuming $\q:\Tm\,(\Gamma\ext A)\,(A[\p])$, we have $\q[\gamma^+] :
+\Tm\,(\Delta\ext A[\gamma])\,(A[\p][\gamma^+])$, but in the same
+context, we have $\q : \Tm\,(\Delta\ext A[\gamma])\,(A[\gamma][\p])$,
+hence the terms in the two sides of the equation $\q[\gamma^+] = \q$
+have different types. But these two types should be the same:
+weakening a type at the end of the context, and then applying another
+lifted weakening should be the same as first weakening somewhere and
+then weakening at the end. We first assume this equation for types,
+then the equation $\q[\gamma^+] = \q$ becomes well-typed (in the
+metatheory). The equation for $b[\p][\gamma^+]$ has the same shape as
+the newly assumed rule for types. Thus we add the following three
+equations.
+\begin{alignat*}{10}
 & [\p][^+] && : B[\p][\gamma^+] = B[\gamma][\p] \\
 & [\p][^+] && : b[\p][\gamma^+] = b[\gamma][\p] \\
-& \q[^+] && : \q[\gamma^+] = \q \\
+& \q[^+] && : \q[\gamma^+] = \q
+\end{alignat*}
+The second and third equations only make sense because of the first
+equation. The phenomenon that later equations (or operations) depend
+on previous equations is usual in the world of GATs. In fact, the
+later equations cannot even be stated without having some previous
+equations.
+
+Now that we have $[\p][^+]$ for types, we can derive the instantiation
+rule for nondependent function space as follows.
+\begin{alignat*}{10}
+  & (A\Ra B)[\gamma] && {=} \\
+  & (\Pi\,A\,(B[\p]))[\gamma] && {=}(\Pi[]) \\
+  & \Pi\,(A[\gamma])\,(B[\p][\gamma^+])\,\, && {=}([\p][^+]) \\
+  & \Pi\,(A[\gamma])\,(B[\gamma][\p]) && {=} \\
+  & (A[\gamma])\Ra(B[\gamma])
+\end{alignat*}
+
+So far our only terms are variables, but we would like to define
+functions via lambda abstraction. Abstraction takes a term in a
+context extended by the domain of the function. It comes with a rule
+for instantiation analogous to $\Pi[]$.
+\begin{alignat*}{10}
+& \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
+& \lam[] && : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+])
+\end{alignat*}
+Note that the equation $\lam[]$ only makes sense because of the
+previous equation $\Pi[]$: the left hand side is in
+$\Tm\,\Delta\,(\Pi\,A\,B[\gamma])$, in the right hand side,
+$t[\gamma^+] : \Tm\,(\Delta\ext A[\gamma])\,(B[\gamma^+])$, hence the
+right hand side is in
+$\Tm\,\Delta\,(\Pi\,(A[\gamma])\,(B[\gamma^+]))$.
+
+The functions $\lambda x.x$ and $\lambda x\,y.x$ can be defined in our
+syntax as $\lam\,\q : \Tm\,\Gamma\,(A\Ra A)$ and
+$\lam\,(\lam\,(\q[\p])) :
+\Tm\,\Gamma\,\big(\Pi\,A\,(B\Ra(A[\p]))\big)$ which make sense for all
+$\Gamma$, $A$, $B$.
+
+The application operation for dependent function space is a bit
+tricky, because the return type depends on the input: the argument of
+the function will appear in the return type. We write application by
+an infix $\blank\cdot\blank :
+\Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,B'$,
+where $B' : \Ty\,\Gamma$ should be $B:\Ty\,(\Gamma\ext A)$ where the
+last variable is \emph{substituted} (instantiated) by $a$. For this,
+we introduce a new element of $\Sub$ called single substitution which
+goes the opposite way of $\p$. Now we can use instantiation
+$\blank[\blank]$ to substitute the last variable in $B$.
+\begin{alignat*}{10}
+& \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
+& \blank\cdot\blank && : \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle])
+\end{alignat*}
+We could have introduced new, separate sorts and $\blank[\blank]$
+operations for weakenings and substitutions, but we merge them for
+simplicity. There is no need for separation: just as weakenings can be
+lifted, single substitutions can also be lifted, and the
+weakening-rules $\Pi[]$, $\lam[]$ also work for single
+substitutions. We won't have more ways to introduce elements of
+$\Sub$, and there are no equations on $\Sub$. An element of $\Sub$ is
+either a single weakening $\p$ lifted a couple of times, or a single
+substitution lifted a couple of times. We call elements of $\Sub$
+substitutions for simplicity.
+
+With the introduction of $\blank\cdot\blank$, we need a new
+substitution rule, but again it only makes sense with an extra
+equation on types saying that first substituting the last variable and
+then an arbitrary substitution is the same as first the lifted version
+of the arbitrary substitution that does not touch the last variable,
+and then substituting the last variable.
+\begin{alignat*}{10}
+& [\langle\rangle] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
+& {\cdot}[] && : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma])
+\end{alignat*}
+Following the introduction of the operation $\langle\blank\rangle$, we
+need to explain how it acts on variables. Given a variable in the
+middle of the context (a term $b[\p]$), substituting its last variable
+simply returns $b$. Substituting the last variable $\q$ reads out the
+term from $\langle\blank\rangle$. As usual, the rules only typecheck
+if we have an equation for types.
+\begin{alignat*}{10}
 & [\p][\langle\rangle] && : B[\p][\langle a\rangle] = B \\
 & [\p][\langle\rangle] && : b[\p ][\langle a\rangle] = b \\
-& \q[\langle\rangle] && : \q[\langle a\rangle] = a \\
+& \q[\langle\rangle] && : \q[\langle a\rangle] = a
+\end{alignat*}
+We don't have a separate sort of variables, so the rule
+$[\p][\langle\rangle]$ holds not only for variables, but for arbitrary
+terms. This is not an issue, as weakening a term at the end of its
+context, and then substituting the newly introduced variable is the
+same as not doing anything.
+
+We add the computation and uniqueness rule for function space, where
+the uniqueness rule again needs an extra equation on the codomain type
+of the function to make sense. This is the typal version of the
+equation mentioned in the introduction.
+\begin{alignat*}{10}
+& \Pi\beta && : \lam\,t\cdot a = t[\langle a\rangle] \\
 & [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B \\
-& \Pi\eta && : t = \lam\,(t[\p]\cdot\q) \\
+& \Pi\eta && : t = \lam\,(t[\p]\cdot\q)
+\end{alignat*}
+
+Finally, we add the rules for universes. A universe is a type
+containing codes for types, this is witnessed by $\El$ (elements) and
+$\cd$ (code), which make an isomorphism between terms of type $\U\,i$
+and types of level $i$. All three operations come with substitution
+rules ($\El[]$ and $\cd[]$ are interderivable, so it would be enough
+to assume one of the two, but we add both to completely align with the
+algorithm \cite{DBLP:conf/fscd/KaposiX24} generating the rules from
+the SOGAT (\ref{eq:tt})).
+\begin{alignat*}{10}
+  & \U && : (n:\N)\ra\Ty\,\Gamma\,(1+n) \\
+  & \El && : \Tm\,\Gamma\,(\U\,i) \ra \Ty\,\Gamma\,i \\
+  & \cd && : \Ty\,\Gamma\,i\ra\Tm\,\Gamma\,(\U\,i) \\
+  & \U\beta && : \El\,(\cd\,A) = A \\
+  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A} \\
+  & \U[] && : (\U\,i)[\gamma] = \U\,i \\
+  & \El[] && : (\El\,\hat{A})[\gamma] = \El\,(\hat{A}[\gamma]) \\
+  & \cd[] && : (\cd\,A)[\gamma] = \cd\,(A[\gamma])
 \end{alignat*}
 
 Show examples of using the calculus, and where we need to derive more
