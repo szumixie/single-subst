@@ -309,7 +309,7 @@ Ehrhard's calculus, and so are contextual categories/C-systems
 the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18} and
 B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
 
-Kaposi and Luksa \cite{} defined a telescopic single substitution
+Kaposi and Luksa \cite{luksa} defined a telescopic single substitution
 calculus for simple type theory, it can be seen as a simply typed
 version of B-systems. They show that the category of contextual models
 of their calculus is equivalent to the category of contextual simply
@@ -319,29 +319,30 @@ space, the same equivalence holds for the simply typed version of our
 substitution calculus, see the formalisation accompanying this paper.
 
 Most formalisations of type theory are extrinsic
-\cite{pujet,abel,metacoq}: they define the syntax as abstract syntax
-trees, and equip it with typing and conversion relations. A higher
-level representation is working in setoid hell
-\cite{chapman09eatitself}: terms are intrinsically well-typed, but
-conversion is still an explicit relation. For formalising the
-GAT-level syntax, one needs a stronger metatheory than ordinary Agda
-or Coq: the metatheory has to support quotient inductive-inductive
-types (QIITs \cite{DBLP:journals/pacmpl/KaposiKA19}), in other words,
-initial models of GATs. Altenkirch and Kaposi
+\cite{DBLP:journals/pacmpl/0001OV18,DBLP:conf/cpp/AdjedjLMPP24,DBLP:journals/jar/SozeauABCFKMTW20}:
+they define the syntax as abstract syntax trees, and equip it with
+typing and conversion relations. A higher level representation is
+working in setoid hell \cite{chapman09eatitself}: terms are
+intrinsically well-typed, but conversion is still an explicit
+relation. For formalising the GAT-level syntax, one needs a stronger
+metatheory than ordinary Agda or Coq: the metatheory has to support
+quotient inductive-inductive types (QIITs
+\cite{DBLP:journals/pacmpl/KaposiKA19}), in other words, initial
+models of GATs. Altenkirch and Kaposi
 \cite{DBLP:conf/popl/AltenkirchK16} formalised the syntax of type
 theory using postulated QIITs in Agda, together with parametricity and
 normalisation \cite{lmcs:4005} proofs. Brunerie and de Boer
 \cite{initiality-agda} constructed the initial contextual category in
 Agda using postulated quotients. QIITs are supported by the cubical
-set model \cite{} and the setoid model \cite{kaposi-qiit-setoid}, thus
-Cubical Agda \cite{} and setoid/observational type theory
-\cite{setoid,loicThesis} support QIITs. For example, in Cubical Agda,
-set-truncated and groupoid-truncated syntaxes of type theory have been
-formalised \cite{cohtt}. Without QIITs, tricks such as shallow
-embedding the syntax can be used to formalise metatheoretic results
-about type theory such as gluing
-\cite{kaposi_et_al:LIPIcs:2019:10532}, and its special cases
-canonicity and parametricity \cite{kaposi-shallow}.
+set model \cite{DBLP:conf/lics/CoquandHM18} and the setoid model \cite{kaposi-qiit-setoid}, thus
+Cubical Agda \cite{DBLP:journals/jfp/VezzosiMA21} and
+setoid/observational type theory \cite{setoid,DBLP:phd/hal/Pujet22} support
+QIITs. For example, in Cubical Agda, set-truncated and
+groupoid-truncated syntaxes of type theory have been formalised
+\cite{cohtt}. Without QIITs, tricks such as shallow embedding the
+syntax can be used to formalise metatheoretic results about type
+theory such as gluing \cite{kaposi_et_al:LIPIcs:2019:10532}, and its
+special cases canonicity and parametricity \cite{kaposi-shallow}.
 
 At the level of abstraction of SOGATs, the difference between single
 and parallel substitution calculi are not visible. However, the
