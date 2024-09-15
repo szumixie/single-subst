@@ -2,6 +2,7 @@
 
 \usepackage{tikz}
 \usetikzlibrary{arrows}
+\usepackage{proof}
 
 \newcommand{\ra}{\rightarrow}
 \newcommand{\Ra}{\Rightarrow}
@@ -23,6 +24,9 @@
 \renewcommand{\tt}{\mathsf{tt}}
 \newcommand{\fst}{\mathsf{fst}}
 \newcommand{\snd}{\mathsf{snd}}
+\newcommand{\Lift}{\mathsf{Lift}}
+\newcommand{\mk}{\mathsf{mk}}
+\newcommand{\un}{\mathsf{un}}
 
 \begin{document}
 
@@ -83,21 +87,25 @@ Coquand \cite{coquandUniverse} is specified by the following SOGAT.
   & \Pi && : (A:\Ty\,i)\ra(\Tm\,A\ra\Ty\,i)\ra\Ty\,i \\
   & \app && : \Tm\,(\Pi\,A\,B)\cong((a:\Tm\,A)\ra\,\Tm\,(B\,a)): \lam \\
   & \U && : (i:\N)\ra\Ty\,(1+i) \\
-  & \El && : \Tm\,(\U\,i)\cong\Ty\,i : \cd
+  & \El && : \Tm\,(\U\,i)\cong\Ty\,i : \cd \\
+  & \Lift && : \Ty\,i\ra\Ty\,(1+i) \\
+  & \un && : \Tm\,(\Lift\,A)\cong\Tm\,A : \mk
 \end{alignedat}
 \end{equation}
-We use implicit arguments, e.g.\ $\Tm$ takes the $i:\N$ implicitly,
-and $\app$ takes $i$, $A$ and $B$ implicitly. $f : X \cong Y : g$
-denotes an isomorphism, that is, $f : X\ra Y$, $g:Y\ra X$ with
-$g\,(f\,x) = x$ and $f\,(g\,y) = y$ for all $x$, $y$. Note that $\Pi$
-and $\lam$ are second-order functions. We say that $\Pi$ binds a
-$\Tm$-variable of type $A$ in its second $\Ty$-argument. Every binder
-is represented by a second-order function, and as a result, we don't
-need to talk about contexts and substitutions when describing the
-theory: we re-use the binding features of the metatheory to describe
-those of our object theory (this technique is also known as
-higher-order abstract syntax \cite{DBLP:conf/lics/Hofmann99} or
-logical framework
+Because types are isomorphic to a term (witnessed by $\El$ and $\cd$),
+we have to index types by their (universe) level, and types at lower
+level are included at all upper levels by $\Lift$. We use implicit
+arguments, e.g.\ $\Tm$ takes the $i:\N$ implicitly, and $\app$ takes
+$i$, $A$ and $B$ implicitly. $f : X \cong Y : g$ denotes an
+isomorphism, that is, $f : X\ra Y$, $g:Y\ra X$ with $g\,(f\,x) = x$
+and $f\,(g\,y) = y$ for all $x$, $y$. Note that $\Pi$ and $\lam$ are
+second-order functions. We say that $\Pi$ binds a $\Tm$-variable of
+type $A$ in its second $\Ty$-argument. Every binder is represented by
+a second-order function, and as a result, we don't need to talk about
+contexts and substitutions when describing the theory: we re-use the
+binding features of the metatheory to describe those of our object
+theory (this technique is also known as higher-order abstract syntax
+\cite{DBLP:conf/lics/Hofmann99} or logical framework
 \cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2}). There
 is no good notion of homomorphism between second-order models, thus
 the semantics of a SOGAT is given by a first order generalised
@@ -244,7 +252,10 @@ SSC -> CwF -> SSC = we get a stronger thing than what we started with.
 To summarise, our contributions are the following:
 \begin{itemize}
 \item A new generalised algebraic presentation of type theory in the
-  form of a minimalistic single substitution calculus.
+  form of a minimalistic single substitution calculus. We show that
+  there is no need for parallel substitutions, empty substitution,
+  parallel weakenings, telescopes, or combinations of these to
+  describe the syntax of type theory in an intrinsic way.
 \item The $\alpha$-normalisation technique and deriving parallel
   substitutions from the single substitution syntax.
 \item Minimisation.
@@ -269,45 +280,77 @@ show that our syntax is isomorphic to the CwF-style syntax (Section
 
 In the 1990s single substitution calculi for type theory were popular,
 but usually in the extrinsic setting, see e.g.\ the thesis of
-Altenkirch \cite{alti:phd93}. B-systems were introduced by Voevodsky
-\cite{voevodsky2014bsystems} as an algebraic way of describing type
-theories close to the notations using typing judgements. B-systems are
-a generalised algebraic (intrinsic) presentation of type theory using
-single substitutions. xxx
+Altenkirch \cite{alti:phd93}.
 
+B-systems were introduced by Voevodsky \cite{voevodsky2014bsystems} as
+an algebraic way of describing type theories close to the notations
+using typing judgements. B-systems are an intrinsic, but essentially
+algebraic presentation of type theory using single
+substitutions. B-systems correspond to our single substitution
+calculus as essentially algebraic theories correpond to generalised
+algebraic theories, or sets with a map into $I$ correspond to indexed
+families over $I$ \cite[page
+  221]{DBLP:journals/apal/Cartmell86}. Another difference is that we
+have fewer and less general equations, resulting in the fact that we
+have more models than B-systems. However in the syntax of our theory,
+all the rules of B-systems are admissible. We describe the
+relationship in more detail. B-systems are B-frames together with a
+substitution, weakening and generic element operations. A B-frame is
+given by sets $B_i$, $\tilde{B}_i$ and functions between them as shown
+below \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. \\
 \begin{tikzpicture}
-  \node (b0) at (0,0) {$\top\cong B_0$};
-  \node (b1) at (2,0) {$B_1$};
+  \node (b0) at (0,0) {$\top$};
+  \node (b1) at (1.5,0) {$B_1$};
   \node (b2) at (4,0) {$B_2$};
-  \node (b3) at (6,0) {$\dots$};
-  \node (c1) at (3,1) {$\tilde{B}_1$};
+  \node (b3) at (7,0) {$\dots$};
+  \node (c1) at (2.5,1) {$\tilde{B}_1$};
   \node (c2) at (5,1) {$\tilde{B}_1$};
   \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{ft}_0$} (b0);
   \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{ft}_1$} (b1);
   \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{ft}_2$} (b2);
   \draw[->,font=\scriptsize] (c1) edge node[above] {$\partial_1$} (b1);
   \draw[->,font=\scriptsize] (c2) edge node[above] {$\partial_2$} (b2);
-\end{tikzpicture}
-
-Using our
-notations B-systems can be described as follows. B-frame. TODO
-
-we use Sub, but we could have used telescopes
-
-The first generalised algebraic presentation of type theory was Thomas
-Ehrhard's calculus \cite{ehrhard,coquandEhrhard} which featured a
-parallel substitution calculus with $\p$, $\blank^+$ and
-$\langle\blank\rangle$ operations, just like in our calculus. Our
-single substitution calculus is essentially Ehrhard's calculus with
-the categorical composition and identity operations
-removed. Categories with families (CwFs
-\cite{DBLP:conf/types/Dybjer95,Castellan2021}) feature $\p$, $\q$,
-$\blank,\blank$ operations which makes it more apparent that
-substitutions are simple lists of terms. CwFs are equivalent to
-Ehrhard's calculus, and so are contextual categories/C-systems
-\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
-the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18} and
-B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
+\end{tikzpicture} \\
+Using our notation, a B-frame contains the following data. \\
+\begin{tikzpicture}
+  \node (b0) at (0,0) {$\top$};
+  \node (b1) at (1.5,0) {$\Ty\,\diamond$};
+  \node (b2) at (4,0) {$(A:\Ty\,\diamond)\times\Ty\,(\diamond\ext A)$};
+  \node (b3) at (7,0) {$\dots$};
+  \node (c1) at (2.5,1) [text width=3cm] {$(A:\Ty\,\diamond)\times\Tm\,\diamond\,A$};
+  \node (c2) at (5.7,1.7) [text width=4cm,align=center] {$\big((A:\Ty\,\diamond)\times(B:\Ty\,(\diamond\ext A))\big)\times\Tm\,(\diamond\ext A)\,B$};
+  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{fst}$} (b0);
+  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{fst}$} (b1);
+  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{fst}$} (b2);
+  \draw[->,font=\scriptsize] (c1) edge node[above] {$\mathsf{fst}$} (b1);
+  \draw[->,font=\scriptsize] (c2) edge node[above] {$\mathsf{fst}$} (b2);
+\end{tikzpicture} \\
+The substitution operation $\mathbb{S}$ for an element of
+$x:\tilde{B}_{n+1}$ is a homomorphism of the slice B-frames
+$\mathbb{B}/\partial(x) \ra \mathbb{B}/\mathsf{ft}(\partial(x))$. In
+our notation, $x = (\Gamma, A, a)$ where $a : \Tm\,\Gamma\,A$, and the
+homomorphism $\mathbb{S}$ corresponds to the following maps for the
+bottom row of the diagram:
+\begin{alignat*}{10}
+  & \blank[\langle a\rangle] && : \Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
+  & \blank[\langle a\rangle^+] && : \Ty\,(\Gamma\ext A\ext B)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]) \\
+  & \blank[\langle a\rangle^{++}] && : \Ty\,(\Gamma\ext A\ext B\ext C)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]\ext C[\langle a\rangle^+]) \\
+  & \dots,
+\end{alignat*}
+and similarly $\mathbb{S}$ also includes all the (lifted) substitution
+operations for terms corresponding to the top row of the
+diagram. Analogously, the weakening operation corresponds to
+$\blank[\p^{+\dots+}]$ operations, and the generic element is $\q$ in
+our notation. The six groups of equations correspond to our
+$[\langle\rangle][]$, $[\p][^+]$, $\q[^+]$, $[\p][\langle\rangle]$,
+$\q[\langle\rangle]$, $[\p^+][\langle\q\rangle]$ equations, in this
+order. However we don't have the lifted versions of our equations,
+equations $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$ are only
+stated for types, and $\q[^+]$, $\q[\langle\rangle]$ are only stated
+for terms. The missing equations are admissible, see Section
+\ref{sec:admissible}. In the presence of universes and $\Pi$ types, we
+reduce the needed equations even more, see Section
+\ref{sec:minimisation}.
 
 Kaposi and Luksa \cite{luksa} defined a telescopic single substitution
 calculus for simple type theory, it can be seen as a simply typed
@@ -318,7 +361,22 @@ without the presence of function space. In the presence of function
 space, the same equivalence holds for the simply typed version of our
 substitution calculus, see the formalisation accompanying this paper.
 
-Most formalisations of type theory are extrinsic
+The first generalised algebraic presentation of type theory was Thomas
+Ehrhard's calculus \cite{ehrhard,coquandEhrhard} which featured a
+parallel substitution calculus with $\p$, $\blank^+$ and
+$\langle\blank\rangle$ operations, just like in our calculus. Our
+single substitution calculus is essentially Ehrhard's calculus with
+the categorical composition and identity operations
+removed. Categories with families (CwFs
+\cite{DBLP:conf/types/Dybjer95,Castellan2021}) feature $\p$, $\q$,
+$\blank,\blank$ operations which make it more apparent that
+substitutions are lists of terms. CwFs are equivalent to Ehrhard's
+calculus, and so are contextual categories/C-systems
+\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
+the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18} and
+B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
+
+Most computer formalisations of type theory are extrinsic
 \cite{DBLP:journals/pacmpl/0001OV18,DBLP:conf/cpp/AdjedjLMPP24,DBLP:journals/jar/SozeauABCFKMTW20}:
 they define the syntax as abstract syntax trees, and equip it with
 typing and conversion relations. A higher level representation is
@@ -334,17 +392,19 @@ theory using postulated QIITs in Agda, together with parametricity and
 normalisation \cite{lmcs:4005} proofs. Brunerie and de Boer
 \cite{initiality-agda} constructed the initial contextual category in
 Agda using postulated quotients. QIITs are supported by the cubical
-set model \cite{DBLP:conf/lics/CoquandHM18} and the setoid model \cite{kaposi-qiit-setoid}, thus
-Cubical Agda \cite{DBLP:journals/jfp/VezzosiMA21} and
-setoid/observational type theory \cite{setoid,DBLP:phd/hal/Pujet22} support
-QIITs. For example, in Cubical Agda, set-truncated and
-groupoid-truncated syntaxes of type theory have been formalised
-\cite{cohtt}. Without QIITs, tricks such as shallow embedding the
-syntax can be used to formalise metatheoretic results about type
-theory such as gluing \cite{kaposi_et_al:LIPIcs:2019:10532}, and its
-special cases canonicity and parametricity \cite{kaposi-shallow}.
+set model \cite{DBLP:conf/lics/CoquandHM18} and the setoid model
+\cite{kaposi-qiit-setoid}, thus Cubical Agda
+\cite{DBLP:journals/jfp/VezzosiMA21} and setoid/observational type
+theory \cite{setoid,DBLP:phd/hal/Pujet22} support QIITs. For example,
+in Cubical Agda, set-truncated and groupoid-truncated syntaxes of type
+theory have been formalised \cite{cohtt}. Without QIITs, tricks such
+as shallow embedding the syntax can be used to formalise metatheoretic
+results about type theory such as gluing
+\cite{kaposi_et_al:LIPIcs:2019:10532}, and its special cases
+canonicity and parametricity \cite{kaposi-shallow}.
 
-At the level of abstraction of SOGATs, the difference between single
+At the level of abstraction of SOGATs
+\cite{uemura,DBLP:conf/fscd/KaposiX24}, the difference between single
 and parallel substitution calculi are not visible. However, the
 metatheory of type theory can be still investigated in this abstract
 setting, via the methods of Synthethic Tait Computability
@@ -363,7 +423,7 @@ As Agda does not support them directly, we postulate their
 constructors and induction principle and add the computation rules
 using rewrite rules \cite{DBLP:conf/types/Cockx19}.
 
-Notation and formalisation techniques.
+Notation and formalisation techniques, including congruence rules.
 
 Prop.
 
@@ -447,7 +507,7 @@ Next we add dependent function space $\Pi$: the domain of a dependent
 function is a type in some context $\Gamma$, and the codomain can also
 refer to a variable in the domain, so we extend the context of the
 codomain type with the type of the domain. For simplicity, both types
-are at the same level.
+are at the same level (this can be remedied using $\Lift$, see later).
 \begin{alignat*}{10}
 & \Pi && : (A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i
 \end{alignat*}
@@ -583,7 +643,7 @@ then an arbitrary substitution is the same as first the lifted version
 of the arbitrary substitution that does not touch the last variable,
 and then substituting the last variable.
 \begin{alignat*}{10}
-& [\langle\rangle] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
+& [\langle\rangle][] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
 & {\cdot}[] && : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma])
 \end{alignat*}
 Following the introduction of the operation $\langle\blank\rangle$, we
@@ -613,40 +673,67 @@ equation mentioned in the introduction.
 & \Pi\eta && : t = \lam\,(t[\p]\cdot\q)
 \end{alignat*}
 
-Finally, we add the rules for universes. A universe is a type
-containing codes for types, this is witnessed by $\El$ (elements) and
-$\cd$ (code), which make an isomorphism between terms of type $\U\,i$
-and types of level $i$. All three operations come with substitution
-rules ($\El[]$ and $\cd[]$ are interderivable, so it would be enough
-to assume one of the two, but we add both to completely align with the
-algorithm \cite{DBLP:conf/fscd/KaposiX24} generating the rules from
-the SOGAT (\ref{eq:tt})).
+We add the rules for universes. A universe is a type containing codes
+for types, this is witnessed by $\El$ (elements) and $\cd$ (code),
+which make an isomorphism between terms of type $\U\,i$ and types of
+level $i$. All three operations come with substitution rules ($\El[]$
+and $\cd[]$ are interderivable, so it would be enough to assume one of
+the two, but we add both to completely align with the algorithm
+\cite{DBLP:conf/fscd/KaposiX24} generating the rules from the SOGAT
+(\ref{eq:tt})).
 \begin{alignat*}{10}
-  & \U && : (n:\N)\ra\Ty\,\Gamma\,(1+n) \\
-  & \El && : \Tm\,\Gamma\,(\U\,i) \ra \Ty\,\Gamma\,i \\
-  & \cd && : \Ty\,\Gamma\,i\ra\Tm\,\Gamma\,(\U\,i) \\
+  & \U && : (i:\N)\ra\Ty\,\Gamma\,(1+i)\hspace{2em} && \U[] && : (\U\,i)[\gamma] = \U\,i \\
+  & \El && : \Tm\,\Gamma\,(\U\,i) \ra \Ty\,\Gamma\,i && \El[] && : (\El\,\hat{A})[\gamma] = \El\,(\hat{A}[\gamma]) \\
+  & \cd && : \Ty\,\Gamma\,i\ra\Tm\,\Gamma\,(\U\,i) && \cd[] && : (\cd\,A)[\gamma] = \cd\,(A[\gamma]) \\
   & \U\beta && : \El\,(\cd\,A) = A \\
-  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A} \\
-  & \U[] && : (\U\,i)[\gamma] = \U\,i \\
-  & \El[] && : (\El\,\hat{A})[\gamma] = \El\,(\hat{A}[\gamma]) \\
-  & \cd[] && : (\cd\,A)[\gamma] = \cd\,(A[\gamma])
+  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A}
 \end{alignat*}
+Finally, we add the rules for moving types one level up. Because we
+defined function space only between types at the same level, without
+lifting, we cannot even define the polymorphic identity function.
+\begin{alignat*}{10}
+  & \Lift && : \Ty\,\Gamma\,i\ra\Ty\,\Gamma\,(1+i)\hspace{3.5em} && (\Lift\,A)[\gamma] = \Lift\,(A[\gamma]) \\
+  & \mk && : \Tm\,\Gamma\,A \ra \Tm\,\Gamma\,(\Lift\,A) && (\mk\,a)[\gamma] = \mk\,(a[\gamma]) \\
+  & \un && : \Tm\,\Gamma\,(\Lift\,A) \ra \Tm\,\Gamma\,A && (\un\,a)[\gamma] = \un\,(a[\gamma]) \\
+  & \Lift\beta && : \un\,(\mk\,a) = a \\
+  & \Lift\eta && : \mk\,(\un\,a) = a
+\end{alignat*}
+This concludes the first-order single substitution semantics of the
+SOGAT \ref{eq:tt}. The theory can be extended with new type and term
+formers in the same fashion: each rule has to be indexed over
+arbitrary contexts and come equipped with a substitution rule. There
+is no need to add more structural (substitution calculus) rules.
 
-Show examples of using the calculus, and where we need to derive more
-stuff.
+The polymorphic identity function for types at the level 0 is defined
+as
+\[
+\lam\,(\lam\,\q) : \Tm\,\diamond\,\Big(\Pi\,(\U\,0)\,\big(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)\big)\Big).
+\]
+Note that readability of this term essentially relies on implicit
+arguments. For example, $\q$ takes $(\diamond\ext\U\,0)$ as its first,
+$1$ as its second and $\Lift\,(\El\,\q)$ as its third implicit
+argument. Inrinsically typed terms are the same as derivation trees,
+we illustrate this by deriving this term as follows.
+\[
+\infer[(*)]{\lam\,(\lam\,\q) : \Tm\,\diamond\,\big(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))\big)}{\infer{\lam\,\q : \Tm\,(\diamond\ext\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))}{\infer{\q : \Tm\,(\diamond\ext\U\,0\ext\Lift\,(\El\,\q))\,(\Lift\,(\El\,\q)[\p])}{}}}
+\]
+Note that in step (*), $\lam$ made it sure that $\U\,0$ and
+$\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)$ are types at the same level,
+this is why we had to lift $\El\,\q$. Another subtle thing is
+happening when deriving the third implicit argument of $\q$. We have
+to coerce $\q$ along the equality $\U[]$.
+\[
+\infer{\Lift\,(\El\,\q) : \Ty\,(\diamond\ext\U\,0)\,1}{\infer{\El\,\q : \Ty\,(\diamond\ext\U\,0)\,0}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,(\U\,0)}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,((\U\,0)[\p])}{} && \infer{\U[] : (\U\,0)[\p] = \U\,0}{}}}}
+\]
+When working informally (or in extensional type theory), we don't
+write the coercion, but Agda requires it.
 
-no need for parallel substitutions, empty substitution, parallel
-weakenings, telescopes, or combinations of these.
+\section{Admissible equations}
+\label{sec:admissible}
 
-say that we assume the QIIT version of this.
-
-\section{$\alpha$-normalisation}
-\label{sec:alpha}
+TODO: say that we assume the QIIT version of this.
 
 $\alpha$-normal forms could also be called substitution normal forms.
-
-\section{Isomorphism}
-\label{sec:cwf}
 
 In this section we show that a category with families (CwF) equipped
 with a hierarchy of Coquand-universes and $\Pi$ types can be derived
@@ -655,7 +742,8 @@ from the single substitution syntax defined in \autoref{sec:ssc}.
 TODO: show that the SSC operations are derivable from CwF.
 
 \section{Minimisation}
-
+\label{sec:minimisation}
+        
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
 
 termification in the shallow paper is shown equationally complete
