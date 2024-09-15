@@ -699,8 +699,9 @@ lifting, we cannot even define the polymorphic identity function.
   & \Lift\eta && : \mk\,(\un\,a) = a
 \end{alignat*}
 This concludes the first-order single substitution semantics of the
-SOGAT \ref{eq:tt}. The theory can be extended with new type and term
-formers in the same fashion: each rule has to be indexed over
+SOGAT \ref{eq:tt}. For reference, we list the same rules again in
+Appendix \ref{app:tt}. The theory can be extended with new type and
+term formers in the same fashion: each rule has to be indexed over
 arbitrary contexts and come equipped with a substitution rule. There
 is no need to add more structural (substitution calculus) rules.
 
@@ -826,7 +827,7 @@ Hence, the conditional $\cdot[]'$ equation implies the condition for
 all types.
 
 Finally, we will remove equation $[\p^+][\langle\q\rangle]$ by making
-$\Pi\eta$ conditional. This needs another change: we exchange
+$\Pi\eta$ conditional. This needs another change: we substitute
 $\Pi\beta$ for a more general variant which is also conditional on the
 same equation.
 \begin{alignat*}{10}
@@ -844,7 +845,7 @@ $\hat{B} : \Tm\,(\Gamma\ext A)\,\U$,
   & && ((\lam\,\hat{B})[\p]\cdot\q)[\langle a\rangle] && {=}(\Pi\beta'\,\U[]) \\
   & && \hat{B}[\langle a\rangle].
 \end{alignat*}
-Now we derive the assumption for any type $B : \Ty\,(\Gamma\ext A)$.
+Now we derive the assumption of $\Pi\beta/\eta'$ for any type $B : \Ty\,(\Gamma\ext A)$.
 \begin{alignat*}{10}
   & B[\p^+][\langle\q\rangle] && {=}(\U\beta) \\
   & \El\,(\cd\,B)[\p^+][\langle\q\rangle] && {=}(\El[]) \\
@@ -854,13 +855,13 @@ Now we derive the assumption for any type $B : \Ty\,(\Gamma\ext A)$.
   & \El\,(\cd\,B) && {=}(\U\beta) \\
   & B
 \end{alignat*}
-With this we derived an even more minimalistic first-order theory for
-the SOGAT (\ref{eq:tt}), essentially relying on the universe and $\Pi$
-types. It is clear from the construction that the resulting theory is
-isomorphic to the one presented in Section \ref{sec:tt} (and Appendix
-\ref{app:tt}), all equations are interderivable. For reference, we
-list all the rules of the minimised calculus in Appendix
-\ref{app:minimisation}.
+This concludes the derivation of an even more minimalistic first-order
+theory for the SOGAT (\ref{eq:tt}), relying essentially on the
+universe and $\Pi$ types. It is clear from the construction that the
+resulting theory is isomorphic to the one presented in Section
+\ref{sec:tt} (and Appendix \ref{app:tt}), all equations are
+interderivable. For reference, we list all the rules of the minimised
+calculus in Appendix \ref{app:minimisation}.
 
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
 
@@ -996,8 +997,8 @@ Rules for individual type formers.
 \section{Minimised GAT presentation of (\ref{eq:tt})}
 \label{app:minimisation}
 
-We list the rules of the theory derived in Section
-\ref{sec:minimisation}.
+Rules of the theory derived in Section \ref{sec:minimisation}
+(omitting $\Lift$):
 \begin{alignat*}{10}
   & \Con && : \Set \\
   & \Ty && : \Con\ra\N\ra\Set \\
