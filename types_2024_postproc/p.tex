@@ -157,7 +157,7 @@ parallel semantics. In this paper we investigate the single
 substitution semantics of the type theory specified by the SOGAT
 (\ref{eq:tt}). This presentation of type theory is simpler than CwFs,
 the operations are all easy to motivate, we illustrate this in Section
-\ref{sec:ssc}. Single substitution calculi are closer to the usual
+\ref{sec:tt}. Single substitution calculi are closer to the usual
 presentation of type theory using derivation rules, this was one of
 the motivations of Voevodsky for developing B-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. Our single substitution
@@ -265,7 +265,7 @@ To summarise, our contributions are the following:
 
 \subsection{Structure of the paper}
 
-TODO. In Section \ref{sec:ssc}, we introduce the single substitution
+TODO. In Section \ref{sec:tt}, we introduce the single substitution
 calculus only relying on a working knowledge of an implementation of
 type theory such as Agda, no prior experience with the metatheory of
 type theory is required. We first show how to get rid of explicit
@@ -428,7 +428,7 @@ Notation and formalisation techniques, including congruence rules.
 Prop.
 
 \section{Single substitution syntax}
-\label{sec:ssc}
+\label{sec:tt}
 
 In this section, we introduce the syntax of type theory with function
 space and universes in a minimalistic way, only introducing operations
@@ -596,7 +596,7 @@ context extended by the domain of the function. It comes with a rule
 for instantiation analogous to $\Pi[]$.
 \begin{alignat*}{10}
 & \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
-& \lam[] && : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+])
+& \lam[] && : (\lam\,b)[\gamma] = \lam\,(b[\gamma^+])
 \end{alignat*}
 Note that the equation $\lam[]$ only makes sense because of the
 previous equation $\Pi[]$: the left hand side is in
@@ -668,7 +668,7 @@ the uniqueness rule again needs an extra equation on the codomain type
 of the function to make sense. This is the typal version of the
 equation mentioned in the introduction.
 \begin{alignat*}{10}
-& \Pi\beta && : \lam\,t\cdot a = t[\langle a\rangle] \\
+& \Pi\beta && : \lam\,b\cdot a = b[\langle a\rangle] \\
 & [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B \\
 & \Pi\eta && : t = \lam\,(t[\p]\cdot\q)
 \end{alignat*}
@@ -728,6 +728,8 @@ to coerce $\q$ along the equality $\U[]$.
 When working informally (or in extensional type theory), we don't
 write the coercion, but Agda requires it.
 
+TODO: beta equation for id.
+
 \section{Admissible equations}
 \label{sec:admissible}
 
@@ -737,7 +739,7 @@ $\alpha$-normal forms could also be called substitution normal forms.
 
 In this section we show that a category with families (CwF) equipped
 with a hierarchy of Coquand-universes and $\Pi$ types can be derived
-from the single substitution syntax defined in \autoref{sec:ssc}.
+from the single substitution syntax defined in \autoref{sec:tt}.
 
 TODO: show that the SSC operations are derivable from CwF.
 
@@ -748,9 +750,9 @@ We conjecture that the same works for any SOGAT.
 
 In this section we show that if have we universes and $\Pi$ types
 (which is the case in the theory (\ref{eq:tt})), we can decrease the
-number of euqations.
+number of equations.
 
-In our single substitution calculus, we have the equation $[\p][^+]$
+In our single substitution calculus, we have equation $[\p][^+]$
 stated both for types and terms (we know that the left one is about
 types because of our convention that type metavariables are uppercase
 Latin letters and term metavariables are lowercase):
@@ -773,18 +775,18 @@ It turns out that if we have Coquand-universes, the conditional
 $[\p][^+]'$ rule is enough: the input equation holds for $B := \U\,i$
 via $\U[]$, thus we get that for any $\hat{A} : \Tm\,\Gamma\,(\U\,i)$,
 $\hat{A}[\p][\gamma^+] = \hat{A}[\gamma][\p]$. But every type has a
-code in the universe, so for any $B : \Ty\,\Gamma\,i$,
+code in the universe, so for a $B : \Ty\,\Gamma\,i$,
 \begin{alignat*}{10}
   & B[\p][\gamma^+] && {=}(\U\beta) \\
   & \El\,(\cd\,B)[\p][\gamma^+] && {=}(\El[]) \\
-  & \El\,((\cd\,B)[\p][\gamma^+])\,\, && {=}([\p][^+]') \\
+  & \El\,((\cd\,B)[\p][\gamma^+])\,\, && {=}([\p][^+]'\,\U[]) \\
   & \El\,((\cd\,B)[\gamma][\p]) && {=}(\El[]) \\
   & \El\,(\cd\,B)[\gamma][\p] && {=}(\U\beta) \\
   & B[\gamma][\p].
 \end{alignat*}
-Equation $[\q][^+] : \q[\gamma^+] = \q$ only makes sense if we have
-$[\p][^+]$ for types, so either we make $[\q][^+]$ conditional, or we
-coerce it along the derived equation.
+Equation $[\q][^+] : \q[\gamma^+] = \q$ also only makes sense if we
+have $[\p][^+]$ for types, so either we have to make $[\q][^+]$
+conditional, or we coerce it along the derived equation.
 
 We play the exact same game with $[\p][\langle\rangle]$: we replace it
 with the conditional equation
@@ -792,7 +794,8 @@ with the conditional equation
 [\p][\langle\rangle]' : (e:B[\p][\langle a\rangle] = B)\ra b[\p][\langle a\rangle] =_e b,
 \]
 notice that we have the input for $B = \U\,i$, and derive the input
-equation for all types.
+equation for all types. We make $\q[\langle\rangle]$ conditional as
+well.
 
 Now we turn our attention to the equation
 \[
@@ -801,13 +804,70 @@ Now we turn our attention to the equation
 We were forced to introduce it so that we can state the substitution
 rule for function application $\cdot[]$. What if we made $\cdot[]$
 itself conditional?
+\begin{alignat*}{10}
+  & \cdot[]' :{} && (e : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle])\ra \\
+  & && (t\cdot a)[\gamma] =_e (t[\gamma])\cdot(a[\gamma])
+\end{alignat*}
+Again, for $B = \U$ we have the assumption $e$. But then $t$ is in
+$\Tm\,\Gamma\,(\Pi\,A\,\U)$, which is isomorphic to $\Ty\,(\Gamma\ext
+A)$. So we argue as follows for any $B : \Ty\,(\Gamma\ext A)$.
+\begin{alignat*}{10}
+  & B[\langle a\rangle][\gamma] && {=}(\U\beta) \\
+  & \El\,(\cd\,(B[\langle a\rangle][\gamma])) && {=}(\cd[]) \\
+  & \El\,((\cd\,B)[\langle a\rangle][\gamma]) && {=}(\Pi\beta) \\
+  & \El\,((\lam\,(\cd\,B)\cdot a)[\gamma]) && {=}(\cdot[]'\,\U[]) \\
+  & \El\,((\lam\,(\cd\,B)[\gamma])\cdot (a[\gamma]))\,\, && {=}(\lam[]) \\
+  & \El\,(\lam\,(\cd\,B[\gamma^+])\cdot (a[\gamma])) && {=}(\Pi\beta) \\
+  & \El\,(\cd\,B[\gamma^+][\langle a[\gamma]\rangle]) && {=}(\cd[]) \\
+  & \El\,(\cd\,B)[\gamma^+][\langle a[\gamma]\rangle] && {=}(\U\beta) \\
+  & B[\gamma^+][\langle a[\gamma]\rangle]
+\end{alignat*}
+Hence, the conditional $\cdot[]'$ equation implies the condition for
+all types.
 
-xxx
-
+Finally, we will remove equation $[\p^+][\langle\q\rangle]$ by making
+$\Pi\eta$ conditional. This needs another change: we exchange
+$\Pi\beta$ for a more general variant which is also conditional on the
+same equation.
+\begin{alignat*}{10}
+  & \Pi\eta' && : (e:B[\p^+][\langle\q\rangle] = B)\ra t =_e \lam\,(t[\p]\cdot\q) \\
+  & \Pi\beta' && : (e:B[\p^+][\langle\q\rangle] = B)\ra (\lam\,b)[\p]\cdot\q =_e b
+\end{alignat*}
+But first we need to check that the usage of $\Pi\beta$ above when
+proving $B[\langle a\rangle][\gamma] = B[\gamma^+][\langle
+  a[\gamma]\rangle]$ is derivable from $\Pi\beta'$. Assuming a
+$\hat{B} : \Tm\,(\Gamma\ext A)\,\U$,
+\begin{alignat*}{10}
+  & \Pi\beta^\U :{} &&  \lam\,\hat{B}\cdot a && {=}(\q[\langle\rangle]) \\
+  & && \lam\,\hat{B}\cdot(\q[\langle a\rangle])\,\, && {=}([\p][\langle\rangle]) \\
+  & && ((\lam\,\hat{B})[\p][\langle a\rangle])\cdot(\q[\langle a\rangle])\,\, && {=}(\cdot[]'\,\U[]) \\
+  & && ((\lam\,\hat{B})[\p]\cdot\q)[\langle a\rangle] && {=}(\Pi\beta'\,\U[]) \\
+  & && \hat{B}[\langle a\rangle].
+\end{alignat*}
+Now we derive the assumption for any type $B : \Ty\,(\Gamma\ext A)$.
+\begin{alignat*}{10}
+  & B[\p^+][\langle\q\rangle] && {=}(\U\beta) \\
+  & \El\,(\cd\,B)[\p^+][\langle\q\rangle] && {=}(\El[]) \\
+  & \El\,(\cd\,B[\p^+][\langle\q\rangle]) && {=}(\Pi\beta^\U) \\
+  & \El\,((\lam\,(\cd\,B[\p^+])\cdot\q) && {=}(\lam[]) \\
+  & \El\,((\lam\,(\cd\,B)[\p]\cdot\q) && {=}(\Pi\beta'\,\U[]) \\
+  & \El\,(\cd\,B) && {=}(\U\beta) \\
+  & B
+\end{alignat*}
+With this we derived an even more minimalistic first-order theory for
+the SOGAT (\ref{eq:tt}), essentially relying on the universe and $\Pi$
+types. It is clear from the construction that the resulting theory is
+isomorphic to the one presented in Section \ref{sec:tt} (and Appendix
+\ref{app:tt}), all equations are interderivable. For reference, we
+list all the rules of the minimised calculus in Appendix
+\ref{app:minimisation}.
 
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
 
 termification in the shallow paper is shown equationally complete
+
+intuition, similar to minimisation: the subst calc is just there to
+bootstrap U and Pi, those can do everything. 
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -876,41 +936,42 @@ using assumptions, and proving everything by induction.
 
 \appendix
 
-\section{The single substitution GAT presentation of the SOGAT (\ref{eq:tt})}
+\section{GAT presentation of (\ref{eq:tt})}
+\label{app:tt}
 
 For reference, we list the rules of the theory introduced in Section
-\ref{sec:ssc}. The core substitution calculus:
+\ref{sec:tt}. The core substitution calculus:
 \begin{alignat*}{10}
-& \Con && : \Set \\
-& \Ty && : \Con\ra\N\ra\Set \\
-& \diamond && : \Con \\
-& \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con \\
-& \Sub && : \Con\ra\Con\ra\Set \\
-& \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set \\
-& \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
-& \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
-& \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
-& \blank[\blank] && : \Ty\,\Gamma\,i\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta\,i \\
-& \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \\
-& \q && : \Tm\,(\Gamma\ext A)\,(A[\p]) \\
-& [\p][^+] && : B[\p][\gamma^+] = B[\gamma][\p] \\
-& [\p][^+] && : b[\p][\gamma^+] = b[\gamma][\p] \\
-& \q[^+] && : \q[\gamma^+] = \q \\
-& [\p][\langle\rangle] && : B[\p][\langle a\rangle] = B \\
-& [\p][\langle\rangle] && : b[\p ][\langle a\rangle] = b \\
-& \q[\langle\rangle] && : \q[\langle a\rangle] = a \\
-& [\langle\rangle][] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
-& [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B
+  & \Con && : \Set \\
+  & \Ty && : \Con\ra\N\ra\Set \\
+  & \diamond && : \Con \\
+  & \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con \\
+  & \Sub && : \Con\ra\Con\ra\Set \\
+  & \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set \\
+  & \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
+  & \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
+  & \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
+  & \blank[\blank] && : \Ty\,\Gamma\,i\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta\,i \\
+  & \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \\
+  & \q && : \Tm\,(\Gamma\ext A)\,(A[\p]) \\
+  & [\p][^+] && : B[\p][\gamma^+] = B[\gamma][\p] \\
+  & [\p][^+] && : b[\p][\gamma^+] = b[\gamma][\p] \\
+  & \q[^+] && : \q[\gamma^+] = \q \\
+  & [\p][\langle\rangle] && : B[\p][\langle a\rangle] = B \\
+  & [\p][\langle\rangle] && : b[\p ][\langle a\rangle] = b \\
+  & \q[\langle\rangle] && : \q[\langle a\rangle] = a \\
+  & [\langle\rangle][] && : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle] \\
+  & [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B
 \end{alignat*}
 Rules for individual type formers.
 \begin{alignat*}{10}
   & \Pi && : (A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i \\
   & \Pi[] && : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+]) \\
   & \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
-  & \lam[] && : (\lam\,t)[\gamma] = \lam\,(t[\gamma^+]) \\
+  & \lam[] && : (\lam\,b)[\gamma] = \lam\,(b[\gamma^+]) \\
   & \blank\cdot\blank && : \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle]) \\
   & {\cdot}[] && : (t\cdot a)[\gamma] = (t[\gamma])\cdot(a[\gamma]) \\
-  & \Pi\beta && : \lam\,t\cdot a = t[\langle a\rangle] \\
+  & \Pi\beta && : \lam\,b\cdot a = b[\langle a\rangle] \\
   & \Pi\eta && : t = \lam\,(t[\p]\cdot\q) \\
   & \U && : (i:\N)\ra\Ty\,\Gamma\,(1+i) \\
   & \U[] && : (\U\,i)[\gamma] = \U\,i \\  
@@ -919,17 +980,58 @@ Rules for individual type formers.
   & \cd && : \Ty\,\Gamma\,i\ra\Tm\,\Gamma\,(\U\,i) \\
   & \cd[] && : (\cd\,A)[\gamma] = \cd\,(A[\gamma]) \\
   & \U\beta && : \El\,(\cd\,A) = A \\
-  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A}
+  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A} \\
+  & \Lift && : \Ty\,\Gamma\,i\ra\Ty\,\Gamma\,(1+i) \\
+  & \Lift[] && : (\Lift\,A)[\gamma] = \Lift\,(A[\gamma])
 \end{alignat*}
 \begin{alignat*}{10}
-  & \Lift && : \Ty\,\Gamma\,i\ra\Ty\,\Gamma\,(1+i) \\
-  & \Lift[] && : (\Lift\,A)[\gamma] = \Lift\,(A[\gamma]) \\
   & \mk && : \Tm\,\Gamma\,A \ra \Tm\,\Gamma\,(\Lift\,A) \\
   & \mk[] && : (\mk\,a)[\gamma] = \mk\,(a[\gamma]) \\
   & \un[] && : (\un\,a)[\gamma] = \un\,(a[\gamma]) \\
   & \un && : \Tm\,\Gamma\,(\Lift\,A) \ra \Tm\,\Gamma\,A \\
   & \Lift\beta && : \un\,(\mk\,a) = a \\
   & \Lift\eta && : \mk\,(\un\,a) = a
+\end{alignat*}
+
+\section{Minimised GAT presentation of (\ref{eq:tt})}
+\label{app:minimisation}
+
+We list the rules of the theory derived in Section
+\ref{sec:minimisation}.
+\begin{alignat*}{10}
+  & \Con && : \Set \\
+  & \Ty && : \Con\ra\N\ra\Set \\
+  & \diamond && : \Con \\
+  & \blank\ext\blank && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con \\
+  & \Sub && : \Con\ra\Con\ra\Set \\
+  & \Tm && : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Set \\
+  & \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
+  & \langle\blank\rangle && : \Tm\,\Gamma\,A\ra\Sub\,\Gamma\,(\Gamma\ext A) \\
+  & \blank^+ && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta\ext A[\gamma])\,(\Gamma\ext A) \\
+  & \blank[\blank] && : \Ty\,\Gamma\,i\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta\,i \\
+  & \blank[\blank] && : \Tm\,\Gamma\,A\ra(\gamma:\Sub\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\gamma]) \\
+  & \q && : \Tm\,(\Gamma\ext A)\,(A[\p]) \\
+  & [\p][^+]' && : (e:B[\p][\gamma^+] = B[\gamma][\p])\ra b[\p][\gamma^+] =_e b[\gamma][\p] \\
+  & \q[^+]' && : (e:B[\p][\gamma^+] = B[\gamma][\p])\ra \q[\gamma^+] =_e \q \\
+  & [\p][\langle\rangle]' && : (e:B[\p][\langle a\rangle] = B)\ra b[\p ][\langle a\rangle] =_e b \\
+  & \q[\langle\rangle]' && : (e:B[\p][\langle a\rangle] = B)\ra \q[\langle a\rangle] =_e a \\
+  & \Pi && : (A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i \\
+  & \Pi[] && : (\Pi\,A\,B)[\gamma] = \Pi\,(A[\gamma])\,(B[\gamma^+]) \\
+  & \lam && : \Tm\,(\Gamma\ext A)\,B\ra\Tm\,\Gamma\,(\Pi\,A\,B) \\
+  & \lam[] && : (\lam\,b)[\gamma] = \lam\,(b[\gamma^+]) \\
+  & \blank\cdot\blank && : \Tm\,\Gamma\,(\Pi\,A\,B)\ra(a:\Tm\,\Gamma\,A)\ra\Tm\,\Gamma\,(B[\langle a\rangle]) \\
+  & {\cdot}[]' && : (e:B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle])\ra \\
+  & && \hphantom{{}:{}} (t\cdot a)[\gamma] =_e (t[\gamma])\cdot(a[\gamma]) \\
+  & \Pi\eta' && : (e:B[\p^+][\langle\q\rangle] = B)\ra t =_e \lam\,(t[\p]\cdot\q) \\
+  & \Pi\beta' && : (e:B[\p^+][\langle\q\rangle] = B)\ra (\lam\,b)[\p]\cdot\q =_e b \\
+  & \U && : (i:\N)\ra\Ty\,\Gamma\,(1+i) \\
+  & \U[] && : (\U\,i)[\gamma] = \U\,i \\  
+  & \El && : \Tm\,\Gamma\,(\U\,i) \ra \Ty\,\Gamma\,i \\
+  & \El[] && : (\El\,\hat{A})[\gamma] = \El\,(\hat{A}[\gamma]) \\
+  & \cd && : \Ty\,\Gamma\,i\ra\Tm\,\Gamma\,(\U\,i) \\
+  & \cd[] && : (\cd\,A)[\gamma] = \cd\,(A[\gamma]) \\
+  & \U\beta && : \El\,(\cd\,A) = A \\
+  & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A}
 \end{alignat*}
 
 \end{document}
