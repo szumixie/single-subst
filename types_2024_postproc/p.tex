@@ -234,7 +234,7 @@ minimalistic, but equivalent GAT. Theory (\ref{eq:tt}) can be extended
 with unit and $\Sigma$ types, more precisely with the following rules.
 \begin{equation}\label{eq:sigma}
   \begin{alignedat}{10}
-    & \top && : \Ty\,i \\
+    & \top && : \Ty\,0 \\
     & \tt && : \Tm\,\top \\
     & \top\eta && : t = \tt \\
     & \Sigma && : (A:\Ty\,i)\ra(\Tm\,A\ra\Ty\,i)\ra\Ty\,i \\
@@ -707,6 +707,8 @@ term formers in the same fashion: each rule has to be indexed over
 arbitrary contexts and come equipped with a substitution rule. There
 is no need to add more structural (substitution calculus) rules.
 
+\subsection{Examples}
+
 The polymorphic identity function for types at the level 0 is defined
 as
 \[
@@ -715,10 +717,11 @@ as
 Note that readability of this term essentially relies on implicit
 arguments. For example, $\q$ takes $(\diamond\ext\U\,0)$ as its first,
 $1$ as its second and $\Lift\,(\El\,\q)$ as its third implicit
-argument. Inrinsically typed terms are the same as derivation trees,
-we illustrate this by deriving this term as follows.
+argument, and these arguments themselves are terms written using
+implicit arguments. Inrinsically typed terms are the same as
+derivation trees, we illustrate this by deriving this term as follows.
 \[
-\infer[(*)]{\lam\,(\lam\,\q) : \Tm\,\diamond\,\big(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))\big)}{\infer{\lam\,\q : \Tm\,(\diamond\ext\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))}{\infer{\q : \Tm\,(\diamond\ext\U\,0\ext\Lift\,(\El\,\q))\,(\Lift\,(\El\,\q)[\p])}{}}}
+\infer[\text{(*)}]{\lam\,(\lam\,\q) : \Tm\,\diamond\,\big(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))\big)}{\infer{\lam\,\q : \Tm\,(\diamond\ext\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))}{\infer{\q : \Tm\,(\diamond\ext\U\,0\ext\Lift\,(\El\,\q))\,(\Lift\,(\El\,\q)[\p])}{}}}
 \]
 Note that in step (*), $\lam$ made it sure that $\U\,0$ and
 $\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)$ are types at the same level,
@@ -731,7 +734,14 @@ to coerce $\q$ along the equality $\U[]$.
 When working informally (or in extensional type theory), we don't
 write the coercion, but Agda requires it.
 
-TODO: beta equation for id.
+TODO: beta equation for id, show what we can do with types in an open
+context.
+
+\subsection{Models}
+
+TODO: To make sure that our definitions of models are correct, we show
+that in Agda there is a model for both the parallel and single
+substitution calculi.
 
 \section{Admissible equations}
 \label{sec:admissible}
@@ -950,7 +960,12 @@ resulting theory is isomorphic to the one presented in Section
 interderivable. For reference, we list all the rules of the minimised
 calculus in Appendix \ref{app:minimisation}.
 
+TODO: summarise this section with a theorem?
+
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
+
+We can emulate the parallel substitution calculus using function
+space, U and Sigma types
 
 termification in the shallow paper is shown equationally complete
 
@@ -964,6 +979,11 @@ Why are we still looking at alternative ways of defining type theory?
 Closer to the syntax/implementation, easier to understand/implement,
 fewer equations, hence easier to define models, coherent syntax?
 
+We showed a particular example for the SOGAT->single GAT translation,
+we showed that the syntax is equivalent to the other one, we
+conjecture that the method presented here generalises. For this
+particular SOGAT, the single GAT syntax can be simplified, and in
+fact, it is ``equivalent'' to the parallel theory.
 
 In this paper we introduced a new single substitution calculus which
 can be seen as a minimalistic variant of B-systems. We illustrate its
@@ -1003,7 +1023,7 @@ QIIT is nice because syntax and semantics are given together. The
 notion of model/semantics is traditionally given separately, and work
 has to be done to show that the above specified syntax generates a
 model. For example, this was the goal of the initiality project for
-homotopy type theory \cite{brunerie}. Maybe list work on type theory
+homotopy type theory \cite{initiality-agda}. Maybe list work on type theory
 using QIITs, see TYPES mailing list.
 
 We can abstract over these strategies and define our language as a
