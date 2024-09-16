@@ -1,0 +1,188 @@
+Deriving a parallel model from the SSC model via termification. We
+start with the SSC model M, it has Π,U,Lift,⊤,Σ.
+
+Lift^k : Ty Γ i → Ty Γ (k+i)
+Lift^0     A := A
+Lift^(1+k) A := Lift(Lift^k A)
+
+un^k : Tm Γ (Lift^k A) ≅ Tm Γ A : mk^k
+
+app : Tm Γ (Π A B) → Tm (Γ▹A) B
+app t := t[p]·q
+
+Con := (i:ℕ) × M.Ty ◇ i
+- we will overload contexts as both elements of ℕ and M.Tys for
+  readability
+Sub Δ Γ := M.Tm ◇ (Lift^(Γ-Δ) Δ ⇒ Lift^(Δ-Γ) Γ)
+γ∘δ := lam(mk^(Θ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Γ-Θ) q))))))
+- ?   : M.Tm (◇ ▹ Lift^(Γ-Θ) Θ) (Lift^(Θ-Γ) Γ[p])
+  δ   : M.Tm ◇ (Lift^(Δ-Θ) Θ ⇒ Lift^(Θ-Δ) Δ)
+  γ   : M.Tm ◇ (Lift^(Γ-Δ) Δ ⇒ Lift^(Δ-Γ) Γ)
+  γ∘δ : M.Tm ◇ (Lift^(Γ-Θ) Θ ⇒ Lift^(Θ-Γ) Γ)
+id  := lam q
+- ass : (γ∘δ)∘θ = γ∘(δ∘θ)
+  γ   : Sub Δ Γ
+  δ   : Sub Θ Δ
+  θ   : Sub Ξ Θ
+  γ∘δ : Sub Θ Γ
+  δ∘θ : Sub Ξ Δ
+  δ∘θ = lam(mk^(Ξ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Δ-Ξ) q))))))
+  (γ∘δ)∘θ =
+  lam(mk^(Ξ-Γ) (un^(Θ-Γ) ((γ∘δ)[p]·mk^(Γ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Γ-Ξ) q)))))) =
+  lam(mk^(Ξ-Γ) (un^(Θ-Γ) (lam(mk^(Θ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Γ-Θ) q))))))[p]·mk^(Γ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Γ-Ξ) q)))))) =(lam[])
+  lam(mk^(Ξ-Γ) (un^(Θ-Γ) (lam(mk^(Θ-Γ) (un^(Δ-Γ) (γ[p][p⁺]·mk^(Γ-Δ) (un^(Θ-Δ) (δ[p][p⁺]·mk^(Δ-Θ) (un^(Γ-Θ) q))))))·mk^(Γ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Γ-Ξ) q)))))) =(Πβ)
+  lam(mk^(Ξ-Γ) (un^(Θ-Γ) (mk^(Θ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Γ-Θ) (mk^(Γ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Γ-Ξ) q)))))))))))) =(Liftβ, Liftβ)
+  lam(mk^(Ξ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Γ-Ξ) q)))))))) =(Liftβ,Liftβ)
+  lam(mk^(Ξ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Ξ-Δ) (mk^(Ξ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Δ-Ξ) (mk^(Δ-Ξ) (un^(Γ-Ξ) q)))))))))))) =(Πβ)
+  lam(mk^(Ξ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Ξ-Δ) ((lam(mk^(Ξ-Δ) (un^(Θ-Δ) (δ[p][p⁺]·mk^(Δ-Θ) (un^(Ξ-Θ) (θ[p][p⁺]·mk^(Θ-Ξ) (un^(Δ-Ξ) q)))))))·mk^(Δ-Ξ) (un^(Γ-Ξ) q)))))) =(lam[])
+  lam(mk^(Ξ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Ξ-Δ) ((lam(mk^(Ξ-Δ) (un^(Θ-Δ) (δ[p]·mk^(Δ-Θ) (un^(Ξ-Θ) (θ[p]·mk^(Θ-Ξ) (un^(Δ-Ξ) q)))))))[p]·mk^(Δ-Ξ) (un^(Γ-Ξ) q)))))) =
+  lam(mk^(Ξ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Ξ-Δ) ((δ∘θ)[p]·mk^(Δ-Ξ) (un^(Γ-Ξ) q)))))) =
+  γ∘(δ∘θ)
+- idl : id∘γ = γ
+  id∘γ =
+  lam(mk^(Δ-Γ) (un^(Γ-Γ) (lam q[p]·mk^(Γ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Γ-Δ) q)))))) =
+  lam(mk^(Δ-Γ) (lam q[p]·(un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Γ-Δ) q))))) =(Liftη)
+  lam(mk^(Δ-Γ) (lam q[p]·un^(Δ-Γ) (γ[p]·q))) =(lam[])
+  lam(mk^(Δ-Γ) (lam q·un^(Δ-Γ) (γ[p]·q))) =(Πβ)
+  lam(mk^(Δ-Γ) (un^(Δ-Γ) (γ[p]·q))) =(Liftη)
+  lam(γ[p]·q) =(Πη)
+  γ
+- idr : γ∘id = γ
+  γ∘id =
+  lam(mk^(Δ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (un^(Δ-Δ) (id[p]·mk^(Δ-Δ) (un^(Γ-Δ) q)))))) =
+  lam(mk^(Δ-Γ) (un^(Δ-Γ) (γ[p]·mk^(Γ-Δ) (lam q[p]·un^(Γ-Δ) q)))) =(Liftη)
+  lam(γ[p]·mk^(Γ-Δ) (lam q[p]·un^(Γ-Δ) q)) =(lam[])
+  lam(γ[p]·mk^(Γ-Δ) (lam q·un^(Γ-Δ) q)) =(Πβ)
+  lam(γ[p]·mk^(Γ-Δ) (un^(Γ-Δ) q)) =(Liftη)
+  lam(γ[p]·q) =(Πη)
+  γ
+◇ := (0,⊤)
+ε := lam (mk^Γ tt)
+- ε : M.Tm ◇ (Γ ⇒ Lift^Γ ⊤)
+- ◇η : σ = ε
+  σ =(Πη)
+  lam(σ[p]·q) =
+  lam(σ[p]·q) =(Liftη)
+  lam(mk^Γ (un^Γ (σ[p]·q))) =(⊤η)
+  lam (mk^Γ tt) = 
+  ε
+Ty Γ i := Sub Γ (1+i,U i)
+- Ty Γ i = M.Tm ◇ (Lift^(1+i-Γ) Γ ⇒ Lift^(Γ-(1+i)) (U i))
+A[γ] := A∘γ
+- [∘] : A[γ∘δ] = A∘(γ∘δ) = (A∘γ)∘δ = A[γ][δ]
+- [id] : A[id] = A∘id = A
+Tm Γ {i} A := M.Tm ◇ (Π (Lift^(i-Γ) Γ) (Lift^(Γ-i) (El(un^(Γ-(1+i)) (A[p]·mk^(1+i-Γ) (un^(i-Γ) q))))))
+- A : M.Tm ◇ (Lift^(1+i-Γ) Γ ⇒ Lift^(Γ-(1+i)) (U i))
+  A[p] : M.Tm (◇ ▹ Lift^(i-Γ) Γ) (Lift^(1+i-Γ) Γ ⇒ Lift^(Γ-(1+i)) (U i)[p])
+Γ▹A := Σ (Lift^(i-Γ) Γ) (Lift^(Γ-i) (El(un^(Γ-(1+i)) (A[p]·mk^(1+i-Γ) (un^(i-Γ) q)))))
+- Γ : M.Ty ◇ Γ
+  A : M.Tm ◇ (Lift^(1+i-Γ) Γ ⇒ Lift^(Γ-(1+i)) (U i))
+
+The above without universe stuff:
+Con     := M.Ty ◇
+Sub Δ Γ := M.Tm ◇ (Δ ⇒ Γ)
+γ∘δ     := lam (γ[p]·(δ[p]·q))
+id      := lam q
+◇       := ⊤
+ε       := lam tt
+Ty Γ    := Sub Γ U = M.Tm ◇ (Γ ⇒ U)
+A[γ]    := lam (A[p]·(γ[p]·q))
+- A[γ][p]·q = A[p]·(γ[p]·q)
+  A[γ][p]·q = 
+  lam (A[p]·(γ[p]·q))[p]·q =(lam[])
+  lam (A[p][p⁺]·(γ[p][p⁺]·q))·q =(Πβ)
+  A[p]·(γ[p]·q)
+Tm Γ A  := M.Tm ◇ (Π Γ (El(A[p]·q)))
+Γ▹A     := Σ Γ (El(A[p]·q))
+a[γ]    := lam (a[p]·(γ[p]·q))
+- [∘] : a[γ∘δ] = a[γ][δ]
+  a[γ∘δ] =
+  lam (a[p]·((lam (γ[p]·(δ[p]·q)))[p]·q)) =(lam[])
+  lam (a[p]·(lam (γ[p][p⁺]·(δ[p][p⁺]·q))·q)) =(Πβ)
+  lam (a[p]·(γ[p]·(δ[p]·q))) =(Πβ)
+  lam ((lam (a[p][p⁺]·(γ[p][p⁺]·q)))·(δ[p]·q)) =(lam[])
+  lam ((lam (a[p]·(γ[p]·q)))[p]·(δ[p]·q)) =
+  a[γ][δ]
+- [id] : a[id] = a
+  a[id] =
+  lam (a[p]·(lam q[p]·q)) =(lam[])
+  lam (a[p]·(lam q·q)) =(Πβ)
+  lam (a[p]·q) =(Πη)
+  a
+γ,a     := lam(γ[p]·q,a[p]·q)
+p       := lam(fst q)
+q       := lam(snd q)
+- Sub Δ (Γ▹A) ≅ (γ:Sub Δ Γ) × Tm Δ (A[γ])
+  Sub Δ (Γ▹A) =
+  M.Tm ◇ (Δ ⇒ Σ Γ (El(A[p]·q))) ≅(Π univ.prop)
+  M.Tm (◇ ▹ Δ) (Σ Γ (El(A[p]·q))[p]) ≅(Σ univ.prop)
+  (γ:M.Tm (◇▹Δ) (Γ[p])) × M.Tm (◇▹Δ) ((El(A[p]·q))[p⁺][⟨γ⟩]) =
+  (γ:M.Tm (◇▹Δ) (Γ[p])) × M.Tm (◇▹Δ) ((El(A[p][p⁺][⟨γ⟩]·γ))) =
+  (γ:M.Tm (◇▹Δ) (Γ[p])) × M.Tm (◇▹Δ) ((El(A[p][p][⟨γ⟩]·γ))) =
+  (γ:M.Tm (◇▹Δ) (Γ[p])) × M.Tm (◇▹Δ) ((El(A[p]·γ))) ≅(Π univ.prop)
+  (γ:M.Tm ◇ (Δ ⇒ Γ)) × M.Tm ◇ (Π Δ (El(A[p]·(γ[p]·q)))) =
+  (γ:M.Tm ◇ (Δ ⇒ Γ)) × M.Tm ◇ (Π Δ (El(lam(A[p][p⁺]·(γ[p][p⁺]·q))·q))) =
+  (γ:M.Tm ◇ (Δ ⇒ Γ)) × M.Tm ◇ (Π Δ (El(lam(A[p]·(γ[p]·q))[p]·q))) =
+  (γ:M.Tm ◇ (Δ ⇒ Γ)) × M.Tm ◇ (Π Δ (El(A[γ][p]·q))) =
+  (γ:Sub Δ Γ) × Tm Δ (A[γ])
+- (γ,a)∘δ = (γ∘δ,a[γ])
+  (γ,a)∘δ =
+  lam((lam(γ[p]·q,a[p]·q))[p]·(δ[p]·q)) =(lam[])
+  lam((lam(γ[p][p⁺]·q,a[p][p⁺]·q))·(δ[p]·q)) =(Πβ)
+  lam(γ[p]·(δ[p]·q),a[p]·(γ[p]·q)) =(lam[],Πβ)
+  lam((lam(γ[p]·(δ[p]·q)))[p]·q,(lam (a[p]·(γ[p]·q)))[p]·q) =
+  lam((γ∘δ)[p]·q,a[γ][p]·q) =
+  (γ∘δ,a[γ])
+- (γ∘p,q) = lam(γ[p]·fst q,snd q)
+  lam(lam (γ[p]·(lam(fst q)[p]·q))[p]·q,lam(snd q)[p]·q) =(lam[])
+  lam(lam (γ[p]·(lam(fst q[p⁺])·q))[p]·q,lam(snd q[p⁺])·q) =
+  lam(lam (γ[p]·(lam(fst q)·q))[p]·q,lam(snd q)·q) =(Πβ)
+  lam(lam (γ[p]·fst q)[p]·q,snd q) =(lam[])
+  lam(lam (γ[p][p⁺]·fst q)·q,snd q) =(Πβ)
+  lam(γ[p][p⁺][⟨q⟩]·fst q,snd q) =([p⁺][⟨q⟩])
+  lam(γ[p]·fst q,snd q)
+Π A B   := lam (c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))
+- ?          : M.Tm ◇ (Γ ⇒ U)
+  A          : M.Tm ◇ (Γ ⇒ U)
+  B          : M.Tm ◇ (Σ Γ (El(A[p]·q)) ⇒ U)
+  A[p]·q     : M.Tm (◇▹Γ) U
+  B·(q[p],q) : M.Tm (◇▹Γ▹El(A[p]·q)) U
+  q[p]       : M.Tm (◇▹Γ▹El(A[p]·q)) (Γ[p][p])
+  q          : M.Tm (◇▹Γ▹El(A[p]·q)) (El(A[p]·q)[p])
+  q          : M.Tm (◇▹Γ▹El(A[p]·q)) (El(A[p][p]·(q[p])))
+  q          : M.Tm (◇▹Γ▹El(A[p]·q)) (El(A[p][p][p][⟨q[p]⟩]·(q[p])))
+  q          : M.Tm (◇▹Γ▹El(A[p]·q)) (El(A[p][p][p]·q)[⟨q[p]⟩])
+  (q[p],q)   : M.Tm (◇▹Γ▹El(A[p]·q)) (Σ Γ (El(A[p]·q))[p][p])
+  (q[p],q)   : M.Tm (◇▹Γ▹El(A[p]·q)) (Σ (Γ[p][p]) (El(A[p][p⁺][p⁺]·q)))
+  (q[p],q)   : M.Tm (◇▹Γ▹El(A[p]·q)) (Σ (Γ[p][p]) (El(A[p][p][p]·q)))
+  B[p][p]    : M.Tm (◇▹Γ▹El(A[p]·q)) (Σ Γ (El(A[p]·q))[p][p] ⇒ U)
+- Π[] : (Π A B)[γ] = Π (A[γ]) (B[γ∘p,q])
+  (Π A B)[γ] =
+  lam (lam (c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))[p]·(γ[p]·q)) =(lam[])
+  lam (lam (c (Π (El (A[p][p⁺]·q)) (El (B[p][p][p⁺⁺]·(q[p][p⁺⁺],q)))))·(γ[p]·q)) =(Πβ)
+  lam (c (Π (El (A[p][p⁺][⟨γ[p]·q⟩]·(γ[p]·q))) (El (B[p][p][p⁺⁺][⟨γ[p]·q⟩⁺]·(q[p][p⁺⁺][⟨γ[p]·q⟩⁺],q))))) =([p][⁺])
+  lam (c (Π (El (A[p][p][⟨γ[p]·q⟩]·(γ[p]·q))) (El (B[p][p⁺][p][⟨γ[p]·q⟩⁺]·(q[p⁺][p][⟨γ[p]·q⟩⁺],q))))) =([p][⟨⟩])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p⁺][p][⟨γ[p]·q⟩⁺]·(q[p⁺][p][⟨γ[p]·q⟩⁺],q))))) =([p][⁺])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p][⟨γ[p]·q⟩][p]·(q[p⁺][⟨γ[p]·q⟩][p],q))))) =([p][⟨⟩])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(q[p⁺][⟨γ[p]·q⟩][p],q))))) =(q[⁺])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(q[⟨γ[p]·q⟩][p],q))))) =(q[⟨⟩])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·((γ[p]·q)[p],q))))) =(·[])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(γ[p][p]·(q[p]),q))))) =(Σβ)
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(γ[p][p]·fst (q[p],q),snd (q[p],q)))))) =([p][⟨⟩])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(γ[p][p][p][⟨q[p],q⟩]·fst (q[p],q),snd (q[p],q)))))) =(Πβ)
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(lam(γ[p][p][p]·fst q,snd q)·(q[p],q)))))) =([p][⁺])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(lam(γ[p][p⁺][p⁺]·fst q,snd q)·(q[p],q)))))) =(lam[])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(lam(γ[p]·fst q,snd q)[p][p]·(q[p],q)))))) =([p][⟨⟩])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p][p][⟨q[p],q⟩]·(lam(γ[p]·fst q,snd q)[p][p][p][⟨q[p],q⟩]·(q[p],q)))))) =([p][⁺])
+  lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p⁺][p⁺][⟨q[p],q⟩]·(lam(γ[p]·fst q,snd q)[p][p⁺][p⁺][⟨q[p],q⟩]·(q[p],q)))))) =(Πβ)
+  lam (c (Π (El (lam (A[p][p⁺]·(γ[p][p⁺]·q))·q)) (El (lam (B[p][p⁺][p⁺]·(lam(γ[p]·fst q,snd q)[p][p⁺][p⁺]·q))·(q[p],q))))) =(la(c (Π (El (lam (A[p]·(γ[p]·q))[p]·q)) (El (lam (B[p]·(lam(γ[p]·fst q,snd q)[p]·q))[p][p]·(q[p],q))))) lam =
+  Π (A[γ]) (B[γ∘p,q])
+lam b   := lam (lam (b[p][p]·(q[p],q)))
+- b : M.Tm ◇ (Π (Σ Γ (El(A[p]·q))) (El(B[p]·q)))
+  ? : M.Tm ◇ (Π Γ (El(lam (c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))[p]·q)))
+  ? : M.Tm ◇ (Π Γ (El(lam (c (Π (El (A[p][p⁺]·q)) (El (B[p][p][p⁺⁺]·(q[p][p⁺⁺],q)))))·q)))
+  ? : M.Tm ◇ (Π Γ (El(lam (c (Π (El (A[p][p]·q)) (El (B[p][p⁺][p]·(q[p⁺][p],q)))))·q)))
+  ? : M.Tm ◇ (Π Γ (El(lam (c (Π (El (A[p][p]·q)) (El (B[p][p][p]·(q[p],q)))))·q)))
+  ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p][p][⟨q⟩]·q)) (El (B[p][p][p][⟨q⟩⁺]·(q[p][⟨q⟩⁺],q)))))))
+  ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p]·q)) (El (B[p][p][⟨q⟩][p]·(q[⟨q⟩][p],q)))))))
+  ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))))
