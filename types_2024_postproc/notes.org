@@ -1,3 +1,4 @@
+** Termification
 Deriving a parallel model from the SSC model via termification. We
 start with the SSC model M, it has Π,U,Lift,⊤,Σ.
 
@@ -186,3 +187,43 @@ lam b   := lam (lam (b[p][p]·(q[p],q)))
   ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p][p][⟨q⟩]·q)) (El (B[p][p][p][⟨q⟩⁺]·(q[p][⟨q⟩⁺],q)))))))
   ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p]·q)) (El (B[p][p][⟨q⟩][p]·(q[⟨q⟩][p],q)))))))
   ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))))
+and so on.
+  
+** Roundtrip: M:CwF, U M:SSC, T(U M):CwF, we show that for M' := T(U M), M' ≃ M.
+Our notion of equivalence: a weak CwF-morphism which is bijective on types and terms
+
+F : M'.Con → M.Con
+F : M'.Sub Δ Γ → M.Sub (F Δ) (F Γ)
+F : M'.Ty Γ ≅ M.Ty (F Γ)
+F : M'.Tm Γ A ≅ M.Tm (F Γ) (F A)
+
+F (γ∘δ) = F γ∘F δ
+F id = id
+F◇⁻¹ : Sub ◇ (F ◇)
+F◇⁻¹ ∘ ε = id
+F (A[γ]) = F A[F γ]
+F (a[γ]) = F a[F γ]
+F▹⁻¹ : Sub (F Γ▹F A) (F(Γ▹A))
+F▹⁻¹ ∘ (F p,F q) = id
+(F p,F q) ∘ F▹⁻¹ = id
+
+why we don't need preservation of type formers which are defined by
+universal property:
+
+M'.Tm Γ (Π A B) ≅(univ.prop of Π in M') M'.Tm (Γ▹A) B ≅(preservation of Cwf structure by F) M.Tm (F Γ ▹ F A) (F B[...]) ≅(univ.prop of Π in M) M.Tm (Π (F A) (F B[...]))
+
+Actions on the sorts:
+
+F : M'.Con → M.Con
+F : Ty ◇ → Con
+F Γ := ◇▹Γ
+
+F : M'.Sub Δ Γ → M.Sub (F Δ) (F Γ)
+F : Tm ◇ (Δ ⇒ Γ) → Sub (◇▹Δ) (◇▹Γ)
+F γ := (ε,γ[p]·q)
+
+F : M'.Ty Γ = Tm ◇ (Γ ⇒ U) ≅ Tm (◇▹Γ) U ≅ Ty (◇▹Γ) = M.Ty (F Γ)
+F A := El(A[p]·q)
+
+F : M'.Tm Γ A = Tm ◇ (Π Γ (El(A[p]·q))) ≅ Tm (◇▹Γ) (El(A[p]·q)) = M.Tm (F Γ) (F A)
+F a := a[p]·q
