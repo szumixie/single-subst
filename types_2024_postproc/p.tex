@@ -11,6 +11,8 @@
 \newcommand{\Tm}{\mathsf{Tm}}
 \newcommand{\Con}{\mathsf{Con}}
 \newcommand{\Sub}{\mathsf{Sub}}
+\newcommand{\Tel}{\mathsf{Tel}}
+\newcommand{\Tms}{\mathsf{Tms}}
 \newcommand{\p}{\mathsf{p}}
 \newcommand{\q}{\mathsf{q}}
 \newcommand{\ext}{\mathop{\triangleright}}
@@ -745,6 +747,91 @@ from the single substitution syntax defined in \autoref{sec:tt}.
 TODO: show that the SSC operations are derivable from CwF.
 
 We conjecture that the same works for any SOGAT.
+
+\section{stuff}
+
+There are equations in B-systems that cannot be derived from the equations of
+SSC. The following four equations are such, they are versions of equations in
+section \ref{sec:ssc} lifted under arbitrary amount of $\blank^+$s.
+\begin{equation}\label{eq:lifted}
+\begin{aligned}
+  B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \\
+  B[\p^{+^n}][\langle a \rangle^{+^n}] & = B \\
+  B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \\
+  B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B
+\end{aligned}
+\end{equation}
+In addition, we need the corresponding lifted equations for terms. Note that we
+do not have the non-lifted term versions of the last two equations in SSC.
+
+To formally state the equations in (\ref{eq:lifted}), we define telescopes as an
+inductive type together with a recursive operation to append telescopes to
+contexts.
+\begin{alignat*}{10}
+  & \Tel && : \Con\ra\Set \\
+  & \blank+\blank && : (\Gamma:\Con)\ra\Tel\,\Gamma\ra\Con \\
+  & \diamond && : \Tel\,\Gamma \\
+  & \blank\ext\blank && : (\Omega:\Tel\,\Gamma)\ra\Ty\,(\Gamma+\Omega)\ra\Tel\,\Omega
+\end{alignat*}
+The appending operation is defined recursively on telescopes.
+\begin{alignat*}{10}
+  & \Gamma+\diamond && := \Gamma \\
+  & \Gamma+(\Omega\ext A) && := (\Gamma+\Omega)\ext A
+\end{alignat*}
+We then define a lifting operation over any telescope mutually with an
+instantiation operation on telescopes by recursion on telescopes.
+\begin{alignat*}{10}
+  & \blank[\blank] && : \Tel\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Tel\,\Delta \\
+  & \blank^{+^\Omega} && (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta+\Omega[\gamma])\,(\Gamma+\Omega)
+\end{alignat*}
+
+If we try to prove the equations in (\ref{eq:lifted}) by induction on the types
+and terms, we run into difficulties in the instantiation case, as we would have
+to commute the instantiations without the equations to do so. Therefore, we
+first $\alpha$-normalize the syntax to compute away all the instantiations, then
+prove the equations by induction on the $\alpha$-normal forms.
+
+We define $\alpha$-normal forms as inductive predicates in Prop
+
+separate weakening and single substitution
+
+Define instantiation operations by recursion on $\alpha$-normal forms
+
+Instead of doing induction on the syntax for each of the equations in
+(\ref{eq:lifted}), we define a general lemma which can lift any equation between
+instantiations over a telescope.
+
+We define $\Sub^*$ to be $\Sub$ with freely added identity and composition
+operations. All instantiation operations, lifting operations, and substitution
+rules can be redefined for $\Sub^*$.
+
+\begin{lemma}
+  Given and $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
+  A[\delta]$ and $x[\sigma] = x[\delta]$ for any $A:\Ty\,\Gamma$ and variable
+  $x$ in $A$, then
+  \begin{itemize}
+    \item $\Omega[\sigma] = \Omega[\delta]$ for $\Omega:\Tel\,\Gamma$
+    \item $A[\sigma^{+^\Omega}] = A[\delta^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
+    \item $a[\sigma^{+^\Omega}] = a[\delta^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  asd
+\end{proof}
+
+We can simulate parallel substitutions using $\Sub^*$ as iterated single
+substitutions, however it does not satisfy the equations of parallel
+substitutions. Thus we define parallel substitutions as a list of terms with a
+map into $\Sub^*$, and reuse instantiation operation of $\Sub^*$ to convert it
+into a sequence of instantiations of single substitutions.
+\begin{alignat*}{10}
+  & \Tms && : \Con\ra\Con\ra\Con \\
+  & \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
+  & \upvarepsilon && : \Tms\,\Gamma\,\diamond \\
+  & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A) \\
+  & \llcorner\upvarepsilon\lrcorner && := id\circ\dots\circ\p \\
+  & \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
+\end{alignat*}
 
 \section{Minimisation}
 \label{sec:minimisation}
