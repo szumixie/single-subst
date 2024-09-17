@@ -426,18 +426,19 @@ setting, via the methods of Synthethic Tait Computability
 
 \subsection{Metatheory and formalisation}
 
-Our metatheory in which this paper is
-written is thus type theory, some sections are formalised in Agda.
-
-As Agda does not support them directly, we postulate their
-constructors and induction principle and add the computation rules
-using rewrite rules \cite{DBLP:conf/types/Cockx19}.
-
-Notation and formalisation techniques, including congruence rules.
-
-Prop.
-
-We mainly work in ETT.
+Our metatheory is observational type theory
+\cite{DBLP:phd/hal/Pujet22} with quotient inductive-inductive types
+(QIITs). On paper we usually omit writing coercions, so our notation
+is close to extensional type theory. Sections \ref{sec:tt} and
+\ref{sec:admissible} of this paper are formalised in the proof
+assistant Agda, we use a strict Prop-valued
+\cite{DBLP:journals/pacmpl/GilbertCST19} equality type with postulated
+coercion rule (transport rule) and postulated QIITs with computation
+rules added using rewrite rules
+\cite{DBLP:journals/pacmpl/CockxTW21}. Our notation on paper is close
+to Agda's, we write $\Pi$ types as $(x:A)\ra B$, $\Sigma$ types as
+$(x:A)\times B$, and use implicit arguments and overloading
+extensively.
 
 \section{Single substitution syntax}
 \label{sec:tt}
