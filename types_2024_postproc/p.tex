@@ -7,6 +7,7 @@
 \newcommand{\ra}{\rightarrow}
 \newcommand{\Ra}{\Rightarrow}
 \newcommand{\Set}{\mathsf{Set}}
+\newcommand{\Prop}{\mathsf{Prop}}
 \newcommand{\Ty}{\mathsf{Ty}}
 \newcommand{\Tm}{\mathsf{Tm}}
 \newcommand{\Con}{\mathsf{Con}}
@@ -823,7 +824,7 @@ We then define a lifting operation over any telescope mutually with an
 instantiation operation on telescopes by recursion on telescopes.
 \begin{alignat*}{10}
   & \blank[\blank] && : \Tel\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Tel\,\Delta \\
-  & \blank^{+^\Omega} && (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta+\Omega[\gamma])\,(\Gamma+\Omega)
+  & \blank^{+^\Omega} && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta+\Omega[\gamma])\,(\Gamma+\Omega)
 \end{alignat*}
 
 If we try to prove the equations in (\ref{eq:lifted}) by induction on the types
@@ -834,9 +835,9 @@ prove the equations by induction on the $\alpha$-normal forms.
 
 A type or term is $\alpha$-normal if it does not contain instantiation
 operations, except at the leaves of the syntax tree as variables. However,
-$\alpha$-normal can still contain $\beta$/$\eta$ redexes, so that we do not need
-to do full normalization. We define variables and $\alpha$-normal forms as
-inductive predicates in Prop.
+$\alpha$-normal terms can still contain $\beta$/$\eta$ redexes, so that we do
+not need to do full normalization. We define variables and $\alpha$-normal forms
+as inductive predicates in $\Prop$.
 \begin{itemize}
   \item $\q:\Tm\,(\Gamma\ext A)\ (A[\p])$ is a variable.
   \item $x[\p]:\Tm\,(\Gamma\ext A)\ (B[\p])$ is a variable if $x:\Tm\,\Gamma\,B$
@@ -853,12 +854,11 @@ we do not state that instantiated types/terms are $\alpha$-normal. It is
 important to truncate the $\alpha$-normal predicates to be propositions to
 ensure that it preserves the $\beta$/$\eta$ conversion rules.
 
-We define instantiation operations by recursion on $\alpha$-normal forms. The
-instantiation operations need to be defined separately for weakenings and single
-substitutions for the recursion to be well-founded.
-
-$x[\p][\gamma^+]' = b[\gamma]'[\p]'$
-
+We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
+terms instantiated with $\alpha$-normal substitutions. However, this needs to be
+proved separately for weakenings and $\alpha$-normal single substitutions for
+the induction to be well-founded. We define predicates for weakening and
+$\alpha$-normal single substitutions as follows.
 \begin{itemize}
   \item $\p$ is a weakening.
   \item $\gamma^+$ is a weakening if $\gamma$ is a weakening.
@@ -870,18 +870,21 @@ $x[\p][\gamma^+]' = b[\gamma]'[\p]'$
 
 \begin{lemma}
   \label{thm:alpha}
-  Every type and term is/has? an $\alpha$-normal form.
+  The $\alpha$-normal predicate holds for any type and term.
 \end{lemma}
 \begin{proof}
-  By induction on the syntax, normalizing the substitutions at the same time.
+  By induction on the syntax, $\alpha$-normalizing the substitutions at the same
+  time.
 \end{proof}
 
-Instead of doing induction on the syntax for each of the equations in
+Instead of doing induction on $\alpha$-normal forms for each of the equations in
 (\ref{eq:lifted}), we define a general lemma which can lift any equation between
 instantiations over a telescope. For this we define $\Sub^*$ to be $\Sub$ with
 freely added identity and composition operations, we do not require it to
-satisfy the laws of a category. All instantiation operations, lifting
-operations, and substitution rules can be redefined for $\Sub^*$.
+satisfy the laws of a category as we will not compare $\Sub^*$s directly for
+equality, only between types and terms instantiated with $\Sub^*$s. All
+instantiation operations, lifting operations, and substitution rules can be
+redefined for $\Sub^*$.
 \begin{lemma}
   \label{thm:lifting}
   Given and $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
@@ -892,13 +895,15 @@ operations, and substitution rules can be redefined for $\Sub^*$.
     \item $A[\sigma^{+^\Omega}] = A[\delta^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
     \item $a[\sigma^{+^\Omega}] = a[\delta^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
   \end{itemize}
+  Note that the later equations depend the the earlier ones.
 \end{lemma}
 \begin{proof}
   Assuming the first equation, we prove that $x[\sigma^{+^\Omega}] =
   x[\delta^{+^\Omega}]$ for any variable $x$ by induction on the telescope and
-  the variable. Then the two latter equations can be proven by induction on
-  $\alpha$-normalized types and terms, still assuming the first equation.
-  Finally we prove the first equation by induction on the telescope.
+  the variable. Then the two latter equations can be proven by mutual induction
+  on $\alpha$-normalized types and terms, still assuming the first equation.
+  Finally we prove the first equation by induction on the telescope, using the
+  previously proven equation for types, discharging its assumption.
 \end{proof}
 
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
@@ -911,14 +916,29 @@ into a sequence of instantiations of single substitutions.
   & \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
   & \epsilon && : \Tms\,\Gamma\,\diamond \\
   & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A) \\
-  & \llcorner\epsilon\lrcorner && := id\circ\p\circ\dots\circ\p \\
+  & \llcorner\epsilon\lrcorner && := \id\circ\p\circ\dots\circ\p \\
   & \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
 \end{alignat*}
-The computation of instantiating with $\Tms$ is illustrated bellow.
+The computation of instantiating with $\Tms$ is illustrated below.
 \begin{gather*}
   B[\llcorner\epsilon,a_1,a_2,\dots,a_{n-1},a_n\lrcorner] = \\
   B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
 \end{gather*}
+All CwF operations and equations can be defined with $\Tms$ by induction.
+
+\begin{theorem}
+  Contexts, types, and terms in the SSC syntax are isomorphic to the
+  corresponding sorts in the CwF syntax.
+\end{theorem}
+\begin{proof}\leavevmode
+  \begin{description}
+    \item[$\Rightarrow$] By recursion on the syntax, SSC operations can be
+    trivially interpreted by CwF operations.
+    \item[$\Leftarrow$] By recursion on the syntax, using $\Tms$ to interpret
+    parallel substitutions.
+  \end{description}
+  The roundtrips are proven by induction on the syntax.
+\end{proof}
 
 \section{Minimisation}
 \label{sec:minimisation}
