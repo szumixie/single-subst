@@ -766,8 +766,31 @@ to coerce $\q$ along the equality $\U[]$.
 When working informally (or in extensional type theory), we don't
 write the coercion, but Agda requires it.
 
-TODO: beta equation for id, show what we can do with types in an open
-context.
+Given a type $A:\Ty\,\diamond\,0$, and $a : \Tm\,\diamond\,A$, we have
+\begin{alignat*}{10}
+  & \lam\,(\lam\,\q)\cdot\cd\,A\cdot a && {=}(\Pi\beta) \\
+  & (\lam\,\q[\langle\cd\,A\rangle])\cdot a && {=}(\lam[]) \\
+  & (\lam\,(\q[\langle\cd\,A\rangle^+]))\cdot a && {=}([\q][^+]) \\
+  & (\lam\,\q)\cdot a && {=}(\Pi\beta) \\
+  & \q[\langle a\rangle] && {=}(\q[\langle\rangle]) \\
+  & a
+\end{alignat*}
+If we want to specify open inputs $A':\Ty\,(\diamond\ext C)\,0$, and
+$a' : \Tm\,(\diamond\ext C)\,A'$, we have to weaken our function to
+accept them:
+\begin{alignat*}{10}
+  & \lam\,(\lam\,\q)[\p] : \Tm\,&& (\diamond\ext C)\,\\
+  & && \Big(\Pi\,(\U\,0)\,\big(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)\big)[\p]\Big)
+\end{alignat*}
+But we have
+\[
+\lam\,(\lam\,\q)[\p] \overset{\lam[]\,2\text{x}}{=} \lam\,(\lam\,(\q[\p^{++}])) \overset{\q[^+]}{=} \lam\,(\lam\,\q)
+\]
+(with different implicit arguments), so we are able apply $\cd\,A'$
+and $a'$ just as before. What we cannot do is to directly weaken a
+term in context $\diamond$ to an arbitrary metavariable context
+$\Gamma$, we can only do this step by step by applying weakening
+$\blank[\p]$ for each type in the context.
 
 As a sanity check for our notion of SSC-model, we defined the standard
 (metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
