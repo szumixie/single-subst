@@ -70,8 +70,8 @@ calculus. All the results in this paper were formalised in Agda.
 
 What is type theory? Here we refer to type theory as a particular
 formal system based on Martin-Löf's original definition
-\cite{martinlof73predicative}, and not to the field studying type
-systems (e.g.\ \cite{DBLP:books/daglib/0005958}).
+\cite{martinlof73predicative}, and not to the study of type systems
+(e.g.\ \cite{DBLP:books/daglib/0005958}).
 
 Type theory is a language which can be described as a second-order
 generalised algebraic theory (SOGAT
@@ -101,7 +101,7 @@ Coquand \cite{coquandUniverse} is specified by the following SOGAT.
 \end{equation}
 Because types are isomorphic to a term (witnessed by $\El$ and $\cd$),
 we have to index types by their (universe) level, and types at lower
-level are included at all upper levels by $\Lift$. We use implicit
+levels are included at upper levels by $\Lift$. We use implicit
 arguments, e.g.\ $\Tm$ takes the $i:\N$ implicitly, and $\app$ takes
 $i$, $A$ and $B$ implicitly. $f : X \cong Y : g$ denotes an
 isomorphism, that is, $f : X\ra Y$, $g:Y\ra X$ with $g\,(f\,x) = x$
@@ -113,18 +113,18 @@ contexts and substitutions when describing the theory: we re-use the
 binding features of the metatheory to describe those of our object
 theory (this technique is also known as higher-order abstract syntax
 \cite{DBLP:conf/lics/Hofmann99} or logical framework
-\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2}). There
-is no good notion of homomorphism between second-order models, thus
-the semantics of a SOGAT is given by a first order generalised
-algebraic theory (GAT \cite{DBLP:journals/apal/Cartmell86}). GATs are
-generalisations of single-sorted algebraic theories (such as monoids,
-groups) to multiple sorts where later sorts can be indexed over
-previous sorts. The usual results from universal algebra (e.g.\ models
-form a category with finite limits and initial object, existence of
-free and co-free models) carry over to GATs
-\cite{andras,DBLP:phd/hal/Moeneclaey22}. An example of a GAT is the
-theory of categories where there is a sort for objects and a sort for
-morphisms double-indexed over objects.
+\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2} and
+our notation comes from two-level type theory \cite{DBLP:conf/csl/AltenkirchCK16,DBLP:journals/mscs/AnnenkovCKS23}). There is no good notion of homomorphism between
+second-order models, thus the semantics of a SOGAT is given by a first
+order generalised algebraic theory (GAT
+\cite{DBLP:journals/apal/Cartmell86}). GATs are generalisations of
+single-sorted algebraic theories (such as monoids, groups) to multiple
+sorts where later sorts can be indexed over previous sorts. The usual
+results from universal algebra (e.g.\ models form a category with
+finite limits and initial object, existence of free and co-free
+models) carry over to GATs \cite{andras,DBLP:phd/hal/Moeneclaey22}. An
+example of a GAT is the theory of categories where there is a sort of
+objects and a sort of morphisms double-indexed over objects.
 
 Kaposi and Xie \cite{DBLP:conf/fscd/KaposiX24} present two different
 first order semantics for any SOGAT: one based on parallel
@@ -148,9 +148,9 @@ presheaf). The parallel semantics of the SOGAT
 \end{alignedat}
 \end{equation}
 is the GAT of categories with families (CwFs
-\cite{DBLP:conf/types/Dybjer95,Castellan2021}). We define the notion
-of model of a language (a SOGAT) by its parallel substitution
-semantics, which is a GAT, and that induces a notion of model. The
+\cite{DBLP:conf/types/Dybjer95,Castellan2021}, Definition \ref{def:cwf}).
+We define the notion ``model of the SOGAT'' by its parallel substitution
+semantics, which is a GAT, and that has an obvious notion of model. The
 syntax of the language is the initial model, which exists for every
 GAT \cite{DBLP:journals/pacmpl/KaposiKA19}. This is an intrinsic
 syntax (only well-typed terms), quotiented by the equations in the
@@ -170,14 +170,14 @@ the motivations of Voevodsky for developing B-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. Our single substitution
 semantics of (\ref{eq:tytm}) is simpler and has more models than
 B-systems. GAT presentations of type theory are important for defining
-models, our presentation gives a new notion of model, which in the
+models. Our presentation gives a new notion of model, which in the
 future might contribute to definitions of new models. It can also
 influence implementations of type theory. Because our single
 substitution GAT does not involve a category, it might be easier to
 adapt it to a higher dimensional setting, see Section
 \ref{sec:conclusion}.
 
-The single substitution semantics of (\ref{eq:tytm}) is in some sense
+The single substitution semantics is in some sense
 too minimalistic: for example, consider a term $b$ which depends on a
 context $\Gamma$ and an extra variable of type $A$, that is, $b :
 \Tm\,(\Gamma\ext A)\,B$. We weaken $b$ so that we add an extra $A$
@@ -188,8 +188,8 @@ variable in the context. Then, we instantiate the last $A[\p]$
 variable in the context by the previous $A$ obtaining
 $b[\p^+][\langle\q\rangle] : \Tm\,(\Gamma\ext A)\,B$ where $\q$
 denotes the last variable in the context (a.k.a\ De Bruijn index $0$).
-We cannot derive $b[\p^+][\langle\q\rangle] = b$ in an arbitrary
-model, but this equation holds in the syntax.
+We cannot derive $b[\p^+][\langle\q\rangle] = b$ in an arbitrary single substitution
+model, but this equation holds in the single substitution syntax.
 % p⁺  : Sub (Γ▹A▹A[p]) (Γ▹A)
 % ⟨q⟩ : Sub (Γ▹A) (Γ▹A▹A[p])
 This is analogous to e.g.\ parametricity results
@@ -197,7 +197,7 @@ This is analogous to e.g.\ parametricity results
 arbitrary model, but they hold in the syntax. In fact, we show that
 the single substitution syntax of (\ref{eq:tt}) is equivalent to the
 parallel substitution syntax of (\ref{eq:tt}), and the techniques that
-we use here are not specific to the SOGAT (\ref{eq:tt}), we expect
+we use are not specific to the SOGAT (\ref{eq:tt}), we expect
 that they work for any SOGAT. Equivalence of the syntaxes means that
 the corresponding sorts ($\Con$, $\Ty$, $\Tm$) are isomorphic. For a
 general SOGAT, there are more models of the correponding single
@@ -205,7 +205,7 @@ substitution GAT than the parallel substitution GAT. Every parallel
 model is also a single model, but not necessarily the other way. While
 B-systems are equivalent to CwFs (and C-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more single
-substitution models of (\ref{eq:tt}) than parallel substitution
+substitution models of (\ref{eq:tytm}) than parallel substitution
 models. The situation is similar to that of extensional combinatory
 calculus and lambda calculus, where the syntaxes are equivalent, and
 every lambda model is a combinatory model, but not the other way round
@@ -220,22 +220,24 @@ equivalent, we define the parallel operations by induction on the
 single substitution syntax. One of the operations in the single
 substitution syntax is the instantiation operation: $\blank[\blank] :
 \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta$, and similarly for
-terms. When doing induction on types/terms, we always have to provide
+terms. When doing induction on types/terms, we have to provide
 a method for these operations, but this can be difficult as
 substitutions don't compose. This is why we derive a new induction
 principle which works on $\alpha$-normal types and terms. Just as
 $\beta$-normal forms don't distinguish between $\beta$-equal terms,
-$\alpha$-normal forms don't include explicit substitutions, all the
-variables are instantiated. $\alpha$-normal forms are not usual normal
+$\alpha$-normal forms don't include explicit substitutions.
+$\alpha$-normal forms are not usual normal
 forms in the sense that they are still quotiented by the
 computation/uniqueness rules like $\beta$/$\eta$ for function
 space. To derive the new induction principle for the syntax, we first
 prove $\alpha$-normalisation.
 
 In the particular theory (\ref{eq:tt}), every type is represented by a
-term. In the first order single substitution calculus, this can be
+term. In its single substitution calculus, this can be
 used to adapt some equations and remove some others, obtaining a more
-minimalistic, but equivalent GAT. Theory (\ref{eq:tt}) can be extended
+minimalistic, but equivalent GAT.
+
+Theory (\ref{eq:tt}) can be extended
 with unit and $\Sigma$ types, more precisely with the following rules.
 \begin{equation}\label{eq:sigma}
   \begin{alignedat}{10}
@@ -249,12 +251,10 @@ with unit and $\Sigma$ types, more precisely with the following rules.
 Using the same insight about types and the universe, the fact that
 dependences can be represented by function spaces, and that
 collections of dependencies can be collected using $\Sigma$ types, we
-can actually derive a parallel model from a single substitution model.
-TODO: universe levels are a problem (maybe not if we use iterated
-function space instead of $\Sigma$); the resulting CwF is not the same as
-the free CwF over the SSC. Bootstrapping a CwF.
-CwF -> SSC -> CwF = termification, that is equationally complete, see shallow paper, so we get an isomorphic CwF
-SSC -> CwF -> SSC = we get a stronger thing than what we started with.
+can actually derive a parallel model from any single substitution
+model. This way we show that for the particular theory (\ref{eq:tt})+(\ref{eq:sigma}),
+single and parallel substitution models are actually equivalent in a
+weak sense.
 
 To summarise, our contributions are the following:
 \begin{itemize}
@@ -265,23 +265,26 @@ To summarise, our contributions are the following:
   describe the syntax of type theory in an intrinsic way.
 \item The $\alpha$-normalisation technique and deriving parallel
   substitutions from the single substitution syntax.
-\item Minimisation.
-\item For type theory with $\Pi$, $\U$, $\top$ and $\Sigma$, deriving
-  a parallel model from a single substitution model.
+\item For type theory with $\Pi$, $\U$, a minimised presentation of
+  the equations which results in an isomorphic theory.
+\item For type theory with $\Pi$, $\U$, $\top$, $\Sigma$, we show that
+  single and parallel models are equivalent in a weak sense.
 \end{itemize}
 
 \subsection{Structure of the paper}
 
-TODO. In Section \ref{sec:tt}, we introduce the single substitution
-calculus only relying on a working knowledge of an implementation of
-type theory such as Agda, no prior experience with the metatheory of
-type theory is required. We first show how to get rid of explicit
-substitutions from the syntax using the technique of
-$\alpha$-normalisation (Section \ref{sec:alpha}), and we use this to
-prove several admissible equations. Then we show how to derive the
-rules of a CwF from our syntax (Section \ref{sec:cwf}). Finally, we
-show that our syntax is isomorphic to the CwF-style syntax (Section
-\ref{sec:iso}). We conclude in Section \ref{sec:conclusion}.
+In Section \ref{sec:tt}, we introduce the single substitution calculus
+(SSC) only relying on a working knowledge of an implementation of type
+theory such as Agda, no prior experience with the metatheory of type
+theory is required. Section \ref{sec:admissible} shows that in the
+syntax of SSC, several new equations are admissible, and that the
+syntax of SSC is actually isomorphic to the CwF-based syntax. In
+Section \ref{sec:minimisation} we minimise our SSC obtaining a theory
+with fewer equations, relying on the presence of $\Pi$ and $\U$ in our
+theory. In Section \ref{sec:cwf}, we show that in the presence of
+$\Pi$, $\U$ and $\Sigma$, SSC-models are actually equivalent to
+CwF-models in a weak sense. We conclude in Section
+\ref{sec:conclusion}.
 
 \subsection{Related work}
 
@@ -1042,6 +1045,7 @@ We summarise this section by formally stating what we defined.
 \end{proof}
 
 \section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
+\label{sec:cwf}
 
 In this section we show that if the single substitution calculus has
 certain type formers, then it is actually weakly equivalent to CwFs
@@ -1056,7 +1060,7 @@ and then single substitutions are just there to set up $\Sigma$, $\Pi$
 and $\U$, and these types are enough to bootstrap the parallel
 substitution calculus.
 
-\begin{definition}[CwF]
+\begin{definition}[CwF]\label{def:cwf}
   A category with $\N$-many families is defined as a category (objects
   denoted $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
   ($\epsilon$ denotes the unique morphism into it); for each $i$ a
