@@ -6,11 +6,11 @@
   --postfix-projections
 #-}
 
-module TT.SSC.Standard where
+module TT.CwF.Standard where
 
 open import TT.Lib
 open import TT.IRUniv
-open import TT.SSC.Ind
+open import TT.CwF.Ind
 
 open DM
 open DModel
@@ -24,29 +24,36 @@ opaque
   M .sorts .Tyᴹ Γ i _ = Elω Γ → U i
   M .sorts .Tmᴹ Γ A _ = (γ : Elω Γ) → El (A γ)
 
+  M .core ._∘ᴹ_ γ δ θ = γ (δ θ)
+  M .core .assocᴹ = refl
+
+  M .core .idᴹ γ = γ
+  M .core .idrᴹ = refl
+  M .core .idlᴹ = refl
+
   M .core ._[_]ᵀᴹ A γ δ = A (γ δ)
+  M .core .[]ᵀ-∘ᴹ = refl
+  M .core .[]ᵀ-idᴹ = refl
+
   M .core ._[_]ᵗᴹ a γ δ = a (γ δ)
+  M .core .[]ᵗ-∘ᴹ = refl
+  M .core .[]ᵗ-idᴹ = refl
 
   M .core .◇ᴹ = base (`Lift (base `⊤))
-  M .core ._▹ᴹ_ Γ A = `Σ Γ λ γ → base (`Lift (A γ))
+  M .core .εᴹ γ = ⋆
+  M .core .ε-∘ᴹ = refl
+  M .core .◇-ηᴹ = refl
 
+  M .core ._▹ᴹ_ Γ A = `Σ Γ λ γ → base (`Lift (A γ))
   M .core .pᴹ (γ ,, a) = γ
   M .core .qᴹ (γ ,, a) = a
 
-  M .core ._⁺ᴹ γ (δ ,, a) = γ δ ,, a
-  M .core .p-⁺ᵀᴹ = refl
+  M .core ._,ᴹ_ γ a δ = γ δ ,, a δ
+  M .core .,-∘ᴹ = refl
 
-  M .core .p-⁺ᵗᴹ = refl
-  M .core .q-⁺ᴹ = refl
-
-  M .core .⟨_⟩ᴹ a γ = γ ,, a γ
-  M .core .p-⟨⟩ᵀᴹ = refl
-
-  M .core .p-⟨⟩ᵗᴹ = refl
-  M .core .q-⟨⟩ᴹ = refl
-
-  M .core .⟨⟩-[]ᵀᴹ = refl
-  M .core .▹-ηᵀᴹ = refl
+  M .core .▹-β₁ᴹ = refl
+  M .core .▹-β₂ᴹ = refl
+  M .core .▹-ηᴹ = refl
 
   M .types .Uᴹ i γ = base `U
   M .types .U-[]ᴹ = refl

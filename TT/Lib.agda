@@ -100,6 +100,16 @@ record ⊤ : Set where
   eta-equality
   constructor ⋆
 
+infixl 4 _,,_
+record Σ (A : Set) (B : A → Set) : Set where
+  eta-equality
+  constructor _,,_
+  field
+    fst : A
+    snd : B fst
+
+open Σ public
+
 data ℕ : Set where
   zero : ℕ
   suc : ℕ → ℕ
