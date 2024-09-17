@@ -62,7 +62,9 @@ typecheck other equations. All the other equations are substitution
 formers. SSC provides a simple, minimalistic alternative to parallel
 substitution calculi or B-systems for defining type theory. SSC
 relates to CwF as extensional combinatory calculus relates to lambda
-calculus. All the results in this paper were formalised in Agda.
+calculus. In case of additional type formers, we show that SSC models
+are actually equivalent to CwF-based models in a weak sense. Most
+results in this paper were formalised in Agda.
 \end{abstract}
 
 \maketitle
@@ -800,25 +802,33 @@ to model the infinite hierarchy of types, and all the SSC-equations
 hold by reflexivity in this model. We defined the analogous CwF-based
 standard model.
 
+
 \section{Admissible equations}
 \label{sec:admissible}
 
-TODO: say that we assume the QIIT version of this.
+In this section we show that our SSC-based syntax is isomorphic to the
+CwF-based syntax for the same theory (namely the SOGAT
+(\ref{eq:tt})). We conjecture that the method presented here works
+generically for any SOGAT.
 
-$\alpha$-normal forms could also be called substitution normal forms.
-
-In this section we show that a category with families (CwF) equipped
-with a hierarchy of Coquand-universes and $\Pi$ types can be derived
-from the single substitution syntax defined in \autoref{sec:tt}.
-
-TODO: show that the SSC operations are derivable from CwF.
-
-We conjecture that the same works for any SOGAT.
-
-\section{stuff}
+\begin{definition}[CwF]\label{def:cwf}
+  A category with $\N$-many families is defined as a category (objects
+  denoted $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
+  ($\epsilon$ denotes the unique morphism into it); for each $i$ a
+  presheaf of types (action on objects denoted $\Ty\,\blank\,i$,
+  action on morphisms $\blank[\blank]$); for each $i$ a locally
+  representable dependent presheaf $\Tm$ over $\Ty\,\blank\,i$
+  (actions denoted $\Tm$, $\blank[\blank]$, local representability is
+  denoted $\blank\ext\blank : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con$
+  with an isomorphism
+  $
+  (\p\circ\blank,\q[\blank]) : \Sub\,\Delta\,(\Gamma\ext A) \cong (\gamma:\Sub\,\Delta\,\Gamma)\times\Tm\,\Delta\,(A[\gamma]) : (\blank,\blank)
+  $
+  natural in $\Delta$).
+\end{definition}
 
 The following four equations correspond to equations in B-systems which cannot
-be derived from the equations of SSC, these are versions of equations in section
+be derived from the equations of SSC, these are versions of equations in Section
 \ref{sec:tt} lifted under arbitrary amount of $\blank^+$s.
 \begin{equation}\label{eq:lifted}
 \begin{aligned}
@@ -828,7 +838,7 @@ be derived from the equations of SSC, these are versions of equations in section
   B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B
 \end{aligned}
 \end{equation}
-The correspoinding equations on terms are also needed. Note that we do not have
+The corresponding equations on terms are also needed. Note that we do not have
 the non-lifted term versions of the last two equations in SSC.
 
 To formally state the equations in (\ref{eq:lifted}), we define telescopes as an
@@ -862,7 +872,7 @@ A type or term is $\alpha$-normal if it does not contain instantiation
 operations, except at the leaves of the syntax tree as variables. However,
 $\alpha$-normal terms can still contain $\beta$/$\eta$ redexes, so that we do
 not need to do full normalization. We define variables and $\alpha$-normal forms
-as inductive predicates in $\Prop$.
+as inductive predicates in $\Prop$ as follows.
 \begin{itemize}
   \item $\q:\Tm\,(\Gamma\ext A)\ (A[\p])$ is a variable.
   \item $x[\p]:\Tm\,(\Gamma\ext A)\ (B[\p])$ is a variable if $x:\Tm\,\Gamma\,B$
@@ -875,7 +885,7 @@ as inductive predicates in $\Prop$.
   $a:\Tm\,\Gamma\,A$ are $\alpha$-normal terms.
 \end{itemize}
 The predicate is defined similarly for the other type and term formers. Notably,
-we do not state that instantiated types/terms are $\alpha$-normal. It is
+we do not state that instantiated types/terms are $\alpha$-normal (except variables). It is
 important to truncate the $\alpha$-normal predicates to be propositions to
 ensure that it preserves the $\beta$/$\eta$ conversion rules.
 
@@ -898,8 +908,9 @@ $\alpha$-normal single substitutions as follows.
   The $\alpha$-normal predicate holds for any type and term.
 \end{lemma}
 \begin{proof}
-  By induction on the syntax, $\alpha$-normalizing the substitutions at the same
-  time.
+  By induction on the syntax, $\alpha$-normalizing the substitutions
+  at the same time. Note that induction on the syntax refers to the
+  elimination principle of the corresponding QIIT.
 \end{proof}
 
 Instead of doing induction on $\alpha$-normal forms for each of the equations in
@@ -912,7 +923,7 @@ instantiation operations, lifting operations, and substitution rules can be
 redefined for $\Sub^*$.
 \begin{lemma}
   \label{thm:lifting}
-  Given and $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
+  Given $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
   A[\delta]$ and $x[\sigma] = x[\delta]$ for any $A:\Ty\,\Gamma$ and variable
   $x:\Tm\,\Gamma\,A$, then
   \begin{itemize}
@@ -934,7 +945,7 @@ redefined for $\Sub^*$.
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
 substitutions, however it does not satisfy the equations of parallel
 substitutions. Thus we define parallel substitutions as a list of terms with a
-map into $\Sub^*$, and reuse instantiation operation of $\Sub^*$ to convert it
+map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to convert it
 into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
   & \Tms && : \Con\ra\Con\ra\Con \\
@@ -1069,8 +1080,8 @@ Now we derive the assumption of $\Pi\beta/\eta'$ for any type $B : \Ty\,(\Gamma\
   & B[\p^+][\langle\q\rangle] && {=}(\U\beta) \\
   & \El\,(\cd\,B)[\p^+][\langle\q\rangle] && {=}(\El[]) \\
   & \El\,(\cd\,B[\p^+][\langle\q\rangle]) && {=}(\Pi\beta^\U) \\
-  & \El\,((\lam\,(\cd\,B[\p^+])\cdot\q) && {=}(\lam[]) \\
-  & \El\,((\lam\,(\cd\,B)[\p]\cdot\q) && {=}(\Pi\beta'\,\U[]) \\
+  & \El\,(\lam\,(\cd\,B[\p^+])\cdot\q) && {=}(\lam[]) \\
+  & \El\,(\lam\,(\cd\,B)[\p]\cdot\q) && {=}(\Pi\beta'\,\U[]) \\
   & \El\,(\cd\,B) && {=}(\U\beta) \\
   & B
 \end{alignat*}
@@ -1106,21 +1117,6 @@ and then single substitutions are just there to set up $\Sigma$, $\Pi$
 and $\U$, and these types are enough to bootstrap the parallel
 substitution calculus.
 
-\begin{definition}[CwF]\label{def:cwf}
-  A category with $\N$-many families is defined as a category (objects
-  denoted $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
-  ($\epsilon$ denotes the unique morphism into it); for each $i$ a
-  presheaf of types (action on objects denoted $\Ty\,\blank\,i$,
-  action on morphisms $\blank[\blank]$); for each $i$ a locally
-  representable dependent presheaf $\Tm$ over $\Ty\,\blank\,i$
-  (actions denoted $\Tm$, $\blank[\blank]$, local representability is
-  denoted $\blank\ext\blank : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con$
-  with an isomorphism
-  $
-  (\p\circ\blank,\q[\blank]) : \Sub\,\Delta\,(\Gamma\ext A) \cong (\gamma:\Sub\,\Delta\,\Gamma)\times\Tm\,\Delta\,(A[\gamma]) : (\blank,\blank)
-  $
-  natural in $\Delta$.
-\end{definition}
 \begin{problem}
   Every CwF (with type formers $\Pi, \dots, \Sigma$) is an SSC (with
   the same type formers, see Definition \ref{def:sigma}).
@@ -1192,15 +1188,19 @@ new model are terms in the old model.
   Context extension is given by $\Sigma$ types and pairing/projections
   by pairing/projections of $\Sigma$. All the CwF equations hold, for
   example we derive the functor law for type substitution as follows.
-  \begin{alignat*}{10}
+  \begin{equation}
+  \begin{alignedat}{10}\label{eq:functor}
     & A[\gamma\circ\delta] && {=} \\
     & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q))[\p]\cdot\q)) && {=}(\lam[]) \\
-    & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p][\p^+]\cdot(\delta[\p][\p^+]\cdot\q))\cdot\q)) && {=}(\Pi\beta) \\
+    & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p][\p^+]\cdot(\delta[\p][\p^+]\cdot\q))\cdot\q)) && {=}(\Pi\beta, {\cdot}[]) \\
+    & \lam\,(A[\p]\cdot(\gamma[\p][\p^+][\langle\q\rangle]\cdot(\delta[\p][\p^+][\langle\q\rangle]\cdot\q))) && {=}([\p][^+]) \\
+    & \lam\,(A[\p]\cdot(\gamma[\p][\p][\langle\q\rangle]\cdot(\delta[\p][\p][\langle\q\rangle]\cdot\q))) && {=}([\p][\langle\rangle]) \\
     & \lam\,(A[\p]\cdot(\gamma[\p]\cdot(\delta[\p]\cdot\q))) && {=}(\Pi\beta) \\
     & \lam\,(\lam\,(A[\p][\p^+]\cdot(\gamma[\p][\p^+]\cdot\q))\cdot(\delta[\p]\cdot\q))\,\, && {=}(\lam[]) \\
     & \lam\,(\lam\,(A[\p]\cdot(\gamma[\p]\cdot\q))[\p]\cdot(\delta[\p]\cdot\q)) && {=} \\
     & A[\gamma][\delta]
-  \end{alignat*}
+  \end{alignedat}
+  \end{equation}
   Type formers are added by adjusting them to handle contexts built up
   by $\Sigma$ types, for example,
   \[
@@ -1264,64 +1264,22 @@ conjecture that the method presented here generalises. For this
 particular SOGAT, the single GAT syntax can be simplified, and in
 fact, it is ``equivalent'' to the parallel theory.
 
-In this paper we introduced a new single substitution calculus which
-can be seen as a minimalistic variant of B-systems. We illustrate its
-usage through the definition of a type theory with dependent function
-space and a hierarchy of universes. We aim for accessibility: this
-paper can be seen as a tutorial introduction to the syntax of type
-theory inside type theory. All the operations and equations are
-well-motivated and provide a minimalistic description of the syntax of
-type theory. It is minimalistic in the sense that the syntax is
-isomorphic to the CwF-syntax, but there are more models. 
-
-The relationship of our single substitution calculus and the CwF-based
-theory is similar to that of combinatory logic and lambda calculus
-\cite{DBLP:conf/fscd/AltenkirchKSV23}. Combinatory logic has more
-models than lambda calculus, but the syntaxes are
-isomorphic. Similarly, the single substitution calculus has more
-models, but the syntaxes are isomorphic.
-
-A more abstract, higher level description of a language is simply
-stating that a language is an algebraic theory: the terms of the
-language are given by a sort of the theory, the different term formers
-are operations, and the conversion relation is specified by the
-equations. Such a description contains less information than the
-traditional one, for example, conversion is not oriented, so it is not
-clear how to turn it into a rewriting relation; we cannot choose how
-much annotations we add to terms, they are always fully
-annotated. this is similar to how asts contain less information than
-strings, for example, the bracket-removal strategy is not encoded in
-asts. the algebraic description automatically induces a notion of
-model and the existence of an initial model
-\cite{DBLP:journals/pacmpl/KaposiKA19} which we call the syntax. The
-algebraic approach is especially natural for languages with dependent
-types where typing and conversion have to be specified mutually
-\cite{DBLP:conf/popl/AltenkirchK16}.
-
-QIIT is nice because syntax and semantics are given together. The
-notion of model/semantics is traditionally given separately, and work
-has to be done to show that the above specified syntax generates a
-model. For example, this was the goal of the initiality project for
-homotopy type theory \cite{initiality-agda}. Maybe list work on type theory
-using QIITs, see TYPES mailing list.
-
-We can abstract over these strategies and define our language as a
-second-order generalised algebraic theory
-\cite{DBLP:journals/corr/abs-1904-04097}, but to state initiality of
-our syntax, at some point we need to turn it into a first-order
-algebraic theory \cite{DBLP:conf/fscd/BocquetKS23}.
-
-We conjecture that any SOGAT can be turned into an SSC.
+Can we remove even more structural rules? the termification doesn't
+work if we don't have e.g. $[\p][^+]$ and $[\p][\langle\rangle]$ for all terms, and 
 
 Separate sort for variables, without the extra type equations, by
-using assumptions, and proving everything by induction.
-
-If we have var, then we cannot do termification to get a CwF from a var-SSC.
+using assumptions, and proving everything by induction. If we have
+var, then we cannot do termification to get a CwF from a var-SSC, see
+the proof of equation (\ref{eq:functor}).
 
 Prove full equivalence of CwF+ with SSC+.
 
 \bibliography{b}{}
 \bibliographystyle{plain}
+
+\pagebreak
+
+\phantom{A}
 
 \pagebreak
 
