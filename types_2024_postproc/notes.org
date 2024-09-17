@@ -176,7 +176,7 @@ q       := lam(snd q)
   lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p]·(lam(γ[p]·fst q,snd q)[p][p]·(q[p],q)))))) =([p][⟨⟩])
   lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p][p][⟨q[p],q⟩]·(lam(γ[p]·fst q,snd q)[p][p][p][⟨q[p],q⟩]·(q[p],q)))))) =([p][⁺])
   lam (c (Π (El (A[p]·(γ[p]·q))) (El (B[p][p⁺][p⁺][⟨q[p],q⟩]·(lam(γ[p]·fst q,snd q)[p][p⁺][p⁺][⟨q[p],q⟩]·(q[p],q)))))) =(Πβ)
-  lam (c (Π (El (lam (A[p][p⁺]·(γ[p][p⁺]·q))·q)) (El (lam (B[p][p⁺][p⁺]·(lam(γ[p]·fst q,snd q)[p][p⁺][p⁺]·q))·(q[p],q))))) =(la(c (Π (El (lam (A[p]·(γ[p]·q))[p]·q)) (El (lam (B[p]·(lam(γ[p]·fst q,snd q)[p]·q))[p][p]·(q[p],q))))) lam =
+  lam (c (Π (El (lam (A[p][p⁺]·(γ[p][p⁺]·q))·q)) (El (lam (B[p][p⁺][p⁺]·(lam(γ[p]·fst q,snd q)[p][p⁺][p⁺]·q))·(q[p],q))))) =
   Π (A[γ]) (B[γ∘p,q])
 lam b   := lam (lam (b[p][p]·(q[p],q)))
 - b : M.Tm ◇ (Π (Σ Γ (El(A[p]·q))) (El(B[p]·q)))
@@ -220,10 +220,89 @@ F Γ := ◇▹Γ
 
 F : M'.Sub Δ Γ → M.Sub (F Δ) (F Γ)
 F : Tm ◇ (Δ ⇒ Γ) → Sub (◇▹Δ) (◇▹Γ)
-F γ := (ε,γ[p]·q)
+F γ := (p,γ[p]·q)
 
 F : M'.Ty Γ = Tm ◇ (Γ ⇒ U) ≅ Tm (◇▹Γ) U ≅ Ty (◇▹Γ) = M.Ty (F Γ)
 F A := El(A[p]·q)
 
 F : M'.Tm Γ A = Tm ◇ (Π Γ (El(A[p]·q))) ≅ Tm (◇▹Γ) (El(A[p]·q)) = M.Tm (F Γ) (F A)
 F a := a[p]·q
+
+preservation of CwF structure:
+
+- F (γ∘δ) = F γ∘F δ
+  F (γ∘δ) =
+  F (lam (γ[p]·(δ[p]·q))) =
+  (ε,(lam (γ[p]·(δ[p]·q)))[p]·q) =(lam[])
+  (ε,(lam (γ[p][p⁺]·(δ[p][p⁺]·q)))·q) =(Πβ)
+  (ε,γ[p]·(δ[p]·q)) =
+  (ε,γ[p]·q)∘(ε,δ[p]·q) =
+  F γ∘F δ
+- F id = id
+  F id =
+  F (lam q) =
+  (ε,lam q[p]·q) =
+  (ε,q) =
+  id
+F◇⁻¹ : Sub ◇ (F ◇)
+F◇⁻¹ : Sub ◇ (◇▹⊤)
+F◇⁻¹ := (id,tt)
+- F◇⁻¹ ∘ ε = id
+  F◇⁻¹ ∘ ε =
+  (id,tt) ∘ ε =
+  (ε,tt) =(⊤η)
+  id
+- F (A[γ]) = F A[F γ]
+  F (A[γ]) =
+  F (lam (A[p]·(γ[p]·q))) =
+  El(lam (A[p]·(γ[p]·q))[p]·q) =
+  El(A[p]·(γ[p]·q)) =
+  El(A[p]·q)[(p,γ[p]·q)] =
+  F A[F γ]
+- F (a[γ]) = F a[F γ]
+  F (a[γ]) =
+  F (lam (a[p]·(γ[p]·q))) =
+  lam (a[p]·(γ[p]·q))[p]·q =
+  a[p]·(γ[p]·q) =
+  a[p]·q[p,γ[p]·q] =
+  F a[F γ]
+F▹⁻¹ : Sub (F Γ▹F A) (F(Γ▹A))
+F▹⁻¹ : Sub (◇▹Γ▹El(A[p]·q)) (◇▹Σ Γ (El(A[p]·q)))
+F▹⁻¹ := (p∘p,(q[p],q))
+- F▹⁻¹ ∘ (F p,F q) = id
+  F▹⁻¹ ∘ (F p,F q) =
+  (p∘p,(q[p],q)) ∘ ((p,lam(fst q)[p]·q),lam(snd q)[p]·q) =(lam[],Πβ)
+  (p∘p,(q[p],q)) ∘ (p,fst q,snd q) =
+  (p,(fst q,snd q)) =(Ση)
+  (p,q) =
+  id
+- (F p,F q) ∘ F▹⁻¹ = id
+  (F p,F q) ∘ F▹⁻¹ =
+  ((p,lam(fst q)[p]·q),lam(snd q)[p]·q) ∘ (p∘p,(q[p],q)) =
+  (p,fst q,snd q) ∘ (p∘p,(q[p],q)) =
+  (p∘p,q[p],q) =
+  id
+
+What about the other direction? If we start with a SSC, turn it into a CwF and turn it back into an SSC. do we get equivalent stuff?
+
+M:SSC, T M:CwF, U(T M):SSC, M' := U(T M)
+
+F : M'.Con → M.Con
+F : M'.Sub Δ Γ → M.Sub (F Δ) (F Γ)       <- we cannot define this
+F : M'.Ty Γ ≅ M.Ty (F Γ)
+F : M'.Tm Γ A ≅ M.Tm (F Γ) (F A)
+
+F : M'.Con → M.Con
+F : Ty ◇ → Con
+F Γ := (◇▹Γ)
+
+F : M'.Sub Δ Γ → M.Sub (F Δ) (F Γ)
+F : Tm ◇ (Δ ⇒ Γ) → Sub (◇▹Δ) (◇▹Γ)
+F γ := we cannot define this
+- γ[p]·q : Tm (◇▹Δ) (Γ[p])
+  ⟨γ[p]·q⟩ : Sub (◇▹Δ) (◇▹Δ▹Γ[p])
+
+F : M'.Ty Γ = Tm ◇ (Γ ⇒ U) ≅ Tm (◇▹Γ) U ≅ Ty (◇▹Γ) = M.Ty (F Γ)
+F A := El(A[p]·q)
+
+F : M'.Tm Γ A = Tm ◇ (Π Γ (El(A[p]·q))) ≅ Tm (◇▹Γ) (El(A[p]·q)) = M.Tm (F Γ) (F A)
