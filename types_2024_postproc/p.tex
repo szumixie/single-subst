@@ -768,11 +768,13 @@ write the coercion, but Agda requires it.
 TODO: beta equation for id, show what we can do with types in an open
 context.
 
-\subsection{Models}
-
-TODO: To make sure that our definitions of models are correct, we show
-that in Agda there is a model for both the parallel and single
-substitution calculi.
+As a sanity check for our notion of SSC-model, we defined the standard
+(metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
+SSC-based calculus calculus in Agda. We used the techniques of Kovács
+\cite{DBLP:conf/csl/Kovacs22} to define inductive-recursive universes
+to model the infinite hierarchy of types, and all the SSC-equations
+hold by reflexivity in this model. We defined the analogous CwF-based
+standard model.
 
 \section{Admissible equations}
 \label{sec:admissible}
@@ -1111,7 +1113,7 @@ new model are terms in the old model.
   natural numbers. Composition of substitutions is quite involved, but
   it is just function composition written with explicit weakenings and
   appropriate (un)lifting. The category laws hold. The empty context is
-  modelled by $\top$, its $\eta$ law holds 
+  modelled by $\top$, its $\eta$ law holds via $\eta$ for $\top$.
   \begin{alignat*}{10}
     & \gamma\circ\delta && := \lam\Bigg(\mk^{\Theta-\Gamma}\,\bigg(\un^{\Delta-\Gamma}\,\Big(\gamma[\p]\cdot\mk^{\Gamma-\Delta}\,\big(\un^{\Theta-\Delta}\, \\
     & && \hspace{10em}(\delta[\p]\cdot\mk^{\Delta-\Theta}\,(\un^{\Gamma-\Theta}\,\q))\big)\Big)\bigg)\Bigg) \\
@@ -1206,7 +1208,7 @@ define the map $F : \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra
 not definable using single substitutions. We leave formulating the
 right notion of contextual isomorphism for SSCs as future work.
 
-\section{Conclusions}
+\section{Conclusions and further work}
 \label{sec:conclusion}
 
 Why are we still looking at alternative ways of defining type theory?
