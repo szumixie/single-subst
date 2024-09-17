@@ -787,9 +787,9 @@ We conjecture that the same works for any SOGAT.
 
 \section{stuff}
 
-There are equations in B-systems that cannot be derived from the equations of
-SSC. The following four equations are such, they are versions of equations in
-section \ref{sec:ssc} lifted under arbitrary amount of $\blank^+$s.
+The following four equations correspond to equations in B-systems which cannot
+be derived from the equations of SSC, these are versions of equations in section
+\ref{sec:tt} lifted under arbitrary amount of $\blank^+$s.
 \begin{equation}\label{eq:lifted}
 \begin{aligned}
   B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \\
@@ -798,8 +798,8 @@ section \ref{sec:ssc} lifted under arbitrary amount of $\blank^+$s.
   B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B
 \end{aligned}
 \end{equation}
-In addition, we need the corresponding lifted equations for terms. Note that we
-do not have the non-lifted term versions of the last two equations in SSC.
+The correspoinding equations on terms are also needed. Note that we do not have
+the non-lifted term versions of the last two equations in SSC.
 
 To formally state the equations in (\ref{eq:lifted}), we define telescopes as an
 inductive type together with a recursive operation to append telescopes to
@@ -828,24 +828,61 @@ to commute the instantiations without the equations to do so. Therefore, we
 first $\alpha$-normalize the syntax to compute away all the instantiations, then
 prove the equations by induction on the $\alpha$-normal forms.
 
-We define $\alpha$-normal forms as inductive predicates in Prop
+A type or term is $\alpha$-normal if it does not contain instantiation
+operations, except at the leaves of the syntax tree as variables. However,
+$\alpha$-normal can still contain $\beta$/$\eta$ redexes, so that we do not need
+to do full normalization. We define variables and $\alpha$-normal forms as
+inductive predicates in Prop.
+\begin{itemize}
+  \item $\q:\Tm\,(\Gamma\ext A)\ (A[\p])$ is a variable.
+  \item $x[\p]:\Tm\,(\Gamma\ext A)\ (B[\p])$ is a variable if $x:\Tm\,\Gamma\,B$
+  is a variable.
+  \item $x:\Tm\,\Gamma\,A$ is $\alpha$-normal if $x$ is a variable.
+  \item $\Pi\,A\,B:\Ty\,\Gamma\,i$ is $\alpha$-normal if $A$ and $B$ are
+  $\alpha$-normal types.
+  \item $\app\,f\,a:\Tm\,\Gamma\,(B[\langle a \rangle])$ is $\alpha$-normal if
+  $A$ and $B$ are $\alpha$-normal types, $f:\Tm\,\Gamma\,(\Pi\,A\,B)$ and
+  $a:\Tm\,\Gamma\,A$ are $\alpha$-normal terms.
+\end{itemize}
+The predicate is defined similarly for the other type and term formers. Notably,
+we do not state that instantiated types/terms are $\alpha$-normal. It is
+important to truncate the $\alpha$-normal predicates to be propositions to
+ensure that it preserves the $\beta$/$\eta$ conversion rules.
 
-separate weakening and single substitution
+We define instantiation operations by recursion on $\alpha$-normal forms. The
+instantiation operations need to be defined separately for weakenings and single
+substitutions for the recursion to be well-founded.
 
-Define instantiation operations by recursion on $\alpha$-normal forms
+$x[\p][\gamma^+]' = b[\gamma]'[\p]'$
+
+\begin{itemize}
+  \item $\p$ is a weakening.
+  \item $\gamma^+$ is a weakening if $\gamma$ is a weakening.
+  \item $\langle a \rangle$ is an $\alpha$-normal single substitution if $a$ is an
+  $\alpha$-normal term.
+  \item $\gamma^+$ is an $\alpha$-normal single substitution if $\gamma$ is an
+  $\alpha$-normal single substitution.
+\end{itemize}
+
+\begin{lemma}
+  \label{thm:alpha}
+  Every type and term is/has? an $\alpha$-normal form.
+\end{lemma}
+\begin{proof}
+  By induction on the syntax, normalizing the substitutions at the same time.
+\end{proof}
 
 Instead of doing induction on the syntax for each of the equations in
 (\ref{eq:lifted}), we define a general lemma which can lift any equation between
-instantiations over a telescope.
-
-We define $\Sub^*$ to be $\Sub$ with freely added identity and composition
-operations. All instantiation operations, lifting operations, and substitution
-rules can be redefined for $\Sub^*$.
-
+instantiations over a telescope. For this we define $\Sub^*$ to be $\Sub$ with
+freely added identity and composition operations, we do not require it to
+satisfy the laws of a category. All instantiation operations, lifting
+operations, and substitution rules can be redefined for $\Sub^*$.
 \begin{lemma}
+  \label{thm:lifting}
   Given and $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
   A[\delta]$ and $x[\sigma] = x[\delta]$ for any $A:\Ty\,\Gamma$ and variable
-  $x$ in $A$, then
+  $x:\Tm\,\Gamma\,A$, then
   \begin{itemize}
     \item $\Omega[\sigma] = \Omega[\delta]$ for $\Omega:\Tel\,\Gamma$
     \item $A[\sigma^{+^\Omega}] = A[\delta^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
@@ -853,7 +890,11 @@ rules can be redefined for $\Sub^*$.
   \end{itemize}
 \end{lemma}
 \begin{proof}
-  asd
+  Assuming the first equation, we prove that $x[\sigma^{+^\Omega}] =
+  x[\delta^{+^\Omega}]$ for any variable $x$ by induction on the telescope and
+  the variable. Then the two latter equations can be proven by induction on
+  $\alpha$-normalized types and terms, still assuming the first equation.
+  Finally we prove the first equation by induction on the telescope.
 \end{proof}
 
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
@@ -864,11 +905,16 @@ into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
   & \Tms && : \Con\ra\Con\ra\Con \\
   & \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
-  & \upvarepsilon && : \Tms\,\Gamma\,\diamond \\
+  & \epsilon && : \Tms\,\Gamma\,\diamond \\
   & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A) \\
-  & \llcorner\upvarepsilon\lrcorner && := id\circ\dots\circ\p \\
+  & \llcorner\epsilon\lrcorner && := id\circ\p\circ\dots\circ\p \\
   & \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
 \end{alignat*}
+The computation of instantiating with $\Tms$ is illustrated bellow.
+\begin{gather*}
+  B[\llcorner\epsilon,a_1,a_2,\dots,a_{n-1},a_n\lrcorner] = \\
+  B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
+\end{gather*}
 
 \section{Minimisation}
 \label{sec:minimisation}
