@@ -63,7 +63,7 @@ typecheck other equations. All the other equations are substitution
 formers. SSC provides a simple, minimalistic alternative to parallel
 substitution calculi or B-systems for defining type theory. SSC
 relates to CwF as extensional combinatory calculus relates to lambda
-calculus. In case of additional type formers, we show that SSC models
+calculus. If we have some additional type formers, we show that SSC models
 are actually equivalent to CwF-based models in a weak sense. Most
 results in this paper were formalised in Agda.
 \end{abstract}
@@ -103,22 +103,22 @@ Coquand \cite{coquandUniverse} is specified by the following SOGAT.
   & \un && : \Tm\,(\Lift\,A)\cong\Tm\,A : \mk
 \end{alignedat}
 \end{equation}
-Because types are isomorphic to a term (witnessed by $\El$ and $\cd$),
+Because types are isomorphic to certain terms (witnessed by $\El$ and $\cd$),
 we have to index types by their (universe) level, and types at lower
 levels are included at upper levels by $\Lift$. We use implicit
 arguments, e.g.\ $\Tm$ takes the $i:\N$ implicitly, and $\app$ takes
 $i$, $A$ and $B$ implicitly. $f : X \cong Y : g$ denotes an
 isomorphism, that is, $f : X\ra Y$, $g:Y\ra X$ with $g\,(f\,x) = x$
 and $f\,(g\,y) = y$ for all $x$, $y$. Note that $\Pi$ and $\lam$ are
-second-order functions. We say that $\Pi$ binds a $\Tm$-variable of
-type $A$ in its second $\Ty$-argument. Every binder is represented by
+second-order functions. We say that $\Pi$ binds a $\Tm$-variable
+in its second $\Ty$-argument. Every binder is represented by
 a second-order function, and as a result, we don't need to talk about
 contexts and substitutions when describing the theory: we re-use the
 binding features of the metatheory to describe those of our object
 theory (this technique is also known as higher-order abstract syntax
-\cite{DBLP:conf/lics/Hofmann99} or logical framework
-\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2} and
-our notation comes from two-level type theory \cite{DBLP:conf/csl/AltenkirchCK16,DBLP:journals/mscs/AnnenkovCKS23}). There is no good notion of homomorphism between
+\cite{DBLP:conf/lics/Hofmann99}, logical framework
+\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2} or
+two-level type theory \cite{DBLP:conf/csl/AltenkirchCK16,DBLP:journals/mscs/AnnenkovCKS23}). There is no good notion of homomorphism between
 second-order models, thus the semantics of a SOGAT is given by a first
 order generalised algebraic theory (GAT
 \cite{DBLP:journals/apal/Cartmell86}). GATs are generalisations of
@@ -138,7 +138,7 @@ In the parallel semantics, the GAT always starts with a category with
 a terminal object, objects of the category are called contexts,
 morphisms are substitutions. Every sort/operation of the SOGAT gives
 rise to a sort/operation in the GAT which is now indexed by
-contexts. The sorts moreoever come with instantiation (sometimes
+contexts. The sorts moreover come with instantiation (sometimes
 called substitution) operations which are functorial, and all the
 operations are natural with respect to instantiation. For those sorts
 which are bound by an operation in the SOGAT description, we have
@@ -173,13 +173,7 @@ presentation of type theory using derivation rules, this was one of
 the motivations of Voevodsky for developing B-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. Our single substitution
 semantics of (\ref{eq:tytm}) is simpler and has more models than
-B-systems. GAT presentations of type theory are important for defining
-models. Our presentation gives a new notion of model, which in the
-future might contribute to definitions of new models. It can also
-influence implementations of type theory. Because our single
-substitution GAT does not involve a category, it might be easier to
-adapt it to a higher dimensional setting, see Section
-\ref{sec:conclusion}.
+B-systems.
 
 The single substitution semantics is in some sense
 too minimalistic: for example, consider a term $b$ which depends on a
