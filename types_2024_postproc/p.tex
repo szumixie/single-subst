@@ -880,10 +880,11 @@ as inductive predicates in $\Prop$ as follows.
   $A$ and $B$ are $\alpha$-normal types, $f:\Tm\,\Gamma\,(\Pi\,A\,B)$ and
   $a:\Tm\,\Gamma\,A$ are $\alpha$-normal terms.
 \end{itemize}
-The predicate is defined similarly for the other type and term formers such as $\lam$. Notably,
-we do not state that instantiated types/terms are $\alpha$-normal (except variables). It is
-important to truncate the $\alpha$-normal predicates to be propositions to
-ensure that they preserve the $\beta$/$\eta$ conversion rules.
+The predicate is defined similarly for the other type and term formers such as
+$\lam$. Notably, we do not state that instantiated types/terms are
+$\alpha$-normal (except variables). It is important to truncate the
+$\alpha$-normal predicate to be propositions to ensure that it preserves the
+$\beta$/$\eta$ conversion rules.
 
 We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
 terms instantiated with $\alpha$-normal substitutions. However, this needs to be
@@ -898,6 +899,8 @@ $\alpha$-normal single substitutions as follows.
   \item $\gamma^+$ is an $\alpha$-normal single substitution if $\gamma$ is an
   $\alpha$-normal single substitution.
 \end{itemize}
+We define $\alpha$-normal substitutions to be the disjoint union of weakenings
+and $\alpha$-normal single substitutions.
 
 \begin{lemma}
   \label{thm:alpha}
@@ -956,11 +959,13 @@ The computation of instantiating with $\Tms$ is illustrated below.
   B[\llcorner\epsilon,a_1,a_2,\dots,a_{n-1},a_n\lrcorner] = \\
   B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
 \end{gather*}
-All CwF operations and equations can be defined with $\Tms$ by induction.
+All CwF operations and equations can be defined with $\Tms$ by induction, using
+Lemma \ref{thm:lifting} to avoid further induction on the syntax.
 
 \begin{theorem}
   Contexts, types, and terms in the SSC syntax are isomorphic to the
-  corresponding sorts in the CwF syntax.
+  corresponding sorts in the CwF syntax. In addition $\Tms$ is isomorphic to CwF
+  substitutions.
 \end{theorem}
 \begin{proof}\leavevmode
   \begin{description}
