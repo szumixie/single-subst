@@ -254,7 +254,8 @@ To summarise, our contributions are the following:
   form of a minimalistic single substitution calculus. We show that
   there is no need for parallel substitutions, empty substitution,
   parallel weakenings, telescopes, or combinations of these to
-  describe the syntax of type theory in an intrinsic way.
+  describe the syntax of type theory in an intrinsic way. We present
+  our calculus in an easy-to-understand way.
 \item The $\alpha$-normalisation technique and deriving parallel
   substitutions from the single substitution syntax.
 \item For type theory with $\Pi$, $\U$, a minimised presentation of
@@ -432,7 +433,8 @@ uniqueness of identity proofs (UIP), and our metatheory is
 incompatible with homotopy type theory \cite{HoTTbook}. Our notation
 on paper is close to Agda's, we write $\Pi$ types as $(x:A)\ra B$,
 $\Sigma$ types as $(x:A)\times B$, and use implicit arguments and
-overloading extensively.
+overloading extensively, for example $\blank[\blank]$ for types and
+terms overloaded.
 
 \section{Single substitution syntax}
 \label{sec:tt}
@@ -442,7 +444,7 @@ space and universes in a minimalistic way, only introducing operations
 that are unavoidable. We eschew boilerplate by only defining
 well-formed, well-scoped, well-typed terms that are quotiented by
 conversion. This means that the equalities that hold between terms are
-the ways we can convert terms to each other when running them as
+the ways we can convert terms into each other when running them as
 programs. We give a tutorial-style introduction to the syntax, we do
 not assume prior knowledge of the metatheory of type theory. The
 definition of type theory that we obtain is the same as the single
@@ -454,7 +456,7 @@ types because we only want well-typed terms. Both types and terms can
 include variables, and to keep track of the currently available
 variables, we also index them by contexts: a context is a list of
 types, the length is the number of available variables, and we add new
-variables at the end (that is, they are snoc-lists and not
+variables at the end (that is, they are snoc-lists rather than
 cons-lists). Types are also indexed by their universe level, this is a
 technical requirement for avoiding Russell's paradox. The index $i$ is
 an implicit argument of $\Tm$.
@@ -473,7 +475,7 @@ type which can have variables in the context preceeding the type.
 \end{alignat*}
 We will refer to variables by their distance from the end of the
 context. We would like to describe the operation providing the last
-variable in a context, the zero De Bruijn index, we denote it by $\q :
+variable in a context, the zero De Bruijn index \cite{debruijn}, we denote it by $\q :
 \Tm\,(\Gamma\ext A)\,A'$. It is a term in an extended context, and it
 should have type $A$, but the issue is that $A : \Ty\,\Gamma$, and $A'
 : \Ty\,(\Gamma\ext A)$. We need a way to weaken the type $A$ to obtain
@@ -482,8 +484,8 @@ such an $A'$. For this, we will introduce an operation $\blank[\p] :
 of introducing just $\blank[\p]$, we generalise a bit and add a new
 sort $\Sub$ which for now only has the single element $\p$ and the
 operation $\blank[\blank]$ is called \emph{instantiation}. We
-instantiate the type with the weakening in
-$\Sub\,\Delta\,\Gamma$. Elements of $\Sub$ will be in general called
+instantiate the type with the $\Sub\,\Delta\,\Gamma$ weakening.
+Elements of $\Sub$ will be later called
 substitutions, hence the name, but for now, we only have single end-of
 context weakenings in $\Sub$. $\Delta$ is called the domain, $\Gamma$
 the codomain of a $\Sub\,\Delta\,\Gamma$.
@@ -507,7 +509,7 @@ terms with an overloaded notation.
 Note that this is a dependent function as the type of the resulting
 term has to be weakened the same way as the term itself. Now we can
 define all variables counting from the end of the context (De Bruijn
-indices \cite{debruijn}): $0 := \q$, $1 := \q[\p]$, $2 := \q[\p][\p]$,
+indices): $0 := \q$, $1 := \q[\p]$, $2 := \q[\p][\p]$,
 $3 := \q[\p][\p][\p]$, and so on.
 
 Next we add dependent function space $\Pi$: the domain of a dependent
@@ -529,7 +531,7 @@ C)\,\Gamma$. Then we say $(\Pi\,A\,B)[\p] = \Pi\,(A[\p])\,(B[\p'])$,
 but $B$ cannot be weakened by $\p$ because there we need $\p' :
 \Sub\,(\Gamma\ext C\ext A[\p])$ $(\Gamma\ext A)$. So $p'$ has to be a % hack
 new kind of weakening which adds a new variable in the last but one
-position. But then we need an equation also for $(\Pi\,A\,B)[\p']$,
+position. But after introducing $\p'$, we would need another equation computing $(\Pi\,A\,B)[\p']$,
 introducing a new weakening which adds a new variable in the last but
 two position, and so on. We solve all of these issues by allowing the
 \emph{lifting} of a weakening: $\gamma^+$ will be the same as the
@@ -608,14 +610,14 @@ for instantiation analogous to $\Pi[]$.
 Note that the equation $\lam[]$ only makes sense because of the
 previous equation $\Pi[]$: the left hand side is in
 $\Tm\,\Delta\,(\Pi\,A\,B[\gamma])$, in the right hand side,
-$t[\gamma^+] : \Tm\,(\Delta\ext A[\gamma])\,(B[\gamma^+])$, hence the
+$b[\gamma^+] : \Tm\,(\Delta\ext A[\gamma])\,(B[\gamma^+])$, hence the
 right hand side is in
 $\Tm\,\Delta\,(\Pi\,(A[\gamma])\,(B[\gamma^+]))$.
 
 The functions $\lambda x.x$ and $\lambda x\,y.x$ can be defined in our
 syntax as $\lam\,\q : \Tm\,\Gamma\,(A\Ra A)$ and
 $\lam\,(\lam\,(\q[\p])) :
-\Tm\,\Gamma\,\big(\Pi\,A\,(B\Ra(A[\p]))\big)$ which make sense for all
+\Tm\,\Gamma\,\big(\Pi\,A$ $(B\Ra(A[\p]))\big)$ which make sense for all
 $\Gamma$, $A$, $B$.
 
 The application operation for dependent function space is a bit
@@ -673,7 +675,7 @@ same as not doing anything.
 We add the computation and uniqueness rule for function space, where
 the uniqueness rule again needs an extra equation on the codomain type
 of the function to make sense. This is the typal version of the
-equation mentioned in the introduction.
+equation mentioned in the introduction (we don't have its term version).
 \begin{alignat*}{10}
 & \Pi\beta && : \lam\,b\cdot a = b[\langle a\rangle] \\
 & [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B \\
@@ -711,7 +713,7 @@ SOGAT (\ref{eq:tt}). For reference, we list the same rules again in
 Appendix \ref{app:tt}.
 \end{definition}
 The theory can be extended with new type and term formers in the same
-fashion: each rule has to be indexed over arbitrary contexts and come
+fashion: each operation has to be indexed over arbitrary contexts and come
 equipped with a substitution rule. There is no need to add more
 structural (substitution calculus) rules. For example, we show how to
 extend Definition \ref{def:tt} with the SOGAT-rules (\ref{eq:sigma}).
