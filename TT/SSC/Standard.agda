@@ -27,7 +27,7 @@ opaque
   M .core ._[_]ᵀᴹ A γ δ = A (γ δ)
   M .core ._[_]ᵗᴹ a γ δ = a (γ δ)
 
-  M .core .◇ᴹ = base (`Lift (base `⊤))
+  M .core .◇ᴹ = `⊤
   M .core ._▹ᴹ_ Γ A = `Σ Γ λ γ → base (`Lift (A γ))
 
   M .core .pᴹ (γ ,, a) = γ

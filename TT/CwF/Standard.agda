@@ -39,7 +39,7 @@ opaque
   M .core .[]ᵗ-∘ᴹ = refl
   M .core .[]ᵗ-idᴹ = refl
 
-  M .core .◇ᴹ = base (`Lift (base `⊤))
+  M .core .◇ᴹ = `⊤
   M .core .εᴹ γ = ⋆
   M .core .ε-∘ᴹ = refl
   M .core .◇-ηᴹ = refl

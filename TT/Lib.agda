@@ -10,7 +10,7 @@ module TT.Lib where
 open import Agda.Primitive public
 
 private variable
-  ℓ : Level
+  ℓ ℓ′ : Level
   A A₀ A₁ : Set ℓ
   P₀ P₁ : Prop ℓ
   a a₀ a₁ a₂ a₃ : A
@@ -49,7 +49,7 @@ refl ∙ a₁₂ = a₁₂
 coeₚ : P₀ ≡ P₁ → P₀ → P₁
 coeₚ refl p = p
 
-private postulate
+postulate
   coe₀ : A₀ ≡ A₁ → A₀ → A₁
   coe₀-refl : coe₀ refl a ↝ a
   {-# REWRITE coe₀-refl #-}
@@ -57,6 +57,9 @@ private postulate
 opaque
   coe : A₀ ≡ A₁ → A₀ → A₁
   coe = coe₀
+
+postulate
+  reify-↝ : a₀ ↝ a₁ → a₀ ≡ a₁
 
 private variable
   A₀₁ A₁₂ A₂₁ A₃₂ : A₀ ≡ A₁
@@ -101,7 +104,7 @@ record ⊤ : Set where
   constructor ⋆
 
 infixl 4 _,,_
-record Σ (A : Set) (B : A → Set) : Set where
+record Σ (A : Set ℓ) (B : A → Set ℓ′) : Set (ℓ ⊔ ℓ′) where
   eta-equality
   constructor _,,_
   field
