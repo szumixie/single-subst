@@ -13,10 +13,9 @@ private variable
   i : ℕ
 
 data Uᵇ₀ : Set where
-  `⊤ : Uᵇ₀
 
 Elᵇ₀ : Uᵇ₀ → Set
-Elᵇ₀ `⊤ = ⊤
+Elᵇ₀ ()
 
 module _ (U : Set) (El : U → Set) where
   data Uᵇ₊ : Set where
@@ -33,10 +32,12 @@ module _ (Uᵇ : Set) (Elᵇ : Uᵇ → Set) where
 
   data Uᶜ where
     base : Uᵇ → Uᶜ
-    `Π : (A : Uᶜ) → (Elᶜ A → Uᶜ) → Uᶜ
+    `⊤ : Uᶜ
     `Σ : (A : Uᶜ) → (Elᶜ A → Uᶜ) → Uᶜ
+    `Π : (A : Uᶜ) → (Elᶜ A → Uᶜ) → Uᶜ
 
   Elᶜ (base A) = Elᵇ A
+  Elᶜ `⊤ = ⊤
   Elᶜ (`Π A B) = (a : Elᶜ A) → Elᶜ (B a)
   Elᶜ (`Σ A B) = Σ (Elᶜ A) λ a → Elᶜ (B a)
 

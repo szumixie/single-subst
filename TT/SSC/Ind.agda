@@ -198,6 +198,10 @@ record DModel : Set₁ where
     ap-Conᴹ : Γ₀ ≡ Γ₁ → Conᴹ Γ₀ ≡ Conᴹ Γ₁
     ap-Conᴹ refl = refl
 
+    ap-Subᴹₗ :
+      Δᴹ₀ ≡ Δᴹ₁ → Subᴹ Δᴹ₀ Γᴹ γ ≡ Subᴹ Δᴹ₁ Γᴹ γ
+    ap-Subᴹₗ refl = refl
+
     ap-Subᴹ₅ :
       (Δ₀₁ : Δ₀ ≡ Δ₁) → Δᴹ₀ ≡[ ap-Conᴹ Δ₀₁ ] Δᴹ₁ →
       (Γ₀₁ : Γ₀ ≡ Γ₁) → Γᴹ₀ ≡[ ap-Conᴹ Γ₀₁ ] Γᴹ₁ →
@@ -215,6 +219,9 @@ record DModel : Set₁ where
       Aᴹ₀ ≡[ ap-Tyᴹ₄ Γ₀₁ Γᴹ₀₁ i₀₁ A₀₁ ] Aᴹ₁ →
       a₀ ≡[ ap-Tm₃ Γ₀₁ i₀₁ A₀₁ ] a₁ → Tmᴹ Γᴹ₀ Aᴹ₀ a₀ ≡ Tmᴹ Γᴹ₁ Aᴹ₁ a₁
     ap-Tmᴹ₆ refl refl refl refl refl refl = refl
+
+    ap-▹ᴹᵣ : Aᴹ₀ ≡ Aᴹ₁ → (Γᴹ ▹ᴹ Aᴹ₀) ≡ (Γᴹ ▹ᴹ Aᴹ₁)
+    ap-▹ᴹᵣ refl = refl
 
 module Ind (M : DModel) where
   open DModel M
@@ -264,11 +271,12 @@ module Ind (M : DModel) where
 
   postulate
     ⟦⟧-[]ᵀ : ⟦ A [ γ ]ᵀ ⟧ᵀ ↝ ⟦ A ⟧ᵀ [ ⟦ γ ⟧ˢ ]ᵀᴹ
-    {-# REWRITE ⟦⟧-[]ᵀ #-}
 
   ⟦ p ⟧ˢ = pᴹ
-  ⟦ γ ⁺ ⟧ˢ = ⟦ γ ⟧ˢ ⁺ᴹ
+  ⟦ γ ⁺ ⟧ˢ = coe₀ (ap-Subᴹₗ (ap-▹ᴹᵣ (sym (reify-↝ ⟦⟧-[]ᵀ)))) (⟦ γ ⟧ˢ ⁺ᴹ)
   ⟦ ⟨ a ⟩ ⟧ˢ = ⟨ ⟦ a ⟧ᵗ ⟩ᴹ
+
+  {-# REWRITE ⟦⟧-[]ᵀ #-}
 
   postulate
     ⟦⟧-[]ᵗ : ⟦ a [ γ ]ᵗ ⟧ᵗ ↝ ⟦ a ⟧ᵗ [ ⟦ γ ⟧ˢ ]ᵗᴹ
