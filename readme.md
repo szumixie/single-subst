@@ -2,7 +2,7 @@
 
 * CPP [submission](https://bitbucket.org/akaposi/single/raw/master/cpp/p.pdf) titled "Type theory in type theory with single substitutions" by Ambrus Kaposi and Szumi Xie.
 * TYPES [abstract](types_2024/abstract.tex) titled "Type theory in type theory using single substitutions" by Ambrus Kaposi and Szumi Xie.
-* Agda formalisation of single substitution calculi (SSC):
+* Agda formalisation:
     * Simple type theory:
         * [Syntax](STT/SSC.agda)
         * [Admissible operations](STT/SSC)
@@ -25,3 +25,4 @@
         * [TT.CwF-SSC](TT/CwF-SSC.agda) CwF to SSC
         * [TT.CwF-SSC-CwF](TT/CwF-SSC-CwF.agda) Roundtrip CwF -> SSC -> CwF
         * [TT.SSC-CwF-SSC](TT/SSC-CwF-SSC.agda) Roundtrip SSC -> CwF -> SSC
+        * [TT.Isomorphism](TT/Isomorphism.agda) Putting the above four together
