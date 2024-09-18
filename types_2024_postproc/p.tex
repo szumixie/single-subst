@@ -883,7 +883,7 @@ as inductive predicates in $\Prop$ as follows.
 The predicate is defined similarly for the other type and term formers such as $\lam$. Notably,
 we do not state that instantiated types/terms are $\alpha$-normal (except variables). It is
 important to truncate the $\alpha$-normal predicates to be propositions to
-ensure that it preserves the $\beta$/$\eta$ conversion rules.
+ensure that they preserve the $\beta$/$\eta$ conversion rules.
 
 We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
 terms instantiated with $\alpha$-normal substitutions. However, this needs to be
@@ -919,19 +919,19 @@ instantiation operations, lifting operations, and substitution rules are
 redefined for $\Sub^*$.
 \begin{lemma}
   \label{thm:lifting}
-  Given $\sigma, \delta : \Sub^*\,\Delta\,\Gamma$, if $A[\sigma] =
-  A[\delta]$ and $x[\sigma] = x[\delta]$ for any $A:\Ty\,\Gamma$ and variable
-  $x:\Tm\,\Gamma\,A$, then
+  Given $\gamma_0, \gamma_1 : \Sub^*\,\Delta\,\Gamma$, if $A[\gamma_0] =
+  A[\gamma_1]$ and $x[\gamma_0] = x[\gamma_1]$ for any $A:\Ty\,\Gamma$ and
+  variable $x:\Tm\,\Gamma\,A$, then
   \begin{itemize}
-    \item $\Omega[\sigma] = \Omega[\delta]$ for $\Omega:\Tel\,\Gamma$
-    \item $A[\sigma^{+^\Omega}] = A[\delta^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
-    \item $a[\sigma^{+^\Omega}] = a[\delta^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
+    \item $\Omega[\gamma_0] = \Omega[\gamma_1]$ for $\Omega:\Tel\,\Gamma$
+    \item $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
+    \item $a[\gamma_0^{+^\Omega}] = a[\gamma_1^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
   \end{itemize}
   Note that the later equations depend the the earlier ones.
 \end{lemma}
 \begin{proof}
-  Assuming the first equation, we prove that $x[\sigma^{+^\Omega}] =
-  x[\delta^{+^\Omega}]$ for any variable $x$ by induction on the telescope and
+  Assuming the first equation, we prove that $x[\gamma_0^{+^\Omega}] =
+  x[\gamma_1^{+^\Omega}]$ for any variable $x$ by induction on the telescope and
   the variable. Then the two latter equations can be proven by mutual induction
   on $\alpha$-normalized types and terms, still assuming the first equation.
   Finally we prove the first equation by induction on the telescope, using the
