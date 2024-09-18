@@ -189,7 +189,7 @@ lam b   := lam (lam (b[p][p]·(q[p],q)))
   ? : M.Tm ◇ (Π Γ (El(c (Π (El (A[p]·q)) (El (B[p][p]·(q[p],q)))))))
 and so on.
   
-** Roundtrip: M:CwF, U M:SSC, T(U M):CwF, we show that for M' := T(U M), M' ≃ M.
+** Termification roundtrips: M:CwF, U M:SSC, T(U M):CwF, we show that for M' := T(U M), M' ≃ M.
 Our notion of equivalence: a weak CwF-morphism which is bijective on types and terms
 
 F : M'.Con → M.Con
@@ -306,3 +306,59 @@ F : M'.Ty Γ = Tm ◇ (Γ ⇒ U) ≅ Tm (◇▹Γ) U ≅ Ty (◇▹Γ) = M.Ty (F
 F A := El(A[p]·q)
 
 F : M'.Tm Γ A = Tm ◇ (Π Γ (El(A[p]·q))) ≅ Tm (◇▹Γ) (El(A[p]·q)) = M.Tm (F Γ) (F A)
+** Minimisation
+minimised rules:
+
+[p][⁺]'  : (e:B[p][γ⁺]=B[γ][p]) → b[p][γ⁺] =ₑ b[γ][p]
+q[⁺]'    : (e:B[p][γ⁺]=B[γ][p]) → q[γ⁺] =ₑ q
+[p][⟨⟩]' : (e:B[p][⟨a⟩]=B) → b[p][⟨a⟩] =ₑ b
+q[⟨⟩]'   : (e:B[p][⟨a⟩]=B) → q[⟨a⟩] =ₑ a
+Πβ'      : (e:B[p⁺][⟨q⟩] = B) → lam b[p]·q =ₑ b
+·[]'     : (e:B[⟨a⟩][γ] = B[γ⁺][⟨a[γ]⟩]) → (t·a)[γ] = t[γ]·(a[γ])
+Πη'      : (e:B[p⁺][⟨q⟩] = B) → t =ₑ lam (t[p]·q)
+
+- [p][⁺] : B[p][γ⁺]=B[γ][p]
+  B[p][γ⁺] =
+  El(c B)[p][γ⁺] =
+  El(c B[p][γ⁺]) =([p][⁺]' U[])
+  El(c B[γ][p]) =
+  El(c B)[γ][p] =
+  B[γ][p]
+- [p][⁺] : b[p][γ⁺] =ₑ b[γ][p]
+  [p][⁺] :＝ [p][⁺]' [p][⁺]
+- q[⁺] : q[γ⁺] =ₑ q
+  q[⁺] := q[⁺]' [p][⁺]
+- [p][⟨⟩] : B[p][⟨a⟩]=B
+  B[p][⟨a⟩] =
+  El(c B)[p][⟨a⟩] =
+  El(c B[p][⟨a⟩]) =([p][⟨⟩]' U[])
+  El(c B) =
+  B
+- [p][⟨⟩] : b[p][⟨a⟩] =ₑ b
+  [p][⟨⟩] := [p][⟨⟩]' [p][⟨⟩]
+- q[⟨⟩] : q[⟨a⟩] =ₑ a
+  q[⟨⟩] := q[⟨⟩]' [p][⟨⟩]
+- Πβᵁ : lam B̂·a = B̂[⟨a⟩]     (B̂ : Tm Γ U)
+  lam B̂·a =
+  lam B̂·(q[⟨a⟩]) =
+  (lam B̂[p][⟨a⟩])·(q[⟨a⟩]) =(·[]' U[])
+  (lam B̂[p]·q)[⟨a⟩] =(Πβ' U[])
+  B̂[⟨a⟩]
+- [⟨⟩][] : B[⟨a⟩][γ] = B[γ⁺][⟨a[γ]⟩]
+  B[⟨a⟩][γ] =
+  El(c B[⟨a⟩][γ]) =(Πβᵁ)
+  El((lam (c B)·a)[γ]) =(·[]' U[])
+  El(lam (c B[γ⁺])·(a[γ])) =
+  El(c B[γ⁺][⟨a[γ]⟩]) =
+  B[γ⁺][⟨a[γ]⟩]
+- [p⁺][⟨q⟩] : B[p⁺][⟨q⟩] = B
+  B[p⁺][⟨q⟩] =
+  El(c B[p⁺][⟨q⟩]) =(Πβᵁ)
+  El(lam (c B[p⁺])·q]) =(lam[])
+  El(lam (c B)[p]·q]) =(Πβ' U[])
+  El (c B) =
+  B
+- ·[] : (t·a)[γ] = t[γ]·(a[γ])
+  ·[] := ·[]' [⟨⟩][]
+- Πη : t = lam (t[p]·q)
+  Πη := Πη' [p⁺][⟨q⟩]
