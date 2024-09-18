@@ -175,28 +175,22 @@ the motivations of Voevodsky for developing B-systems
 semantics of (\ref{eq:tytm}) is simpler and has more models than
 B-systems.
 
-The single substitution semantics is in some sense
-too minimalistic: for example, consider a term $b$ which depends on a
-context $\Gamma$ and an extra variable of type $A$, that is, $b :
-\Tm\,(\Gamma\ext A)\,B$. We weaken $b$ so that we add an extra $A$
-variable \emph{before} the last one obtaining $ b[\p^+] :
-\Tm\,(\Gamma\ext A\ext A[\p])\,(B[\p]) $ where $\p$ is weakening at
-the end of the context, and $\p^+$ is weakening just before the last
-variable in the context. Then, we instantiate the last $A[\p]$
-variable in the context by the previous $A$ obtaining
-$b[\p^+][\langle\q\rangle] : \Tm\,(\Gamma\ext A)\,B$ where $\q$
-denotes the last variable in the context (a.k.a\ De Bruijn index $0$).
-We cannot derive $b[\p^+][\langle\q\rangle] = b$ in an arbitrary single substitution
-model, but this equation holds in the single substitution syntax.
-% p⁺  : Sub (Γ▹A▹A[p]) (Γ▹A)
-% ⟨q⟩ : Sub (Γ▹A) (Γ▹A▹A[p])
-This is analogous to e.g.\ parametricity results
-\cite{DBLP:journals/jfp/BernardyJP12}, which do not hold in an
-arbitrary model, but they hold in the syntax. In fact, we show that
-the single substitution syntax of (\ref{eq:tt}) is equivalent to the
-parallel substitution syntax of (\ref{eq:tt}), and the techniques that
-we use are not specific to the SOGAT (\ref{eq:tt}), we expect
-that they work for any SOGAT. Equivalence of the syntaxes means that
+The single substitution semantics is in some sense too minimalistic:
+for example, the equation $b[\p^+][\langle\q\rangle] = b$ is not
+\emph{derivable} in any model, but it is \emph{admissible} in the
+syntax. (Here $b : \Tm\,(\Gamma\ext A)\,B$ meaning that it is a term
+which depends on a context $\Gamma$ and an extra variable of type $A$;
+$b[\p^+] : \Tm\,(\Gamma\ext A\ext A[\p])\,(B[\p^+])$ is a version
+where we weakened \emph{before} the last variable; in
+$b[\p^+][\langle\q\rangle] : \Tm\,(\Gamma\ext A)\,B$ we substituted
+the last variable for the previous one.)  This is analogous to
+e.g.\ parametricity results \cite{DBLP:journals/jfp/BernardyJP12},
+which do not hold in an arbitrary model, but they hold in the
+syntax. In this paper, we show that for the particular SOGAT
+(\ref{eq:tt}), the \emph{syntaxes} of the single and parallel
+semantics are isomorphic. The techniques that we use for this proof
+are not specific to the SOGAT (\ref{eq:tt}), we expect
+that they work for any SOGAT. Isomorphism of the syntaxes means that
 the corresponding sorts ($\Con$, $\Ty$, $\Tm$) are isomorphic. For a
 general SOGAT, there are more models of the correponding single
 substitution GAT than the parallel substitution GAT. Every parallel
@@ -204,14 +198,14 @@ model is also a single model, but not necessarily the other way. While
 B-systems are equivalent to CwFs (and C-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more single
 substitution models of (\ref{eq:tytm}) than parallel substitution
-models. The situation is similar to that of extensional combinatory
+models (CwFs). The situation is similar to that of extensional combinatory
 calculus and lambda calculus, where the syntaxes are equivalent, and
 every lambda model is a combinatory model, but not the other way round
 \cite{DBLP:conf/fscd/AltenkirchKSV23}. A simpler example is the
 relationship of monoids over a set $X$ and nil/cons algebras over $X$,
 where every monoid is a nil/cons-algebra, but not the other way; it is
-well-known that free monoids over $X$ (syntax for monoid over $X$) are
-the same as lists of $X$ (the syntax for nil/cons algebras over $X$).
+well-known that free monoids over $X$ (syntax of monoid over $X$) are
+the same as lists of $X$ (the syntax of nil/cons algebras over $X$).
 
 When showing that the parallel and single substitution syntaxes are
 equivalent, we define the parallel operations by induction on the
@@ -219,7 +213,7 @@ single substitution syntax. One of the operations in the single
 substitution syntax is the instantiation operation: $\blank[\blank] :
 \Ty\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Ty\,\Delta$, and similarly for
 terms. When doing induction on types/terms, we have to provide
-a method for these operations, but this can be difficult as
+a method for these operations, but this is difficult as
 substitutions don't compose. This is why we derive a new induction
 principle which works on $\alpha$-normal types and terms. Just as
 $\beta$-normal forms don't distinguish between $\beta$-equal terms,
@@ -231,9 +225,9 @@ space. To derive the new induction principle for the syntax, we first
 prove $\alpha$-normalisation.
 
 In the particular theory (\ref{eq:tt}), every type is represented by a
-term. In its single substitution calculus, this can be
-used to adapt some equations and remove some others, obtaining a more
-minimalistic, but equivalent GAT.
+term. In its single substitution calculus, we use this to adapt some
+equations and remove some others, obtaining a more minimalistic, but
+isomorphic GAT.
 
 Theory (\ref{eq:tt}) can be extended
 with unit and $\Sigma$ types, more precisely with the following rules.
