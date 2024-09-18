@@ -286,7 +286,7 @@ Altenkirch \cite{alti:phd93}.
 
 B-systems were introduced by Voevodsky \cite{voevodsky2014bsystems} as
 an algebraic way of describing type theories close to the notations
-using typing judgements. B-systems are an intrinsic, but essentially
+using typing judgements. B-systems are an intrinsic, essentially
 algebraic presentation of type theory using single
 substitutions. B-systems correspond to our single substitution
 calculus as essentially algebraic theories correpond to generalised
@@ -296,7 +296,7 @@ families over $I$ \cite[page
 have fewer and less general equations, resulting in the fact that we
 have more models than B-systems. However in the syntax of our theory,
 all the rules of B-systems are admissible. We describe the
-relationship in more detail. B-systems are B-frames together with a
+relationship in more detail. B-systems are B-frames together with
 substitution, weakening and generic element operations. A B-frame is
 given by sets $B_i$, $\tilde{B}_i$ and functions between them as shown
 below \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. \\
@@ -331,8 +331,8 @@ The substitution operation $\mathbb{S}$ for an element of
 $x:\tilde{B}_{n+1}$ is a homomorphism of the slice B-frames
 $\mathbb{B}/\partial(x) \ra \mathbb{B}/\mathsf{ft}(\partial(x))$. In
 our notation, $x = (\Gamma, A, a)$ where $a : \Tm\,\Gamma\,A$, and the
-homomorphism $\mathbb{S}$ corresponds to the following maps for the
-bottom row of the diagram:
+homomorphism $\mathbb{S}$ corresponds to the following maps for $\Ty$
+(mapping between the bottom rows of the diagrams):
 \begin{alignat*}{10}
   & \blank[\langle a\rangle] && : \Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
   & \blank[\langle a\rangle^+] && : \Ty\,(\Gamma\ext A\ext B)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]) \\
@@ -340,8 +340,8 @@ bottom row of the diagram:
   & \dots,
 \end{alignat*}
 and similarly $\mathbb{S}$ also includes all the (lifted) substitution
-operations for terms corresponding to the top row of the
-diagram. Analogously, the weakening operation corresponds to
+operations for terms (top rows of the
+diagrams). Analogously, the weakening operation corresponds to
 $\blank[\p^{+\dots+}]$ operations, and the generic element is $\q$ in
 our notation. The six groups of equations correspond to our
 $[\langle\rangle][]$, $[\p][^+]$, $\q[^+]$, $[\p][\langle\rangle]$,
