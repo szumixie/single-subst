@@ -996,7 +996,7 @@ requiring the first one is the following:
 \]
 That is, for any type $B$ for which $B[\p][\gamma^+] = B[\gamma][\p]$,
 we have that for any $b$ we have the equation (suitably over the input
-equation). Thus we add a conditional equation.
+equation). Thus this is a conditional equation.
 
 It turns out that if we have Coquand-universes, the conditional
 $[\p][^+]'$ rule is enough: the input equation holds for $B := \U\,i$
@@ -1085,8 +1085,8 @@ We summarise this section by formally stating what we defined.
 
 \begin{definition}[Minimised single substitution calculus with $\Pi$ and $\U$]\label{def:min}
   This section defined the minimised first-order version of the SOGAT
-  (\ref{eq:tt}), relying essentially on the presernce of universes and
-  $\Pi$ types. For reference, list all the rules of the minimised
+  (\ref{eq:tt}), relying essentially on the presence of universes and
+  $\Pi$ types. For reference, we list all the rules of the minimised
   calculus in Appendix \ref{app:minimisation}.
 \end{definition}
 \begin{theorem}
@@ -1119,7 +1119,7 @@ substitution calculus.
 \end{problem}
 \begin{proof}[Construction]
   Most operations are the same, we set $\gamma^+ :=
-  (\gamma\circ\p,\q)$ and $\langle a\rangle := (\id,a)$.
+  (\gamma\circ\p,\q)$ and $\langle a\rangle := (\id,a)$. All equations are derivable.
 \end{proof}
 The following construction is also known as the standard model,
 metacircular interpretation \cite{DBLP:conf/popl/AltenkirchK16},
@@ -1133,7 +1133,7 @@ new model are terms in the old model.
 \begin{proof}[Construction]
   We define iterated lifting $\Lift^k :
   \Ty\,\Gamma\,i\ra\Ty\,\Gamma\,(k+i)$ by induction on $k$, together
-  with $\un^k : \Tm\,(\Lift^k\,A)\cong\Tm\,A : \mk^k$. The category
+  with $\un^k : \Tm\,(\Lift^k\,A)$ $\cong\Tm\,A : \mk^k$. The category % hack
   part of the CwF is given by types in the empty context and functions
   between them, suitably lifted (on the left hand side of $:=$ there
   is the component in the new CwF-model, on the right hand side the
@@ -1143,11 +1143,10 @@ new model are terms in the old model.
     & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Lift^{\Gamma-\Delta}\,\Delta\Ra\Lift^{\Delta-\Gamma}\,\Gamma)
   \end{alignat*}
   In the definition of $\Sub$, we did not write the projections for
-  $\Con$, so $\Delta$ can mean $\Delta_{.1}$ or $\Delta_{.2}$
-  depending on the context, and we used the truncating subtraction of
+  $\Con$, so $\Delta$ can mean $\Delta_{.1}$ or $\Delta_{.2}$, and we used the truncating subtraction of
   natural numbers. Composition of substitutions is quite involved, but
   it is just function composition written with explicit weakenings and
-  appropriate (un)lifting. The category laws hold. The empty context is
+  appropriate (un)liftings. The category laws hold. The empty context is
   modelled by $\top$, its $\eta$ law holds via $\eta$ for $\top$.
   \begin{alignat*}{10}
     & \gamma\circ\delta && := \lam\Bigg(\mk^{\Theta-\Gamma}\,\bigg(\un^{\Delta-\Gamma}\,\Big(\gamma[\p]\cdot\mk^{\Gamma-\Delta}\,\big(\un^{\Theta-\Delta}\, \\[-1.5em]
@@ -1157,14 +1156,14 @@ new model are terms in the old model.
   Types are given by functions into $\U$, terms are dependent
   functions into the type, with lots of lifting adjustments.
   \begin{alignat*}{10}
-    & \Ty\,\Gamma\,i && := \Tm\,\diamond\,(\Lift^{1+i-\Gamma}\,\Gamma\Ra\Lift^{\Gamma-(1+i)\,(\U\,i)}) \\
+    & \Ty\,\Gamma\,i && := \Tm\,\diamond\,\big(\Lift^{1+i-\Gamma}\,\Gamma\Ra\Lift^{\Gamma-(1+i)}\,(\U\,i)\big) \\
     & \Tm\,\Gamma\,A && := \Tm\,\diamond\,\Bigg(\Pi\,(\Lift^{i-\Gamma}\,\Gamma)\,\bigg(\Lift^{\Gamma-i}\,\Big(\El\, \\[-1em]
     & && \hspace{4em} \big(\un^{\Gamma-(1+i)}\,(A[\p]\cdot\mk^{1+i-\Gamma}\,(\un^{i-\Gamma}\,\q))\big)\Big)\bigg)\Bigg)
   \end{alignat*}
-  To make the notation readable, we will not write the lifting
-  decorations from now on, and we repeat the previous definitions
-  without mentioning universe levels, but all of what follows is
-  definable properly with lifting.
+  To make the notation readable, from now on, we will not write the
+  lifting decorations or universe from now on. We repeat the previous
+  definitions again without writing decorations, but all of what
+  follows can be defined properly.
   \begin{alignat*}{10}
     & \Con && := \Ty\,\diamond \\
     & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Delta\Ra\Gamma) \\
@@ -1241,7 +1240,7 @@ specified by universal properties.
   A))$ $(F\,\Gamma\ext F\,A)$ is an isomorphism. % hack
 \end{proof}
 The other roundtrip, that is, starting with an SSC-model, termifying
-it and comparing the result with the original SSC does not provide an
+it and comparing the result with the original SSC-model does not provide an
 isomorphism because we can't define the map $F :
 \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra
 \Sub\,(\diamond\ext\Delta)\,(\diamond\ext\Gamma)$ on
@@ -1260,17 +1259,17 @@ more models, or contribute to a coherent definition. We elaborate on
 the latter.
 
 Defining a useable syntax of type theory internally to homotopy type
-theory (HoTT \cite{HoTTbook}) is an open problem: the (h)set-truncated
+theory (HoTT \cite{HoTTbook}) is an open problem \cite{mike,nicolai}: the (h)set-truncated
 syntax can be formalised as a QIIT, but then we cannot even define the
 $\Type$-interpretation, that is, a function from the syntax which
-interprets closed types by the metatheoretic universe $\Type$ (rather
+interprets closed types in the metatheoretic universe $\Type$ (rather
 than an inductive recursive universe as in Subsection
 \ref{sec:standard} or \cite[Section
   4]{DBLP:conf/popl/AltenkirchK16}). In two-level type theory the
 syntax of type theory can be defined using infinitely many coherene
 rules \cite{DBLP:conf/lics/Kraus21}. For example, for substitution
-$\Sub$, we have the associativity of composition of substitutions
-equation. If we truncate our syntax to be a set, then this is
+$\Sub$, we have an equation in the syntax on the associativity of composition of substitutions.
+If we truncate our syntax to be a set, then this is
 enough. If we don't truncate, there are two different ways of proving
 $((\gamma\circ\delta)\circ\theta)\circ\xi =
 \gamma\circ(\delta\circ(\theta\circ\xi))$, and nothing forces these to
@@ -1290,27 +1289,27 @@ there are two different ways to prove the following equation:
 \end{alignat*}
 In a coherent version of our syntax we either need to state that these
 two proofs are equal, or we have to remove one of them. We can remove
-the first one by limiting $[\p][\langle\rangle]$ to only work on
+the first one by limiting $[\p][\langle\rangle]$ to only apply to
 variables (this needs the introduction of a new sort for
 variables). If we do this, the minimisation of Section
 \ref{sec:minimisation} does not work anymore, so we need the extra
 four equations for types ($[\p][^+]$, $[\p][\langle\rangle]$,
 $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$). These equations on
 types make the syntax non-coherent again. A possible way out of this
-would be to make the equations that depend on one of these for
-equations conditional. But then the methods of Section
+would be to make the equations that depend on one of these 
+ conditional. But then the methods of Section
 \ref{sec:admissible} don't work anymore for re-proving the needed
-admissible equations. Also, if only have the rule $[\p][^+]$ only for
-variables, then we cannot redo the termification of Section
-\ref{sec:cwf}, in particular it is not clear how to prove equation
+admissible equations. Also, if we only have the rule $[\p][^+]$ for
+variables, we cannot redo the termification of Section
+\ref{sec:cwf}, e.g.\ it is not clear how to prove equation
 (\ref{eq:functor}).
 
 In this paper we unfolded a particular example of the SOGAT $\ra$
 single substitution GAT translation
 \cite{DBLP:conf/fscd/KaposiX24}. We showed that for this theory, the
 syntax is isomorphic to the parallel syntax, and we conjecture that
-our method works for any SOGAT. For our particular SOGAT, the single
-substitution syntax can be simplified, and we even have that any
+our method works for any SOGAT. For our particular SOGAT, we minimised the single
+substitution syntax, and we even have that any
 single substitution model is equivalent to a parallel model in a weak
 sense. This shows that if we have enough type formers, the
 substitution calculus can be very weak, and still enough to bootstrap
