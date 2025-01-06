@@ -1,8 +1,0 @@
-formalisation TODOs:
-- ConP -> ConS                  difficult, but already done
-- ConS -> ConP                  easy because IP is already an S-model
-- ConS -> ConP -> ConS = id     we have to show that this map is an S-homomorphism, then we get that it is equal to the identity
-- ConP -> ConS -> ConP = id     we have to show that this map is an P-homomorphism, then we get that it is equal to the identity
-- one of these:
-  - notion of S,P models, homomorphisms, uniqueness
-  - just define the above functions and prove the two equations using induction
