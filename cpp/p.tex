@@ -98,9 +98,9 @@ Some advantages of using a GAT presentation:
   in an extrinsic presentation, this is expressed by a rule such as
   the following.
   \[
-  \infer{\Gamma\vdash t : B}{A \sim B && \Gamma\vdash t : A}
+  \infer{\Gamma\vdash t : B}{\Gamma\vdash A \sim B && \Gamma\vdash t : A}
   \]
-  When conversion is equality, this rule holds by the general
+  When conversion $\sim$ is equality, this rule holds by the general
   properties of equality; and we also avoid lots of boilerplate
   stating that e.g.\ conversion is a congruence with respect to all
   operations (for an intrinsic presentation with explicit conversion
@@ -118,15 +118,15 @@ Some advantages of using a GAT presentation:
 \item The GAT approach is also more abstract than extrinsic
   approaches, which means that we don't have to make ad-hoc
   choices. For example, we do not have to decide whether we want
-  function space {\`a} la Curry or {\`a} la Church, whether we work
+  function space {\`a} la Curry or {\`a} la Church; whether we work
   with paranoid or economic typing rules \cite[Section
-    5]{winterhalter:hal-01626651}, or whether we have explicit or
+    5]{winterhalter:hal-01626651}; whether we have explicit or
   recursively defined substitution (instantiation of variables by
   terms, written $t[x\mapsto u]$ or $t[u/x]$).  These choices are
   forced by the notion of GAT: the domain of a lambda appears in its
-  type, se we are always {\`a} la Church; algebraic theories don't
+  type, so we are always {\`a} la Church; algebraic theories don't
   allow recursively defined operators, so instantiation is an explicit
-  operation, and so on.
+  operation; and so on.
 \end{itemize}
 
 % For formalisation on a computer, the algebraic approach also has its
@@ -143,27 +143,28 @@ to be made about the instantiation operation. It is usually convenient
 to use parallel substitutions, which means that the instantiation
 operation replaces all variables in a context by terms in another
 context \emph{at the same time}, that is, $t[x_0\mapsto
-  u_0,\dots,x_n\mapsto u_n]$ where $x_0,\dots,x_n$ are all the free
-variables in $t$. $(x_0\mapsto u_0,\dots,x_n\mapsto u_n)$ is called a
-parallel substitution, and the terms $u_0,\dots,u_n$ are all in the
-same context. Parallel substitutions are very natural in the algebraic
-setting because they form the morphisms in a category where objects
-are contexts (lists of types), and then it is clear what equations
-they need to satisfy. Some examples of algebraic definitions of type
-theory using parallel substitutions ranging from the more syntactic to
-the more semantic: Ehrhard's notion \cite{ehrhard,coquandEhrhard},
-categories with families (CwF
-\cite{DBLP:conf/types/Dybjer95,Castellan2021}), Awodey's natural
-models \cite{DBLP:journals/mscs/Awodey18}, contextual categories
-\cite{DBLP:journals/apal/Cartmell86}, C-systems
+  u_0,\dots,x_n\mapsto u_n]$ where $x_0,\dots,x_n$ are the variables
+in the context of $t$. $(x_0\mapsto u_0,\dots,x_n\mapsto u_n)$ is
+called a parallel substitution, where the terms $u_0,\dots,u_n$ are
+all in the same context. Parallel substitutions are very natural in
+the algebraic setting because they form the morphisms in a category
+where objects are contexts (lists of types), then types/terms are
+preheaves, context extension is a representability condition, so the
+equations of the algebraic theory are forced by the categorical
+structure. Some examples of algebraic definitions of type theory using
+parallel substitutions ranging from the more syntactic to the more
+semantic: Ehrhard's notion \cite{ehrhard,coquandEhrhard}, categories
+with families (CwF \cite{DBLP:conf/types/Dybjer95,Castellan2021}),
+Awodey's natural models \cite{DBLP:journals/mscs/Awodey18}, contextual
+categories \cite{DBLP:journals/apal/Cartmell86}, C-systems
 \cite{DBLP:journals/lmcs/AhrensLV18}, locally cartesian closed
 categories \cite{DBLP:journals/mscs/ClairambaultD14}, path categories
 \cite{10.1145/3204492}.
 
 In traditional extrinsic presentations
 (e.g.\ \cite{alti:phd93,DBLP:books/daglib/0005958}) instantiation
-simply replaces all free occurrences of a variable $x$ with a term $u$
-as in the notation $t[x\mapsto u]$. A substitutions consists of a
+replaces free occurrences of a single variable $x$ with a term $u$ as
+in the notation $t[x\mapsto u]$. A substitution consists of a
 variable name (a pointer into a context) and a term. Substitutions
 cannot be composed, thus they do not form a category. To bridge the
 gap between the intrinsic parallel substitution world and the
@@ -174,7 +175,7 @@ complex rules describing telescopes, weakenings and substitutions
 under telescopes, with several equations.
 
 In this paper, we introduce a new single substitution calculus (SSC)
-which is simpler and more minimalistic than the existing algebraic
+which is simpler and more minimalistic than existing algebraic
 approaches. The instantiation operation $\blank[\blank]$ takes either a
 single substitution or a single weakening as an argument, and there
 are eight equations explaining how these behave: four of these say how
@@ -200,14 +201,13 @@ we substituted the last variable for the previous one.)  This is
 analogous to e.g.\ parametricity results
 \cite{DBLP:journals/jfp/BernardyJP12}, which do not hold in an
 arbitrary model, but they hold in the syntax. In this paper, we show
-that the \emph{syntax} of our single substitution theory and the
-syntax of the corresponding parallel substitution theory (CwF-based
-theory) are isomorphic. All CwF-based models are models of our single
-substitution theory, but not necessarily the other way. While
-B-systems are equivalent to CwFs (and C-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more SSC models
-than CwF-based models. This relationship is similar to that of
-extensional combinatory calculus and lambda calculus, where the
+that the \emph{syntaxes} of our SSC and the corresponding parallel
+substitution calculus (CwF-based calculus) are isomorphic. All
+CwF-based models are models of our SSC, but not
+necessarily the other way. While B-systems are equivalent to CwFs (and
+C-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more
+SSC models than CwF-based models. This relationship is similar to that
+of extensional combinatory calculus and lambda calculus, where the
 syntaxes are equivalent, and every lambda model is a combinatory
 model, but not the other way round
 \cite{DBLP:conf/fscd/AltenkirchKSV23}. Another example is the
@@ -230,38 +230,40 @@ space. We use induction on $\alpha$-normal forms to define parallel
 substitutions and prove all the rules of CwFs in the syntax of SSC.
 
 Our SSC has 8 equations, and these are enough to describe type
-theories with arbitrary choice of type formers (see the description of
+theories with arbitrary choice of type formers (see the paragraph on
 SOGATs in Subsection \ref{sec:related}). In the particular case of
 type theory with a Coquand-universe and $\Pi$ types, we can do better:
-4 (conditional) equations on variables are enough, because using the
-fact that every type is represented by a terma, we can derive the other
-4 equations.
+the 4 (conditional) equations are enough, because we can derive the
+other 4 equations using the fact that every type is represented by a
+term.
 
 If in addition to having a universe and $\Pi$ types, our type theory
 also supports unit and $\Sigma$ types, we can actually derive a
 CwF-based model from an SSC-model. The idea is that $\Sigma$ types can
 represent contexts, functions between $\Sigma$ types represent
-parallel substitutions, functions into the universe represent depenent
-types. Then the SSC is just there to formulate $\Sigma$, $\Pi$, $\U$,
-and then we use these to define a parallel substitution calculus. So
+parallel substitutions, functions into the universe represent
+dependent types. Then the SSC is just there for bootstrapping
+purposes: we use the SSC to formulate $\Sigma$, $\Pi$, $\U$, and then
+we use these to define a parallel substitution calculus. In summary,
 although SSC models and CwFs without any type formers are not
 equivalent, if we equip them with enough type formers, they become
 (weakly) equivalent.
 
-All of our constructions can be understood as happening internal to
-extenional type theory, and most results in this paper are formalised
-in Agda. Most results in this paper were presented at the TYPES 2024
+All of the constructions in this paper can be understood as happening
+internal to extensional type theory, and most results were formalised
+in Agda. Some results in this paper were presented at the TYPES 2024
 conference \cite{singleTypes}.
 
+In summary, our contributions are the following:
 \begin{itemize}
 \item A new generalised algebraic presentation of type theory in the
-  form of a minimalistic single substitution calculus. We show that
-  there is no need for parallel substitutions, empty substitution,
-  parallel weakenings, telescopes, or combinations of these to
-  describe the syntax of type theory in an intrinsic way. We present
-  our calculus in an easy-to-understand way.
-\item The $\alpha$-normalisation technique and deriving parallel
-  substitutions from the single substitution syntax.
+  form of a minimalistic single substitution calculus. Our calculus
+  does not feature parallel substitutions/weakenings, empty
+  substitution, telescopes. We present our calculus in an
+  easy-to-understand way where all operations are well-motivated.
+\item The $\alpha$-normalisation technique which shows that the syntax
+  of our single substitution calculus is isomorphic to the syntax of
+  the CwF-based theory.
 \item For type theory with $\Pi$, $\U$, a minimised presentation of
   the equations which results in an isomorphic theory.
 \item For type theory with $\Pi$, $\U$, $\top$, $\Sigma$, we show that
@@ -270,28 +272,29 @@ conference \cite{singleTypes}.
 
 \subsection{Structure of the paper}
 
-After discussing related work, in Section \ref{sec:tt}, we introduce
-our single substitution calculus (SSC) only relying on a working
-knowledge of an implementation of type theory such as Agda, no prior
-experience with the metatheory of type theory is required. Section
-\ref{sec:admissible} shows that in the syntax of SSC, several new
-equations are admissible, and that the syntax of SSC is actually
-isomorphic to the CwF-based syntax. In Section \ref{sec:minimisation}
-we minimise our SSC obtaining a theory with fewer equations, relying
-on the presence of $\Pi$ and $\U$ in our theory. In Section
-\ref{sec:cwf}, we show that in the presence of $\Pi$, $\U$ and
-$\Sigma$, SSC-models are actually equivalent to CwF-models in a weak
-sense. We conclude in Section \ref{sec:conclusion}.
+After discussing related work and our metatheory, in Section
+\ref{sec:tt}, we introduce our single substitution calculus (SSC) only
+relying on a working knowledge of an implementation of type theory
+such as Agda, no prior experience with the metatheory of type theory
+is required. Section \ref{sec:admissible} shows that in the syntax of
+SSC, several new equations are admissible, and that the syntax of SSC
+is actually isomorphic to the CwF-based syntax. In Section
+\ref{sec:minimisation}, we minimise our SSC obtaining a theory with
+fewer equations, relying on the presence of $\Pi$ and $\U$ in our
+theory. In Section \ref{sec:cwf}, we show that in the presence of
+$\Pi$, $\U$, $\Sigma$, SSC-models are actually equivalent to
+CwF-models in a weak sense. We conclude in Section
+\ref{sec:conclusion}.
 
-\subsection{Related work}
+\subsection{Related work}\label{sec:related}
 
 \paragraph{B-systems} B-systems were introduced by Voevodsky \cite{voevodsky2014bsystems} as
 an algebraic way of describing type theories close to the notations
 using typing judgements. B-systems are an intrinsic, essentially
 algebraic presentation of type theory using single
-substitutions. B-systems correspond to our SSC as essentially
-algebraic theories correspond to generalised algebraic theories, or
-sets with a map into $I$ correspond to indexed families over $I$
+substitutions. B-systems relate to our SSC as essentially
+algebraic theories relate to generalised algebraic theories, or
+sets with a map into $I$ relate to indexed families over $I$
 \cite[page 221]{DBLP:journals/apal/Cartmell86}. Another difference is
 that we have fewer and less general equations, resulting in the fact
 that we have more models than B-systems. However in the syntax of our
@@ -346,7 +349,7 @@ $\blank[\p^{+\dots+}]$ operations, and the generic element is $\q$ in
 our notation. The six groups of equations correspond to our
 $[\langle\rangle][]$, $[\p][^+]$, $\q[^+]$, $[\p][\langle\rangle]$,
 $\q[\langle\rangle]$, $[\p^+][\langle\q\rangle]$ equations, in this
-order. However we don't have the lifted versions of our equations,
+order. However we don't include the lifted versions of these equations,
 equations $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$ are only
 stated for types, and $\q[^+]$, $\q[\langle\rangle]$ are only stated
 for terms. The missing equations are admissible, see Section
@@ -367,7 +370,7 @@ substitution calculus, see the formalisation accompanying this paper.
 The first generalised algebraic presentation of type theory was Thomas
 Ehrhard's calculus \cite{ehrhard,coquandEhrhard} which featured a
 parallel substitution calculus with $\p$, $\blank^+$ and
-$\langle\blank\rangle$ operations, just like in our calculus. Our
+$\langle\blank\rangle$ operations, just like our calculus. Our
 single substitution calculus is essentially Ehrhard's calculus with
 the categorical composition and identity operations
 removed. Categories with families (CwFs
@@ -387,7 +390,7 @@ typing and conversion relations. A higher level representation is
 working in setoid hell \cite{chapman09eatitself}: terms are
 intrinsically well-typed, but conversion is still an explicit
 relation. For formalising the GAT-level syntax, one needs a stronger
-metatheory than ordinary Agda or Coq: the metatheory has to support
+metatheory than plain Agda or Coq: the metatheory has to support
 quotient inductive-inductive types (QIITs
 \cite{DBLP:journals/pacmpl/KaposiKA19}), in other words, initial
 models of GATs. Altenkirch and Kaposi
@@ -395,10 +398,10 @@ models of GATs. Altenkirch and Kaposi
 theory using postulated QIITs in Agda, together with parametricity and
 normalisation \cite{lmcs:4005} proofs. Brunerie and de Boer
 \cite{initiality-agda} constructed the initial contextual category in
-Agda using postulated quotients. Although there is no general proof
-published about this, we have experimental evidence that QIITs are
-supported by the cubical set model \cite{DBLP:conf/lics/CoquandHM18}
-and the setoid model \cite{kaposi-qiit-setoid}, thus Cubical Agda
+Agda using postulated quotients. Although we don't have a general
+proof, we have experimental evidence that QIITs are supported by the
+cubical set model \cite{DBLP:conf/lics/CoquandHM18} and the setoid
+model \cite{kaposi-qiit-setoid}, thus Cubical Agda
 \cite{DBLP:journals/jfp/VezzosiMA21} and setoid/observational type
 theory \cite{setoid,DBLP:phd/hal/Pujet22} support QIITs. For example,
 in Cubical Agda, set-truncated and groupoid-truncated syntaxes of type
@@ -415,12 +418,14 @@ and logical frameworks
 \cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2}. Second-order
 generalised algebraic theories (SOGATs
 \cite{uemura,DBLP:conf/fscd/KaposiX24}) can be used to present type
-theory even more abstractly than GATs: they even abstract over the way
-of defining the substitution calculus: contexts, substitutions,
-instantiations are simply modelled by the metatheoretic function
-space. For example, a type theory with $\Pi$, Coquand-universes and a
-universe level lifting operation is described by the following SOGAT
-(where $\cong$ means isomorphism):
+theory more abstractly than GATs: SOGATs abstract over the exact
+definition of the substitution calculus (whether substitutions are
+single or parallel; whether we have CwF-style or Ehrhard-style
+operations): contexts, substitutions, instantiations are simply
+modelled by the metatheoretic function space. For example, a type
+theory with $\Pi$, Coquand-universes and a universe level lifting
+operation is described by the following SOGAT (where $\cong$ means
+isomorphism):
 \begin{equation}\label{eq:tt}
 \begin{alignedat}{10}
   & \Ty && : \N\ra\Set \\
@@ -444,14 +449,17 @@ universe level lifting operation is described by the following SOGAT
 %     & \fst,\snd && : \Tm\,(\Sigma\,A\,B)\cong(a:\Tm\,A)\times\,\Tm\,(B\,a): \blank,\blank
 % \end{alignedat}
 % \end{equation}
-Second-order models of SOGATs are not well-behaved as there is no good
-notion of homomorphism between them. This is why Kaposi and Xie
-\cite{DBLP:conf/fscd/KaposiX24} translate SOGATs to GATs: each GAT
-comes with a category of models with initial model (syntax), (co)free
-models, and so on. Actually, Kaposi and Xie define two different
-translations: one based on parallel substitutions and one based on
-single substitutions. If we apply their parallel translation to the
-SOGAT
+Second-order models of SOGATs are not well-behaved, as there is no
+good notion of homomorphism between them. This is why Kaposi and Xie
+\cite{DBLP:conf/fscd/KaposiX24} translate SOGATs to GATs: a model of a
+SOGAT then is a model of the GAT the we obtain by their
+translation. GATs come with well-behaved metatheory: a category of
+models witha initial model (syntax), (co)free models
+\cite{andras,DBLP:phd/hal/Moeneclaey22}, and so on. However, the
+translation is not unique: Kaposi and Xie
+\cite{DBLP:conf/fscd/KaposiX24} define two different translations, one
+based on parallel substitutions and one based on single
+substitutions. If we apply their parallel translation to the SOGAT
 \begin{equation}\label{eq:tytm}
 \begin{alignedat}{10}
   & \Ty && : \Set \\
@@ -460,17 +468,18 @@ SOGAT
 \end{equation}
 with only two sorts and no operations or equations, we obtain the GAT
 of category with families (CwF). If we use their single substitution
-translation on the SOGAT (\ref{eq:tt}), we obtain Definition
-\ref{def:tt} (also listed in Appendix \ref{app:tt}). This paper can be
-seen as taking a big enough type theory (described as a SOGAT), and
-investigating how the result of its single substitution translation
-relates to the result of its parallel translation (the latter
-first-order theory is quite well-known).
+translation to the SOGAT (\ref{eq:tt}), we obtain Definition
+\ref{def:tt} (also listed in Appendix \ref{app:tt}). The current paper
+can be seen as taking a big enough type theory (described as a SOGAT),
+and investigating how the result of its single substitution
+translation relates to the result of its parallel translation (the
+latter first-order theory is quite well-known). There is no general
+result about the relationship of the two translations.
 
 There are techniques to prove properties of type theories without
 choosing between parallel or single substitutions, and staying at the
 SOGAT level of abstraction: Synthethic Tait Computability
-\cite{DBLP:phd/us/Sterling22} or internal sconing
+\cite{DBLP:phd/us/Sterling22} and internal sconing
 \cite{DBLP:conf/fscd/BocquetKS23}.
 
 \subsection{Metatheory and formalisation}
