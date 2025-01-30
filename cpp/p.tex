@@ -64,7 +64,7 @@ type theory. SSC relates to CwF as extensional combinatory calculus
 relates to lambda calculus: there are more models of the former, but
 the syntaxes are equivalent. If we have some additional type formers,
 we show that SSC models are actually equivalent to CwF-based models in
-a weak sense. Most results in this paper were formalised in Agda.
+a weak sense. Sections 2 and 3 of this paper were formalised in Agda.
 \end{abstract}
 
 \maketitle
@@ -92,7 +92,7 @@ well-typed abstract syntax trees, there are no meaningless terms; in
 the GAT presentation, the conversion relation is expressed by
 equations of the algebraic theory.
 
-Some advantages of using a GAT presentation:
+The GAT presentation has the following advantages:
 \begin{itemize}
 \item  In type theory, typing depends on conversion:
   in an extrinsic presentation, this is expressed by a rule such as
@@ -310,14 +310,14 @@ below \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. \\
   \node (b2) at (4,0) {$B_2$};
   \node (b3) at (7,0) {$\dots$};
   \node (c1) at (2.5,1) {$\tilde{B}_1$};
-  \node (c2) at (5,1) {$\tilde{B}_1$};
+  \node (c2) at (5,1) {$\tilde{B}_2$};
   \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{ft}_0$} (b0);
   \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{ft}_1$} (b1);
   \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{ft}_2$} (b2);
   \draw[->,font=\scriptsize] (c1) edge node[above] {$\partial_1$} (b1);
   \draw[->,font=\scriptsize] (c2) edge node[above] {$\partial_2$} (b2);
 \end{tikzpicture} \\
-Using our notation, a B-frame contains the following data. \\
+Using our notation, a B-frame contains the following data ($\diamond$ is the empty context, $\ext$ is context extension). \\
 \begin{tikzpicture}
   \node (b0) at (0,0) {$\top$};
   \node (b1) at (1.5,0) {$\Ty\,\diamond$};
@@ -363,7 +363,7 @@ calculus for simple type theory, it can be seen as a simply typed
 version of B-systems. They show that the category of contextual models
 of their calculus is equivalent to the category of contextual simply
 typed CwFs with function space. Their equivalence result holds even
-without the presence of function space. In the presence of function
+without the presence of function types. In the presence of function
 space, the same equivalence holds for the simply typed version of our
 substitution calculus, see the formalisation accompanying this paper.
 
@@ -388,7 +388,7 @@ Most computer formalisations of type theory are extrinsic
 \cite{DBLP:journals/pacmpl/0001OV18,DBLP:conf/cpp/AdjedjLMPP24,DBLP:journals/jar/SozeauABCFKMTW20}:
 they define the syntax as abstract syntax trees, and equip it with
 typing and conversion relations. A higher level representation is
-working in setoid hell \cite{chapman09eatitself}: terms are
+working in setoid hell \cite{chapman09eatitself,setoidhell}: terms are
 intrinsically well-typed, but conversion is still an explicit
 relation. For formalising the GAT-level syntax, one needs a stronger
 metatheory than plain Agda or Coq: the metatheory has to support
@@ -451,7 +451,7 @@ isomorphism):
 % \end{alignedat}
 % \end{equation}
 Second-order models of SOGATs are not well-behaved, as there is no
-good notion of homomorphism between them. This is why Kaposi and Xie
+good notion of homomorphism between them \cite[bottom of page 5]{DBLP:conf/fscd/KaposiX24}. This is why Kaposi and Xie
 \cite{DBLP:conf/fscd/KaposiX24} translate SOGATs to GATs: a model of a
 SOGAT then is a model of the GAT the we obtain by their
 translation. GATs come with well-behaved metatheory: a category of
@@ -542,20 +542,21 @@ type which can have variables in the context preceeding the type.
 \end{alignat*}
 We will refer to variables by their distance from the end of the
 context. We would like to describe the operation providing the last
-variable in a context, the zero De Bruijn index \cite{debruijn}, we denote it by $\q :
-\Tm\,(\Gamma\ext A)\,A'$. It is a term in an extended context, and it
-should have type $A$, but the issue is that $A : \Ty\,\Gamma$, and $A'
-: \Ty\,(\Gamma\ext A)$. We need a way to weaken the type $A$ to obtain
-such an $A'$. For this, we will introduce an operation $\blank[\p] :
-\Ty\,\Gamma\,i\ra\Ty\,(\Gamma\ext A)\,i$ and define $A' := A[\p]$. Instead
-of introducing just $\blank[\p]$, we generalise a bit and add a new
-sort $\Sub$ which for now only has the single element $\p$ and the
-operation $\blank[\blank]$ is called \emph{instantiation}. We
-instantiate the type with the $\Sub\,\Delta\,\Gamma$ weakening.
-Elements of $\Sub$ will be later called
-substitutions, hence the name, but for now, we only have single end-of
-context weakenings in $\Sub$. $\Delta$ is called the domain, $\Gamma$
-the codomain of a $\Sub\,\Delta\,\Gamma$.
+variable in a context, the zero De Bruijn index \cite{debruijn}, we
+denote it by $\q : \Tm\,(\Gamma\ext A)\,A'$. It is a term in an
+extended context, and it should have type $A$, but the issue is that
+$A : \Ty\,\Gamma$, and $A' : \Ty\,(\Gamma\ext A)$. We need a way to
+weaken the type $A$ to obtain such an $A'$. For this, we will
+introduce an operation $\blank[\p] : \Ty\,\Gamma\,i\ra\Ty\,(\Gamma\ext
+A)\,i$ and define $A' := A[\p]$. Instead of introducing just
+$\blank[\p]$, we generalise a bit and add a new sort $\Sub$ which for
+now only has the single element $\p$ and the operation
+$\blank[\blank]$ is called \emph{instantiation}. We instantiate the
+type with the $\Sub\,\Delta\,\Gamma$ weakening.  Elements of $\Sub$
+will later be called substitutions, hence the name, but for now, we
+only have single end-of context weakenings in $\Sub$. The context
+$\Delta$ is called the domain, $\Gamma$ the codomain of a
+$\Sub\,\Delta\,\Gamma$.
 \begin{alignat*}{10}
 & \Sub && : \Con\ra\Con\ra\Set \\
 & \p && : \Sub\,(\Gamma\ext A)\,\Gamma \\
@@ -741,8 +742,7 @@ same as not doing anything.
 
 We add the computation and uniqueness rule for function space, where
 the uniqueness rule again needs an extra equation on the codomain type
-of the function to make sense. This is the type version of the
-equation mentioned in the introduction (we don't have its term version).
+of the function to make sense (we mentioned the term version of this equation in the introduction).
 \begin{alignat*}{10}
 & \Pi\beta && : \lam\,b\cdot a = b[\langle a\rangle] \\
 & [\p^+][\langle\q\rangle] && : B[\p^+][\langle\q\rangle] = B \\
@@ -791,7 +791,10 @@ Appendix \ref{app:tt}.
 The theory can be extended with new type and term formers in the same
 fashion: each operation has to be indexed over arbitrary contexts and come
 equipped with a substitution rule. There is no need to add more
-structural (substitution calculus) rules. For example, we show how to
+structural (substitution calculus) rules.
+\footnote{This is made formal in \cite{DBLP:conf/fscd/KaposiX24} where
+these equations are enough to describe the first-order theory of any SOGAT.}
+For example, we show how to
 extend Definition \ref{def:tt} with $\top$ and $\Sigma$ types.
 \begin{definition}[Single substitution calculus with $\Pi$, $\U$, $\Lift$, $\top$, and $\Sigma$ types]\label{def:sigma}
   We extend Definition \ref{def:tt} with the following rules.
@@ -832,9 +835,9 @@ derivation trees, we illustrate this by deriving this term as follows.
 \]
 Note that in step (*), $\lam$ made it sure that $\U\,0$ and
 $\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)$ are types at the same level,
-this is why we had to lift $\El\,\q$. Another subtlety is
-happening when deriving the third implicit argument of $\q$. We have
-to coerce $\q$ along the equality $\U[]$.
+which is why we had to lift $\El\,\q$. Another subtlety is
+happening when deriving the third implicit argument of $\q$, because we have
+to coerce $\q$ along the equality $\U[]$:
 \[
 \infer{\Lift\,(\El\,\q) : \Ty\,(\diamond\ext\U\,0)\,1}{\infer{\El\,\q : \Ty\,(\diamond\ext\U\,0)\,0}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,(\U\,0)}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,((\U\,0)[\p])}{} && \infer{\U[] : (\U\,0)[\p] = \U\,0}{}}}}
 \]
@@ -845,7 +848,7 @@ Given a type $A:\Ty\,\diamond\,0$, and $a : \Tm\,\diamond\,A$, we have
 \begin{alignat*}{10}
   & \lam\,(\lam\,\q)\cdot\cd\,A\cdot a && {=}(\Pi\beta) \\
   & (\lam\,\q[\langle\cd\,A\rangle])\cdot a && {=}(\lam[]) \\
-  & (\lam\,(\q[\langle\cd\,A\rangle^+]))\cdot a && {=}([\q][^+]) \\
+  & (\lam\,(\q[\langle\cd\,A\rangle^+]))\cdot a\, && {=}([\q][^+]) \\
   & (\lam\,\q)\cdot a && {=}(\Pi\beta) \\
   & \q[\langle a\rangle] && {=}(\q[\langle\rangle]) \\
   & a
@@ -861,7 +864,7 @@ But we have
 \[
 \lam\,(\lam\,\q)[\p] \overset{\lam[]\,2\text{x}}{=} \lam\,(\lam\,(\q[\p^{++}])) \overset{\q[^+]}{=} \lam\,(\lam\,\q)
 \]
-(with different implicit arguments), so we are able apply $\cd\,A'$
+(with different implicit arguments for the $\lam$s on the left and right hand side), so we are able to apply $\cd\,A'$
 and $a'$ just as before. What we cannot do is to directly weaken a
 term in context $\diamond$ to an arbitrary context $\Gamma$, where
 $\Gamma$ is a metavariable. If we know that $\Gamma$ has lengh $n$,
@@ -944,13 +947,13 @@ section.
 \subsection{Standard model}
 \label{sec:standard}
 
-As a sanity check for our notion of SSC-model, we defined the standard
-(metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
-SSC-based calculus in Agda. We used the techniques of Kovács
-\cite{DBLP:conf/csl/Kovacs22} to define inductive-recursive universes
-to model the infinite hierarchy of types, and all the SSC-equations
-hold by reflexivity in this model. We defined the analogous CwF-based
-standard model.
+As a sanity check for our notion of SSC-model, we defined a variant of
+the standard (metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model
+of the SSC-based calculus in Agda. For convenience, we used an
+inductive-recursive universe to define the infinite hierarchy of types
+\cite{DBLP:journals/jsyml/Dybjer00,DBLP:conf/csl/Kovacs22}. All
+SSC-equations hold by reflexivity in this model. We defined the
+analogous CwF-based standard model.
 
 
 \section{Admissible equations}
@@ -979,6 +982,9 @@ isomorphic.}
   $
   natural in $\Delta$).
 \end{definition}
+In the rest of this section, we work with the SSC syntax denoted
+$\Con$, $\Sub$, $\Ty$, $\Tm$, and so on, towards the goal of defining
+all CwF operations and equations.
 
 The following four equations correspond to equations in B-systems which cannot
 be derived from the equations of SSC, these are versions of equations in Section
@@ -999,7 +1005,7 @@ contexts.
   & \Tel && : \Con\ra\Set \\
   & \blank+\blank && : (\Gamma:\Con)\ra\Tel\,\Gamma\ra\Con \\
   & \diamond && : \Tel\,\Gamma \\
-  & \blank\ext\blank && : (\Omega:\Tel\,\Gamma)\ra\Ty\,(\Gamma+\Omega)\ra\Tel\,\Omega
+  & \blank\ext\blank && : (\Omega:\Tel\,\Gamma)\ra\Ty\,(\Gamma+\Omega)\ra\Tel\,\Gamma
 \end{alignat*}
 The appending operation is defined recursively on telescopes.
 \begin{alignat*}{10}
@@ -1038,7 +1044,7 @@ as inductive predicates in $\Prop$ as follows.
 The predicate is defined similarly for the other type and term formers such as
 $\lam$. Notably, we do not state that instantiated types/terms are
 $\alpha$-normal (except variables). It is important to truncate the
-$\alpha$-normal predicate to be propositions to ensure that it preserves the
+$\alpha$-normal predicate to be a proposition to ensure that it preserves the
 $\beta$/$\eta$ conversion rules.
 
 We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
@@ -1077,9 +1083,12 @@ instantiation operations, lifting operations, and substitution rules are
 redefined for $\Sub^*$.
 \begin{lemma}
   \label{thm:lifting}
-  Given $\gamma_0, \gamma_1 : \Sub^*\,\Delta\,\Gamma$, if $A[\gamma_0] =
-  A[\gamma_1]$ and $x[\gamma_0] = x[\gamma_1]$ for any $A:\Ty\,\Gamma$ and
-  variable $x:\Tm\,\Gamma\,A$, then
+  Given $\gamma_0, \gamma_1 : \Sub^*\,\Delta\,\Gamma$, if
+  \begin{itemize}
+  \item for any $A:\Ty\,\Gamma$, $A[\gamma_0] = A[\gamma_1]$, and
+  \item for any variable $x:\Tm\,\Gamma\,A$, $x[\gamma_0] = x[\gamma_1]$,
+  \end{itemize}
+  then:
   \begin{itemize}
     \item $\Omega[\gamma_0] = \Omega[\gamma_1]$ for $\Omega:\Tel\,\Gamma$
     \item $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
@@ -1098,7 +1107,7 @@ redefined for $\Sub^*$.
 
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
 substitutions, however it does not satisfy the equations of parallel
-substitutions. Thus we define parallel substitutions as a list of terms with a
+substitutions. Thus we define parallel substitutions as lists of terms with a
 map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to convert it
 into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
@@ -1117,12 +1126,12 @@ The computation of instantiating with $\Tms$ is illustrated below.
 All CwF operations and equations can be defined with $\Tms$ by induction, using
 Lemma \ref{thm:lifting} to avoid further induction on the syntax.
 
-\begin{theorem}
+\begin{problem}
   Contexts, types, and terms in the SSC syntax are isomorphic to the
   corresponding sorts in the CwF syntax. In addition $\Tms$ is isomorphic to CwF
   substitutions.
-\end{theorem}
-\begin{proof}\leavevmode
+\end{problem}
+\begin{proof}[Construction]\leavevmode
   \begin{description}
     \item[$\Rightarrow$] By recursion on the syntax, SSC operations can be
     trivially interpreted by CwF operations.
@@ -1131,18 +1140,17 @@ Lemma \ref{thm:lifting} to avoid further induction on the syntax.
   \end{description}
   The roundtrips are proven by induction on the syntax.
 \end{proof}
+This also implies that the initial SSC is the initial CwF.
 
 \section{Minimisation}
 \label{sec:minimisation}
 
-In this section we show that if have we universes and $\Pi$ types
+In this section we show that if have universes and $\Pi$ types
 (which is the case in the theory (\ref{eq:tt})), we can decrease the
 number of equations.
 
 In our single substitution calculus, we have equation $[\p][^+]$
-stated both for types and terms (we know that the left one is about
-types because of our convention that type metavariables are uppercase
-Latin letters and term metavariables are lowercase):
+stated both for types and terms (here $B$ is a type and $b$ is a term of type $B$):
 \[
 B[\p][\gamma^+] = B[\gamma][\p] \hspace{4em} b[\p][\gamma^+] =_{[\p][^+]} b[\gamma][\p]
 \]
@@ -1155,8 +1163,8 @@ requiring the first one is the following:
 [\p][^+]' : (e : B[\p][\gamma^+] = B[\gamma][\p])\ra b[\p][\gamma^+] =_{e} b[\gamma][\p]
 \]
 That is, for any type $B$ for which $B[\p][\gamma^+] = B[\gamma][\p]$,
-we have that for any $b$ we have the equation (suitably over the input
-equation). Thus this is a conditional equation.
+we have the equation (suitably over the input
+equation) for any $b$. Thus this is a conditional equation.
 
 It turns out that if we have Coquand-universes, the conditional
 $[\p][^+]'$ rule is enough: the input equation holds for $B := \U\,i$
@@ -1189,8 +1197,8 @@ Now we turn our attention to the equation
   [\langle\rangle][] : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle].
 \]
 We were forced to introduce it so that we can state the substitution
-rule for function application $\cdot[]$. What if we made $\cdot[]$
-itself conditional?
+rule for function application $\cdot[]$. A conditional version of
+$\cdot[]$ looks as follows.
 \begin{alignat*}{10}
   & \cdot[]' :{} && (e : B[\langle a\rangle][\gamma] = B[\gamma^+][\langle a[\gamma]\rangle])\ra \\
   & && (t\cdot a)[\gamma] =_e (t[\gamma])\cdot(a[\gamma])
@@ -1231,7 +1239,7 @@ $\hat{B} : \Tm\,(\Gamma\ext A)\,\U$,
   & && ((\lam\,\hat{B})[\p]\cdot\q)[\langle a\rangle] && {=}(\Pi\beta'\,\U[]) \\
   & && \hat{B}[\langle a\rangle].
 \end{alignat*}
-Now we derive the assumption of $\Pi\beta/\eta'$ for any type $B : \Ty\,(\Gamma\ext A)$.
+Now we derive the assumption of $\Pi\beta'/\Pi\eta'$ for any type $B : \Ty\,(\Gamma\ext A)$.
 \begin{alignat*}{10}
   & B[\p^+][\langle\q\rangle] && {=}(\U\beta) \\
   & \El\,(\cd\,B)[\p^+][\langle\q\rangle] && {=}(\El[]) \\
@@ -1249,11 +1257,11 @@ We summarise this section by formally stating what we defined.
   $\Pi$ types. For reference, we list all the rules of the minimised
   calculus in Appendix \ref{app:minimisation}.
 \end{definition}
-\begin{theorem}
+\begin{problem}
   The GATs of Definition \ref{def:min} and Definition \ref{def:tt} are
   isomorphic, in particular, all equations are interderivable.
-\end{theorem}
-\begin{proof}
+\end{problem}
+\begin{proof}[Construction]
   Clear from the construction in this section.
 \end{proof}
 
@@ -1274,7 +1282,7 @@ and $\U$, and these types are enough to bootstrap the parallel
 substitution calculus.
 
 \begin{problem}
-  Every CwF (with type formers $\Pi, \dots, \Sigma$) is an SSC (with
+  Every CwF (with type formers $\Pi, \dots, \Sigma$) gives rise to an SSC (with
   the same type formers, see Definition \ref{def:sigma}).
 \end{problem}
 \begin{proof}[Construction]
@@ -1366,12 +1374,12 @@ new model are terms in the old model.
 The notion of equivalence between CwFs that we use is contextual
 isomorphism \cite{DBLP:journals/corr/abs-2211-07487}: a weak
 CwF-morphism (pseudomorphism) which is bijective on types and
-terms. Note that a conextual isomorphism preserves all type formers
+terms. Note that a contextual isomorphism preserves all type formers
 specified by universal properties.
 \begin{problem}
   Given a CwF (with type formers) $M$, let $M'$ denote the CwF
-  obtained by first seeing it as an SSC and then termifying it. There
-  is a contextual isomorphism between $M'$ and $M$.
+  obtained by first seeing it as an SSC and then termifying it. We
+  construct a contextual isomorphism between $M'$ and $M$.
 \end{problem}
 \begin{proof}[Construction]
   We denote the components of the contextual isomorphism $F$ as follows.
@@ -1393,7 +1401,7 @@ specified by universal properties.
     & F\,a := a[\p]\cdot\q
   \end{alignat*}
   It is easy to check that $F$ preserves the CwF structure, i.e.\ it
-  is functor, $\epsilon : \Sub\,(F\,\diamond)\,\diamond$ is an
+  is a functor, $\epsilon : \Sub\,(F\,\diamond)\,\diamond$ is an
   isomorphism, $F\,(A[\gamma]) = F\,A[F\,\gamma]$, $F\,(a[\gamma]) =
   F\,a[F\,\gamma]$ and $(F\,\p,F\,\q) : \Sub\,(F\,(\Gamma\ext
   A))$ $(F\,\Gamma\ext F\,A)$ is an isomorphism. % hack
@@ -1425,7 +1433,7 @@ interprets closed types in the metatheoretic universe $\Type$ (rather
 than an inductive recursive universe as in Subsection
 \ref{sec:standard} or \cite[Section
   4]{DBLP:conf/popl/AltenkirchK16}). In two-level type theory the
-syntax of type theory can be defined using infinitely many coherene
+syntax of type theory can be defined using infinitely many coherence
 rules \cite{DBLP:conf/lics/Kraus21}. For example, for substitution
 $\Sub$, we have an equation in the syntax on the associativity of composition of substitutions.
 If we truncate our syntax to be a set, then this is
@@ -1434,7 +1442,7 @@ $((\gamma\circ\delta)\circ\theta)\circ\xi =
 \gamma\circ(\delta\circ(\theta\circ\xi))$, and nothing forces these to
 be the same, so in such a (wild) syntax substitutions don't form a
 set, hence they don't have decidable equality \cite{hedberg}. The
-solution is to add the pentagon law, but then this introduces new
+solution is to add the pentagon law stating that these two equalities are equal, but then this introduces new
 higher equalities, which require more coherence laws, so in the end we
 have an infinite sequence of higher coherence laws that need to be
 part of the syntax. Our single substitution calculus does not have
