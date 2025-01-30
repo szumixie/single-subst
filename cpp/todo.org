@@ -1,6 +1,9 @@
+- move to appendix:
+  - detailed comparison with B-systems
+  - stuff from examples
+  - ?
 - add links to formalisation
 - rewrite conclusions
-- apply FSCD style
 - l845
   > Tms
 
