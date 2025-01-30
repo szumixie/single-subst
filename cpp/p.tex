@@ -1298,10 +1298,10 @@ new model are terms in the old model.
   between them, suitably lifted (on the left hand side of $:=$ there
   is the component in the new CwF-model, on the right hand side the
   components refer to the old SSC-model):
-  \begin{alignat*}{10}
-    & \Con && := (i:\N)\times\Ty\,\diamond\,i \\
-    & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Lift^{\Gamma-\Delta}\,\Delta\Ra\Lift^{\Delta-\Gamma}\,\Gamma)
-  \end{alignat*}
+  \[
+    \Con := (i:\N)\times\Ty\,\diamond\,i \hspace{6em}
+    \Sub\,\Delta\,\Gamma := \Tm\,\diamond\,(\Lift^{\Gamma-\Delta}\,\Delta\Ra\Lift^{\Delta-\Gamma}\,\Gamma)
+  \]
   In the definition of $\Sub$, we did not write the projections for
   $\Con$, so $\Delta$ can mean $\Delta_{.1}$ or $\Delta_{.2}$, and we used the truncating subtraction of
   natural numbers. Composition of substitutions is quite involved, but
@@ -1309,39 +1309,29 @@ new model are terms in the old model.
   appropriate (un)liftings. The category laws hold. The empty context is
   modelled by $\top$, its $\eta$ law holds via $\eta$ for $\top$.
   \begin{alignat*}{10}
-    & \gamma\circ\delta && := \lam\Bigg(\mk^{\Theta-\Gamma}\,\bigg(\un^{\Delta-\Gamma}\,\Big(\gamma[\p]\cdot\mk^{\Gamma-\Delta}\,\big(\un^{\Theta-\Delta}\, \\[-1.5em]
-    & && \hspace{10em}(\delta[\p]\cdot\mk^{\Delta-\Theta}\,(\un^{\Gamma-\Theta}\,\q))\big)\Big)\bigg)\Bigg) \\
-    & \rlap{$\id := \lam\,\q \hspace{4.35em} \diamond := (0,\top) \hspace{4.35em} \epsilon := \lam\,(\mk^\Gamma\,\tt)$}
+    & \gamma\circ\delta := \lam\Bigg(\mk^{\Theta-\Gamma}\,\bigg(\un^{\Delta-\Gamma}\,\Big(\gamma[\p]\cdot\mk^{\Gamma-\Delta}\,\big(\un^{\Theta-\Delta}\,(\delta[\p]\cdot\mk^{\Delta-\Theta}\,(\un^{\Gamma-\Theta}\,\q))\big)\Big)\bigg)\Bigg) \\
+    & \id := \lam\,\q \hspace{10em} \diamond := (0,\top) \hspace{10em} \epsilon := \lam\,(\mk^\Gamma\,\tt)
   \end{alignat*}
   Types are given by functions into $\U$, terms are dependent
   functions into the type, with lots of lifting adjustments.
   \begin{alignat*}{10}
     & \Ty\,\Gamma\,i && := \Tm\,\diamond\,\big(\Lift^{1+i-\Gamma}\,\Gamma\Ra\Lift^{\Gamma-(1+i)}\,(\U\,i)\big) \\
-    & \Tm\,\Gamma\,A && := \Tm\,\diamond\,\Bigg(\Pi\,(\Lift^{i-\Gamma}\,\Gamma)\,\bigg(\Lift^{\Gamma-i}\,\Big(\El\, \\[-1em]
-    & && \hspace{4em} \big(\un^{\Gamma-(1+i)}\,(A[\p]\cdot\mk^{1+i-\Gamma}\,(\un^{i-\Gamma}\,\q))\big)\Big)\bigg)\Bigg)
+    & \Tm\,\Gamma\,A && := \Tm\,\diamond\,\Bigg(\Pi\,(\Lift^{i-\Gamma}\,\Gamma)\,\bigg(\Lift^{\Gamma-i}\,\Big(\El\,\big(\un^{\Gamma-(1+i)}\,(A[\p]\cdot\mk^{1+i-\Gamma}\,(\un^{i-\Gamma}\,\q))\big)\Big)\bigg)\Bigg)
   \end{alignat*}
   To make the notation readable, from now on, we will not write the
   lifting decorations or universe levels. We repeat the previous
   definitions again without writing decorations.
   \begin{alignat*}{10}
-    & \Con && := \Ty\,\diamond \\
-    & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Delta\Ra\Gamma) \\
-    & \gamma\circ\delta && := \lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q)) \\
-    & \id && := \lam\,\q \\
-    & \diamond && := \top \\
-    & \epsilon && := \lam\,\tt \\
-    & \Ty\,\Gamma && := \Tm\,\diamond\,(\Gamma\Ra\U) \\
-    & A[\gamma] && := \lam\,(A[\p]\cdot(\gamma[\p]\cdot\q)) \\
-    & \Tm\,\Gamma\,A && := \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q))) \\
-    & a[\gamma] && := \lam\,(a[\p]\cdot(\gamma[\p]\cdot\q)) \\
-    & \Gamma\ext A && := \Sigma\,\Gamma\,(\El\,(A[\p]\cdot\q)) \\
-    & (\gamma,a) && := \lam\,(\gamma[\p]\cdot\q,a[\p]\cdot\q) \\
-    & \p && := \lam\,(\fst\,\q) \\
-    & \q && := \lam\,(\snd\,\q)
+    & \Con && := \Ty\,\diamond                                           && \Ty\,\Gamma && := \Tm\,\diamond\,(\Gamma\Ra\U) && \p && := \lam\,(\fst\,\q) \\                     
+    & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Delta\Ra\Gamma)        && A[\gamma] && := \lam\,(A[\p]\cdot(\gamma[\p]\cdot\q)) && \q && := \lam\,(\snd\,\q) \\
+    & \gamma\circ\delta && := \lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q)) \hspace{1.5em} && \Tm\,\Gamma\,A && := \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q)))\hspace{1.5em} \\   
+    & \id && := \lam\,\q                                                 && a[\gamma] && := \lam\,(a[\p]\cdot(\gamma[\p]\cdot\q)) \\                      
+    & \diamond && := \top                                                && \Gamma\ext A && := \Sigma\,\Gamma\,(\El\,(A[\p]\cdot\q)) \\                   
+    & \epsilon && := \lam\,\tt                                           && (\gamma,a) && := \lam\,(\gamma[\p]\cdot\q,a[\p]\cdot\q)
   \end{alignat*}
   Context extension is given by $\Sigma$ types and pairing/projections
   by pairing/projections of $\Sigma$. All the CwF equations hold, for
-  example we derive the functor law for type substitution as follows.
+  example we derive the functor law for type substitution:
   \begin{equation}
   \begin{alignedat}{10}\label{eq:functor}
     & A[\gamma\circ\delta] && {=} \\
@@ -1357,9 +1347,9 @@ new model are terms in the old model.
   \end{equation}
   Type formers are added by adjusting them to handle contexts built up
   by $\Sigma$ types, for example,
-  \[
+  $
   \Pi\,A\,B := \lam\,(\cd\,(\Pi\,(\El\,(A[\p]\cdot\q))\,(\El\,(B[\p][\p]\cdot(\q[\p],\q)))))
-  \]
+  $
   and $\lam\,b := \lam\,(\lam\,(b[\p][\p]\cdot(\q[\p],\q)))$. All
   substitution laws and $\beta$/$\eta$-laws hold.
 \end{proof}
@@ -1376,21 +1366,15 @@ specified by universal properties.
 \begin{proof}[Construction]
   We denote the components of the contextual isomorphism $F$ as follows.
   \begin{alignat*}{10}
-    & F : \Con_{M'}\ra\Con_M \\
-    & F : \Sub_{M'}\,\Delta\,\Gamma\ra\Sub_M\,(F\,\Delta)\,(F\,\Gamma) \\
-    & F : \Ty_{M'}\,\Gamma \cong \Ty_M\,(F\,\Gamma) \\
-    & F : \Tm_{M'}\,\Gamma\,A \cong \Tm_M\,(F\,\Gamma)\,(F\,A)
+    & F : \Con_{M'}\ra\Con_M && F : \Ty_{M'}\,\Gamma \cong \Ty_M\,(F\,\Gamma) \\
+    & F : \Sub_{M'}\,\Delta\,\Gamma\ra\Sub_M\,(F\,\Delta)\,(F\,\Gamma)\hspace{3em} && F : \Tm_{M'}\,\Gamma\,A \cong \Tm_M\,(F\,\Gamma)\,(F\,A)
   \end{alignat*}
-  We define them in the same order as follows, omitting the $M$ subscripts.
+  We define them in the same order, omitting the $M$ subscripts:
   \begin{alignat*}{10}
-    & F : \Ty\,\diamond\ra\Con \\
-    & F\,\Gamma := \diamond\ext\Gamma \\
-    & F : \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra \Sub\,(\diamond\ext\Delta) (\diamond\ext\Gamma) \\
-    & F\,\gamma := (\p,\gamma[\p]\cdot\q) \\
-    & F : \Tm\,\diamond\,(\Gamma\Ra\U) \cong \Tm\,(\diamond\ext\Gamma)\,\U \cong \Ty\,(\diamond\ext\Gamma) \\
-    & F\,A := \El\,(A[\p]\cdot\q) \\
-    & F : \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q))) \cong \Tm\,(\diamond\ext\Gamma)\,(\El\,(A[\p]\cdot\q)) \\
-    & F\,a := a[\p]\cdot\q
+%    & F : \Ty\,\diamond\ra\Con && F : \Tm\,\diamond\,(\Gamma\Ra\U) \cong \Tm\,(\diamond\ext\Gamma)\,\U \cong \Ty\,(\diamond\ext\Gamma) \\
+    & F\,\Gamma := \diamond\ext\Gamma && F\,A := \El\,(A[\p]\cdot\q) \\
+%    & F : \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra \Sub\,(\diamond\ext\Delta) (\diamond\ext\Gamma) && F : \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q))) \cong \Tm\,(\diamond\ext\Gamma)\,(\El\,(A[\p]\cdot\q)) \\
+    & F\,\gamma := (\p,\gamma[\p]\cdot\q) \hspace{3em} && F\,a := a[\p]\cdot\q
   \end{alignat*}
   It is easy to check that $F$ preserves the CwF structure, i.e.\ it
   is a functor, $\epsilon : \Sub\,(F\,\diamond)\,\diamond$ is an
