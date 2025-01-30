@@ -455,7 +455,7 @@ good notion of homomorphism between them. This is why Kaposi and Xie
 \cite{DBLP:conf/fscd/KaposiX24} translate SOGATs to GATs: a model of a
 SOGAT then is a model of the GAT the we obtain by their
 translation. GATs come with well-behaved metatheory: a category of
-models witha initial model (syntax), (co)free models
+models with initial model (syntax), (co)free models
 \cite{andras,DBLP:phd/hal/Moeneclaey22}, and so on. However, the
 translation is not unique: Kaposi and Xie
 \cite{DBLP:conf/fscd/KaposiX24} define two different translations, one
@@ -468,7 +468,7 @@ substitutions. If we apply their parallel translation to the SOGAT
 \end{alignedat}
 \end{equation}
 with only two sorts and no operations or equations, we obtain the GAT
-of category with families (CwF). If we use their single substitution
+of category with families (CwF). If we apply their single substitution
 translation to the SOGAT (\ref{eq:tt}), we obtain Definition
 \ref{def:tt} (also listed in Appendix \ref{app:tt}). The current paper
 can be seen as taking a big enough type theory (described as a SOGAT),
@@ -516,10 +516,7 @@ well-formed, well-scoped, well-typed terms that are quotiented by
 conversion. This means that the equalities that hold between terms are
 the ways we can convert terms into each other when running them as
 programs. We give a tutorial-style introduction to the syntax, we do
-not assume prior knowledge of the metatheory of type theory. The
-definition of type theory that we obtain is the same as the single
-substitution GAT semantics \cite{DBLP:conf/fscd/KaposiX24} of the
-SOGAT (\ref{eq:tt}).
+not assume prior knowledge of the metatheory of type theory.
 
 First of all, we need a sort of terms which have to be indexed by
 types because we only want well-typed terms. Both types and terms can
@@ -816,6 +813,9 @@ extend Definition \ref{def:tt} with $\top$ and $\Sigma$ types.
 
 \subsection{Examples}\label{sec:examples}
 
+In this subsection, we show how to use the above defined calculus, and
+motivate the next section on admissible equations.
+
 The polymorphic identity function for types at the level 0 is defined
 as
 \[
@@ -863,9 +863,12 @@ But we have
 \]
 (with different implicit arguments), so we are able apply $\cd\,A'$
 and $a'$ just as before. What we cannot do is to directly weaken a
-term in context $\diamond$ to an arbitrary metavariable context
-$\Gamma$, we can only do this step by step by applying weakening
-$\blank[\p]$ for each type in the context.
+term in context $\diamond$ to an arbitrary context $\Gamma$, where
+$\Gamma$ is a metavariable. If we know that $\Gamma$ has lengh $n$,
+then we can do the weakening by
+$\blank\underbrace{[\p][\p]\dots[\p]}_{\text{$n$ times}}$. If we work
+in the syntax, then we can derive such weakenings (and more) using the
+methods of Section \ref{sec:admissible}.
 
 The operations for $\U$ and $\Lift$ can be written more consicely as
 the following isomorphisms:
@@ -878,37 +881,72 @@ that the roundtrips are identities. These isomorphisms are also
 by the equations $\El[]$, $\un[]$, $\cd[]$, $\mk[]$.
 
 $\Sigma$ types were introduced by a similar isomorphism, and we give
-names to the roundtrips according to our convention introduced in
-Section \ref{sec:metatheory}. xxx
-
-but
-naturality was only stated for the right to left direction (rule
-${,}[]$). Naturalities in the direction are derivable:
+names to the roundtrips eqautions according to our convention introduced in
+Section \ref{sec:metatheory}: $\Sigma\beta_1 : \fst\,(a,b) = a$,
+$\Sigma\beta_2 : \snd\,(a,b) = b$ and $\Sigma\eta : w =
+(\fst\,w,\snd\,w)$. Naturality for $\Sigma$ was only stated in one
+direction (${,}[]$), because naturalities in the other direction are
+derivable:
 \begin{alignat*}{10}
-  & (\fst\,w)[\gamma] && {=}(xxx) \\
-  & \fst\,((\fst\,w)[\gamma],(\snd\,w)[\gamma]) = \\
-  & \fst\,((\fst\,w,\snd\,w)[\gamma]) = \\
-  & \fst\,(w[\gamma])
+  & (\fst\,w)[\gamma] && {=}(\Sigma\beta_1)                             && (\snd\,w)[\gamma] && {=}(\Sigma\beta_2)                             \\
+  & \fst\,\big((\fst\,w)[\gamma],(\snd\,w)[\gamma]\big)\, && {=}({,}[]) \hspace{4em} && \snd\,\big((\fst\,w)[\gamma],(\snd\,w)[\gamma]\big)\, && {=}({,}[]) \\
+  & \fst\,\big((\fst\,w,\snd\,w)[\gamma]\big) && {=}(\Sigma\eta)        && \snd\,\big((\fst\,w,\snd\,w)[\gamma]\big) && {=}(\Sigma\eta)        \\
+  & \fst\,(w[\gamma])                                                && && \snd\,(w[\gamma])                                                   
 \end{alignat*}
+For $\Pi$ types, we construct a similar isomorphism:
+\[
+(\lambda t.t[\p]\cdot\q) : \Tm\,\Gamma\,(\Pi\,A\,B) \cong \Tm\,(\Gamma\ext A)\,B : \lam
+\]
+The roundtrips are proven as follows:
+\[
+\beta : (\lam\,t)[\p]\cdot\q \overset{\lam[]}{=} \lam\,(t[\p^+])\cdot\q \overset{\Pi\beta}{=} t[p^+][\langle\q\rangle] \overset{\text{(\ref{eq:lifted4})}}{=} t
+\]
+The last step is the admissible equation (\ref{eq:lifted4}) proven in
+Section \ref{sec:admissible}. As above with weakening into an
+arbitrary context, this equation holds in the syntax, bot not in an
+arbitrary model.
+%and also if $t$ is not a metavariable, but an operation, e.g. if $t = \q$ or $t = \q[\p]\cdot\q$).
+The $\eta$ rountrip is exactly $\Pi\eta : \lam\,(t[\p]\cdot\q) = t$.
 
-We show the commutation of $\Lift$ and $\Pi$ types as a sequence of
-isomorphisms:
+We show another isomorphism between terms depending on a variable and
+terms depending on the lifted version of the same variable:
+\[
+(\lambda t.t[\p^+][\langle\un\,\q\rangle]) : \Tm\,(\Gamma\ext A)\,B \cong \Tm\,(\Gamma\ext\Lift\,A)\,(B[\p^+][\langle\q\rangle]) : (\lambda t.t[\p^+][\langle\mk\,\q\rangle])
+\]
+To derive the roundtrips, we again need admissible equations. Here is
+the proof of the first roundtrip equality, the other is analogous:
 \begin{alignat*}{10}
-  & \Tm\,\Gamma\,(\Lift\,(\Pi\,A\,B)) && {\cong}\text{(1)} \\
-  & \Tm\,\Gamma\,(\Pi\,A\,B) && {\cong}\text{(2)} \\
-  & \Tm\,(\Gamma\ext A)\,B && {\cong}\text{(3)} \\
-  & \Tm\,(\Gamma\ext A)\,(\Lift\,B) && {\cong}\text{(4)} \\
-  & \Tm\,(\Gamma\ext \Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle]) && {\cong}\text{(5)} \\
-  & \Tm\,\Gamma\,(\Pi\,(\Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle]))
+  & t[\p^+][\langle\un\,\q\rangle][\p^+][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,\q[\p^+]\rangle][\langle\mk\,\q\rangle] && {=}(\un[]) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,(\q[\p^+])\rangle][\langle\mk\,\q\rangle] && {=}(\q[^+]) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,\q\rangle][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,\q[\langle\mk\,\q\rangle]\rangle] && {=}(\un[]) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\q[\langle\mk\,\q\rangle])\rangle] && {=}(\q[\langle\rangle]) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\mk\,\q)\rangle] && {=}(\Lift\beta) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted1}) \\
+  & t[\p^+][\p^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted2}) \\
+  & t[\p^+][\langle\q\rangle] && {=}(\ref{eq:lifted4}) \\
+  & t
 \end{alignat*}
-Steps (1) and (3) are the isomorphism comprised of $\mk$ and $\un$. 
+Once we have all the above isomorphisms, we can compose them to obtain commutation of $\Lift$ and $\Pi$:
+\begin{alignat*}{10}
+  & \Tm\,\Gamma\,\big(\Lift\,(\Pi\,A\,B)\big) && {\cong}\text{($\Lift$ iso)} \\
+  & \Tm\,\Gamma\,(\Pi\,A\,B) && {\cong}\text{($\Pi$ iso)} \\
+  & \Tm\,(\Gamma\ext A)\,B && {\cong}\text{($\Lift$ iso)} \\
+  & \Tm\,(\Gamma\ext A)\,(\Lift\,B) && {\cong}\text{(lifted variable iso)} \\
+  & \Tm\,(\Gamma\ext \Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle]) && {\cong}\text{($\Pi$ iso)} \\
+  & \Tm\,\Gamma\,\big(\Pi\,(\Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle])\big)
+\end{alignat*}
+We hope that the above examples demonstrated the for equations
+(\ref{eq:lifted1})--(\ref{eq:lifted4}) which we will prove in the next
+section.
 
 \subsection{Standard model}
 \label{sec:standard}
 
 As a sanity check for our notion of SSC-model, we defined the standard
 (metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
-SSC-based calculus calculus in Agda. We used the techniques of Kovács
+SSC-based calculus in Agda. We used the techniques of Kovács
 \cite{DBLP:conf/csl/Kovacs22} to define inductive-recursive universes
 to model the infinite hierarchy of types, and all the SSC-equations
 hold by reflexivity in this model. We defined the analogous CwF-based
@@ -919,9 +957,12 @@ standard model.
 \label{sec:admissible}
 
 In this section we show that our SSC-based syntax is isomorphic to the
-CwF-based syntax for the same theory (namely the SOGAT
-(\ref{eq:tt})). We conjecture that the method presented here works
-generically for any SOGAT.
+CwF-based syntax with the same type formers.
+\footnote{Using the two translations from SOGATs to GATs
+\cite{DBLP:conf/fscd/KaposiX24}, we can rephrase the contents of this
+section as follows: the syntaxes of the single and parallel
+substitution first order versions of the SOGAT \ref{eq:tt} are
+isomorphic.}
 
 \begin{definition}[CwF]\label{def:cwf}
   A category with $\N$-many families is defined as a category (objects
@@ -942,18 +983,16 @@ generically for any SOGAT.
 The following four equations correspond to equations in B-systems which cannot
 be derived from the equations of SSC, these are versions of equations in Section
 \ref{sec:tt} lifted over arbitrary amount of $\blank^+$s.
-\begin{equation}\label{eq:lifted}
-\begin{aligned}
-  B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \\
-  B[\p^{+^n}][\langle a \rangle^{+^n}] & = B \\
-  B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \\
-  B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B
-\end{aligned}
-\end{equation}
+\begin{alignat}{10}
+  B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \label{eq:lifted1}\\
+  B[\p^{+^n}][\langle a \rangle^{+^n}] & = B \label{eq:lifted2}\\
+  B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \label{eq:lifted3}\\
+  B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B\label{eq:lifted4}
+\end{alignat}
 The corresponding equations on terms are also needed. Note that we do not have
 the non-lifted term versions of the last two equations in SSC.
 
-To formally state the equations in (\ref{eq:lifted}), we define telescopes as an
+To formally state equations (\ref{eq:lifted1})--(\ref{eq:lifted4}), we define telescopes as an
 inductive type together with a recursive operation to append telescopes to
 contexts.
 \begin{alignat*}{10}
@@ -974,7 +1013,7 @@ instantiation operation on telescopes by recursion on telescopes.
   & \blank^{+^\Omega} && : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta+\Omega[\gamma])\,(\Gamma+\Omega)
 \end{alignat*}
 
-If we try to prove the equations in (\ref{eq:lifted}) by induction on the types
+If we try to prove the equations in (\ref{eq:lifted1})--(\ref{eq:lifted4}) by induction on the types
 and terms, we run into difficulties in the instantiation case, as we would have
 to commute the instantiations without the equations to do so. Therefore, we
 first $\alpha$-normalize the syntax to compute away all the instantiations, then
@@ -1028,8 +1067,8 @@ and $\alpha$-normal single substitutions.
   elimination principle of the corresponding QIIT.
 \end{proof}
 
-Instead of doing induction on $\alpha$-normal forms for each of the equations in
-(\ref{eq:lifted}), we define a general lemma which can lift any equation between
+Instead of doing induction on $\alpha$-normal forms for each of equations 
+(\ref{eq:lifted1})--(\ref{eq:lifted4}), we define a general lemma which can lift any equation between
 instantiations over a telescope. For this we define $\Sub^*$ to be $\Sub$ with
 freely added identity and composition operations, we do not require it to
 satisfy the laws of a category as we will not compare $\Sub^*$s directly for
