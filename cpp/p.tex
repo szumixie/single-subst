@@ -16,6 +16,9 @@
 
 \keywords{type theory, category with families, substitution calculus}
 
+%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
+
 %\acknowledgements{I want to thank \dots}%optional
 
 %Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,6 +34,9 @@
 \SeriesVolume{42}
 \ArticleNo{23}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{construction}[theorem]{Construction}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows}
@@ -68,10 +74,6 @@
 \begin{document}
 
 \maketitle
-
-\newtheorem{problem}[theorem]{Problem}
-\theoremstyle{remark}
-\newtheorem{construction}[theorem]{Construction}
 
 \begin{abstract}
 Type theory can be described as a generalised algebraic theory. This
@@ -1049,7 +1051,7 @@ $\beta$/$\eta$ conversion rules.
 We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
 terms instantiated with $\alpha$-normal substitutions. However, this needs to be
 proved separately for weakenings and $\alpha$-normal single substitutions for
-the induction to be well-founded. We define predicates for weakening and
+the induction to be structural. We define predicates for weakening and
 $\alpha$-normal single substitutions as follows.
 \begin{itemize}
   \item $\p$ is a weakening.
@@ -1090,7 +1092,7 @@ redefined for $\Sub^*$.
     \item $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
     \item $a[\gamma_0^{+^\Omega}] = a[\gamma_1^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
   \end{itemize}
-  Note that the later equations depend the the earlier ones.
+  Note that the later equations depend on the the earlier ones.
 \end{lemma}
 \begin{proof}
   Assuming the first equation, we prove that $x[\gamma_0^{+^\Omega}] =
@@ -1103,15 +1105,19 @@ redefined for $\Sub^*$.
 
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
 substitutions, however it does not satisfy the equations of parallel
-substitutions. Thus we define parallel substitutions as lists of terms with a
-map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to convert it
-into a sequence of instantiations of single substitutions.
+substitutions. Thus we define parallel substitutions as lists of terms. We
+cannot define the instatiation operation for $\Tms$ directly, so we also define
+a map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to
+convert it into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
   & \Tms && : \Con\ra\Con\ra\Con && \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
   & \epsilon && : \Tms\,\Gamma\,\diamond && \llcorner\epsilon\lrcorner && := \id\circ\p\circ\dots\circ\p \\
   & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A)\hspace{2em} && \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
 \end{alignat*}
-The computation of instantiating with $\Tms$ is illustrated below.
+The computation of instantiating with $\Tms$ is illustrated below. On the
+right-hand side, we first weaken $B$ to the context in which the $a_i$'s live,
+then replace the variables of $B$ one by one by $a_i$'s, which are well-typed
+because of the previous weakening.
 \[
   B[\llcorner\epsilon,a_1,a_2,\dots,a_{n-1},a_n\lrcorner] = 
   B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
@@ -1257,7 +1263,7 @@ We summarise this section by formally stating what we defined.
   Clear from the construction in this section.
 \end{proof}
 
-\section{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}
+\section{\texorpdfstring{CwF from SSC with $\Sigma$, $\Pi$ and $\U$}{CwF from SSC with Σ, Π and U}}
 \label{sec:cwf}
 
 In this section we show that if the single substitution calculus has
