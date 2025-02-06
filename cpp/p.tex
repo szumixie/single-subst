@@ -124,13 +124,10 @@ equations of the algebraic theory.
 
 The GAT presentation has the following advantages:
 \begin{itemize}
-\item  In type theory, typing depends on conversion:
-  in an extrinsic presentation, this is expressed by a rule such as
-  the following.
-  \[
-  \infer{\Gamma\vdash t : B}{\Gamma\vdash A \sim B && \Gamma\vdash t : A}
-  \]
-  When conversion $\sim$ is equality, this rule holds by the general
+\item In type theory, typing depends on conversion: in an extrinsic
+  presentation, this is expressed by the rule deriving $\Gamma\vdash t
+  : B$ from $\Gamma\vdash A \sim B$ and $\Gamma\vdash t : A$.  When
+  conversion $\sim$ is equality, this rule holds by the general
   properties of equality; and we also avoid lots of boilerplate
   stating that e.g.\ conversion is a congruence with respect to all
   operations (for an intrinsic presentation with explicit conversion
@@ -250,11 +247,11 @@ over $X$).
 We introduce a technology for proving admissible rules in our
 theory. We define $\alpha$-normal forms and show
 $\alpha$-normalisation: every term admits an $\alpha$-normal form.
-Thus, when one wants to prove something about all terms, it is enough
-to prove it for $\alpha$-normal forms. Just as $\beta$-normal forms
+Thus, proving something for $\alpha$-normal forms implies it for all terms.
+Just as $\beta$-normal forms
 don't distinguish between $\beta$-convertible terms, $\alpha$-normal
-forms don't include explicit substitutions. $\alpha$-normal forms are
-not like ordinary $\beta/\eta$-normal forms because they are still
+forms don't include explicit instantiations. $\alpha$-normal forms are
+not like ordinary $\beta/\eta$-normal forms because they are 
 quotiented by the computation/uniqueness rules like $\beta$/$\eta$ for
 function space. We use induction on $\alpha$-normal forms to define
 parallel substitutions and prove all the rules of CwFs in the syntax
@@ -285,43 +282,42 @@ internal to extensional type theory, and most results were formalised
 in Agda. Some results in this paper were presented at the TYPES 2024
 conference \cite{singleTypes}.
 
-In summary, our contributions are the following:
-\begin{itemize}
-\item A new generalised algebraic presentation of type theory in the
+In summary, our contributions are (in the same order as the structure of the paper):
+\begin{description}
+\item[Section \ref{sec:tt}] A new generalised algebraic presentation of type theory in the
   form of a minimalistic single substitution calculus. Our calculus
   does not feature parallel substitutions/weakenings, empty
   substitution, telescopes. We present our calculus in an
   easy-to-understand way where all operations are well-motivated.
-\item The $\alpha$-normalisation technique which shows that the syntax
+\item[Section \ref{sec:admissible}] The $\alpha$-normalisation technique which shows that the syntax
   of our single substitution calculus is isomorphic to the syntax of
   the CwF-based theory.
-\item For type theory with $\Pi$, $\U$, a minimised presentation of
+\item[Section \ref{sec:minimisation}] For type theory with $\Pi$, $\U$, a minimised presentation of
   the equations which results in an isomorphic theory.
-\item For type theory with $\Pi$, $\U$, $\top$, $\Sigma$, we show that
+\item[Section \ref{sec:cwf}] For type theory with $\Pi$, $\U$, $\top$, $\Sigma$, we show that
   single and parallel models are equivalent in a weak sense.
-\end{itemize}
+\end{description}
 
-\subsection{Structure of the paper}
-
-After discussing related work and our metatheory, in Section
-\ref{sec:tt}, we introduce our single substitution calculus (SSC) only
-relying on a working knowledge of an implementation of type theory
-such as Agda, no prior experience with the metatheory of type theory
-is required. Section \ref{sec:admissible} shows that in the syntax of
-SSC, several new equations are admissible, and that the syntax of SSC
-is actually isomorphic to the CwF-based syntax. In Section
-\ref{sec:minimisation}, we minimise our SSC obtaining a theory with
-fewer equations, relying on the presence of $\Pi$ and $\U$ in our
-theory. In Section \ref{sec:cwf}, we show that in the presence of
-$\Pi$, $\U$, $\Sigma$, SSC-models are actually equivalent to
-CwF-models in a weak sense. We conclude in Section
-\ref{sec:conclusion}.
+% \subsection{Structure of the paper}
+% 
+% After discussing related work and our metatheory, in Section
+% \ref{sec:tt}, we introduce our single substitution calculus (SSC) only
+% relying on a working knowledge of an implementation of type theory
+% such as Agda, no prior experience with the metatheory of type theory
+% is required. Section \ref{sec:admissible} shows that in the syntax of
+% SSC, several new equations are admissible, and that the syntax of SSC
+% is actually isomorphic to the CwF-based syntax. In Section
+% \ref{sec:minimisation}, we minimise our SSC obtaining a theory with
+% fewer equations, relying on the presence of $\Pi$ and $\U$ in our
+% theory. In Section \ref{sec:cwf}, we show that in the presence of
+% $\Pi$, $\U$, $\Sigma$, SSC-models are actually equivalent to
+% CwF-models in a weak sense. We conclude in Section
+% \ref{sec:conclusion}.
 
 \subsection{Related work}\label{sec:related}
 
-\subparagraph*{B-systems.} B-systems were introduced by Voevodsky \cite{voevodsky2014bsystems} as
-an algebraic description of type theory close to extrinsic definitions.
-B-systems are an intrinsic, essentially
+\subparagraph*{B-systems.} B-systems introduced by Voevodsky \cite{voevodsky2014bsystems}
+are an intrinsic, essentially
 algebraic presentation of type theory using single
 substitutions. B-systems relate to our SSC as essentially
 algebraic theories relate to generalised algebraic theories, or
@@ -330,75 +326,20 @@ sets with a map into $I$ relate to indexed families over $I$
 that we have fewer and less general equations, resulting in the fact
 that we have more models than B-systems. However in the syntax of our
 theory, all the rules of B-systems are admissible. We describe the
-relationship in more detail. B-systems are B-frames together with
-substitution, weakening and generic element operations. A B-frame is
-given by sets $B_i$, $\tilde{B}_i$ and functions between them as shown
-below \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}. \\
-\begin{tikzpicture}
-  \node (b0) at (4,0) {$\top$};
-  \node (b1) at (5,0) {$B_1$};
-  \node (b2) at (12,0) {$B_2$};
-  \node (b3) at (15,0) {$\dots$};
-  \node (c1) at (7,1) {$\tilde{B}_1$};
-  \node (c2) at (14,1) {$\tilde{B}_2$};
-  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{ft}_0$} (b0);
-  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{ft}_1$} (b1);
-  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{ft}_2$} (b2);
-  \draw[->,font=\scriptsize] (c1) edge node[above] {$\partial_1$} (b1);
-  \draw[->,font=\scriptsize] (c2) edge node[above] {$\partial_2$} (b2);
-\end{tikzpicture} \\
-Using our notation, this is the following data ($\diamond$ is the empty context, $\ext$ is context extension). \\
-\begin{tikzpicture}
-  \node (b0) at (4,0) {$\top$};
-  \node (b1) at (5,0) {$\Ty\,\diamond$};
-  \node (b2) at (12,0) {$(A:\Ty\,\diamond)\times\Ty\,(\diamond\ext A)$};
-  \node (b3) at (15,0) {$\dots$};
-  \node (c1) at (7,1)  {$(A:\Ty\,\diamond)\times\Tm\,\diamond\,A$};
-  \node (c2) at (14,1) {$\big((A:\Ty\,\diamond)\times(B:\Ty\,(\diamond\ext A))\big)\times\Tm\,(\diamond\ext A)\,B$};
-  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{fst}$} (b0);
-  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{fst}$} (b1);
-  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{fst}$} (b2);
-  \draw[->,font=\scriptsize] (c1) edge node[above] {$\mathsf{fst}$} (b1);
-  \draw[->,font=\scriptsize] (c2) edge node[above] {$\mathsf{fst}$} (b2);
-\end{tikzpicture} \\
-The substitution operation $\mathbb{S}$ for an $x:\tilde{B}_{n+1}$ is
-a homomorphism of the slice B-frames $\mathbb{B}/\partial(x) \ra
-\mathbb{B}/\mathsf{ft}(\partial(x))$. In our notation, $x = (\Gamma,
-A, a)$ where $a : \Tm\,\Gamma\,A$, and $\mathbb{S}$ corresponds to the
-following functions for $\Ty$ (a map between the bottom rows of the
-diagrams):
-\begin{alignat*}{10}
-  & \blank[\langle a\rangle] && : \Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
-  & \blank[\langle a\rangle^+] && : \Ty\,(\Gamma\ext A\ext B)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]) \\
-  & \blank[\langle a\rangle^{++}] && : \Ty\,(\Gamma\ext A\ext B\ext C)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]\ext C[\langle a\rangle^+]) \\
-  & \dots,
-\end{alignat*}
-and similarly $\mathbb{S}$ also includes all the (lifted) substitution
-operations for terms (top rows of the
-diagrams). Analogously, the weakening operation corresponds to
-$\blank[\p^{+\dots+}]$ operations, and the generic element is $\q$ in
-our notation. The six groups of equations correspond to our
-$[\langle\rangle][]$, $[\p][^+]$, $\q[^+]$, $[\p][\langle\rangle]$,
-$\q[\langle\rangle]$, $[\p^+][\langle\q\rangle]$ equations, in this
-order. However we don't include the lifted versions of these equations,
-equations $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$ are only
-stated for types, and $\q[^+]$, $\q[\langle\rangle]$ are only stated
-for terms. The missing equations are admissible, see Section
-\ref{sec:admissible}. In the presence of $\U$ and $\Pi$, we
-reduce the needed equations even more, see Section
-\ref{sec:minimisation}.
+relationship in more detail in Appendix \ref{app:bsys}.
 
 Kaposi and Luksa \cite{luksa} defined a telescopic single substitution
 calculus for simple type theory, it can be seen as a simply typed
 version of B-systems. They show that the category of contextual models
 of their calculus is equivalent to the category of contextual simply
-typed CwFs with function space. Their equivalence result holds even
-without the presence of function types. In the presence of function
-space, the same equivalence holds for the simply typed version of our
-substitution calculus, see the formalisation accompanying this paper.
+typed CwFs with function space.
+%Their equivalence result holds even without the presence of function types.
+%In the presence of function space,
+The same equivalence holds for the simply typed version of our
+substitution calculus (TODO link).
 
 \subparagraph*{Ehrhard's calculus.}
-The first generalised algebraic presentation of type theory was Thomas
+The first generalised algebraic presentation of type theory was
 Ehrhard's calculus \cite{ehrhard,coquandEhrhard} which featured a
 parallel substitution calculus with $\p$, $\blank^+$ and
 $\langle\blank\rangle$ operations, just like our calculus. Our
@@ -814,10 +755,17 @@ extend Definition \ref{def:tt} with $\top$ and $\Sigma$ types.
 \begin{definition}[Single substitution calculus with $\Pi$, $\U$, $\Lift$, $\top$, and $\Sigma$ types]\label{def:sigma}
   We extend Definition \ref{def:tt} with the following rules.
   \begin{alignat*}{10}
-    & \top && : \Ty\,\Gamma\,0 && \top[] && : \top[\gamma] = \top\hspace{6em} && \top\eta && : t = \tt \\
-    & \tt && : \Tm\,\Gamma\,\top \hspace{6em} && \tt[] && : \tt[\gamma] = \tt \\
-    & \Sigma && : \rlap{$(A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i \hspace{4.4em} \Sigma[] : (\Sigma\,A\,B)[\gamma] = \Sigma\,(A[\gamma])\,(B[\gamma^+])$} \\
-    & \fst,\snd && : \rlap{$\Tm\,\Gamma\,(\Sigma\,A\,B)\cong(a:\Tm\,\Gamma\,A)\times\Tm\,\Gamma\,(B[\langle a\rangle]) : \blank{,}\blank \hspace{1.6em} {,}[] : (a,b)[\gamma] = (a[\gamma],b[\gamma])$}
+    & \rlap{$
+  \top : \Ty\,\Gamma\,0 \hspace{3em}
+  \top[] : \top[\gamma] = \top\hspace{3em}
+  \top\eta : t = \tt \hspace{3em}
+  \tt : \Tm\,\Gamma\,\top \hspace{3em}
+  \tt[] : \tt[\gamma] = \tt
+      $} \\
+    & \Sigma && : (A:\Ty\,\Gamma\,i)\ra\Ty\,(\Gamma\ext A)\,i\ra\Ty\,\Gamma\,i \\
+    & \fst,\snd && : \Tm\,\Gamma\,(\Sigma\,A\,B)\cong(a:\Tm\,\Gamma\,A)\times\Tm\,\Gamma\,(B[\langle a\rangle]) : \blank{,}\blank \\
+    & \Sigma[] && : (\Sigma\,A\,B)[\gamma] = \Sigma\,(A[\gamma])\,(B[\gamma^+]) \\
+    & {,}[] && : (a,b)[\gamma] = (a[\gamma],b[\gamma])
   \end{alignat*}
   To save space, we compressed the introduction, elimination, $\beta$
   and $\eta$ rules of $\Sigma$ into an isomorphism, and did not list
@@ -1105,8 +1053,8 @@ redefined for $\Sub^*$.
 
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
 substitutions, however it does not satisfy the equations of parallel
-substitutions. Thus we define parallel substitutions as lists of terms. We
-cannot define the instatiation operation for $\Tms$ directly, so we also define
+substitutions. Thus we define parallel substitutions as lists of terms. It seems to be
+difficult to define the instatiation operation for $\Tms$ directly, so we also define
 a map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to
 convert it into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
@@ -1473,10 +1421,74 @@ TODO: named CwFs would be even closer to usual syntax.
 
 \appendix
 
-\section{GAT presentation of (\ref{eq:tt})}
+\section{Detailed comparison with B-systems}
+\label{app:bsys}
+
+In this section, we describe the relationship between B-systems
+\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} and our Definition
+\ref{def:tt} in detail.
+
+B-systems are B-frames
+together with substitution, weakening and generic element
+operations. A B-frame is given by sets $B_i$, $\tilde{B}_i$ and
+functions between them as shown below . \\
+\begin{tikzpicture}
+  \node (b0) at (4,0) {$\top$};
+  \node (b1) at (5,0) {$B_1$};
+  \node (b2) at (12,0) {$B_2$};
+  \node (b3) at (15,0) {$\dots$};
+  \node (c1) at (7,1) {$\tilde{B}_1$};
+  \node (c2) at (14,1) {$\tilde{B}_2$};
+  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{ft}_0$} (b0);
+  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{ft}_1$} (b1);
+  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{ft}_2$} (b2);
+  \draw[->,font=\scriptsize] (c1) edge node[above] {$\partial_1$} (b1);
+  \draw[->,font=\scriptsize] (c2) edge node[above] {$\partial_2$} (b2);
+\end{tikzpicture} \\
+Using our notation, this is the following data ($\diamond$ is the empty context, $\ext$ is context extension). \\
+\begin{tikzpicture}
+  \node (b0) at (4,0) {$\top$};
+  \node (b1) at (5,0) {$\Ty\,\diamond$};
+  \node (b2) at (12,0) {$(A:\Ty\,\diamond)\times\Ty\,(\diamond\ext A)$};
+  \node (b3) at (15,0) {$\dots$};
+  \node (c1) at (7,1)  {$(A:\Ty\,\diamond)\times\Tm\,\diamond\,A$};
+  \node (c2) at (14,1) {$\big((A:\Ty\,\diamond)\times(B:\Ty\,(\diamond\ext A))\big)\times\Tm\,(\diamond\ext A)\,B$};
+  \draw[->,font=\scriptsize] (b1) edge node[below] {$\mathsf{fst}$} (b0);
+  \draw[->,font=\scriptsize] (b2) edge node[below] {$\mathsf{fst}$} (b1);
+  \draw[->,font=\scriptsize] (b3) edge node[below] {$\mathsf{fst}$} (b2);
+  \draw[->,font=\scriptsize] (c1) edge node[above] {$\mathsf{fst}$} (b1);
+  \draw[->,font=\scriptsize] (c2) edge node[above] {$\mathsf{fst}$} (b2);
+\end{tikzpicture} \\
+The substitution operation $\mathbb{S}$ for an $x:\tilde{B}_{n+1}$ is
+a homomorphism of the slice B-frames $\mathbb{B}/\partial(x) \ra
+\mathbb{B}/\mathsf{ft}(\partial(x))$. In our notation, $x = (\Gamma,
+A, a)$ where $a : \Tm\,\Gamma\,A$, and $\mathbb{S}$ corresponds to the
+following functions for $\Ty$ (a map between the bottom rows of the
+diagrams):
+\begin{alignat*}{10}
+  & \blank[\langle a\rangle] && : \Ty\,(\Gamma\ext A)\ra\Ty\,\Gamma \\
+  & \blank[\langle a\rangle^+] && : \Ty\,(\Gamma\ext A\ext B)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]) \\
+  & \blank[\langle a\rangle^{++}] && : \Ty\,(\Gamma\ext A\ext B\ext C)\ra\Ty\,(\Gamma\ext B[\langle a\rangle]\ext C[\langle a\rangle^+]) \\
+  & \dots,
+\end{alignat*}
+and similarly $\mathbb{S}$ also includes all the (lifted) substitution
+operations for terms (top rows of the
+diagrams). Analogously, the weakening operation corresponds to
+$\blank[\p^{+\dots+}]$ operations, and the generic element is $\q$ in
+our notation. The six groups of equations correspond to our
+$[\langle\rangle][]$, $[\p][^+]$, $\q[^+]$, $[\p][\langle\rangle]$,
+$\q[\langle\rangle]$, $[\p^+][\langle\q\rangle]$ equations, in this
+order. However we don't include the lifted versions of these equations,
+equations $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$ are only
+stated for types, and $\q[^+]$, $\q[\langle\rangle]$ are only stated
+for terms. The missing equations are admissible, see Section
+\ref{sec:admissible}. In the presence of $\U$ and $\Pi$, we
+reduce the needed equations even more, see Section
+\ref{sec:minimisation}.
+
+\section{GAT presentation of Definition \ref{def:tt}}
 \label{app:tt}
 
-Definition \ref{def:tt} in full detail: \\
 The core substitution calculus:
 \begin{alignat*}{10}
   & \Con && : \Set \\
@@ -1519,9 +1531,7 @@ Rules for individual type formers.
   & \U\beta && : \El\,(\cd\,A) = A \\
   & \U\eta && : \cd\,(\El\,\hat{A}) = \hat{A} \\
   & \Lift && : \Ty\,\Gamma\,i\ra\Ty\,\Gamma\,(1+i) \\
-  & \Lift[] && : (\Lift\,A)[\gamma] = \Lift\,(A[\gamma])
-\end{alignat*}
-\begin{alignat*}{10}
+  & \Lift[] && : (\Lift\,A)[\gamma] = \Lift\,(A[\gamma]) \\
   & \mk && : \Tm\,\Gamma\,A \ra \Tm\,\Gamma\,(\Lift\,A) \\
   & \mk[] && : (\mk\,a)[\gamma] = \mk\,(a[\gamma]) \\
   & \un[] && : (\un\,a)[\gamma] = \un\,(a[\gamma]) \\
@@ -1530,10 +1540,9 @@ Rules for individual type formers.
   & \Lift\eta && : \mk\,(\un\,a) = a
 \end{alignat*}
 
-\section{Minimised GAT presentation of (\ref{eq:tt})}
+\section{Minimised GAT presentation of Definition \ref{def:min} (omitting $\Lift$)}
 \label{app:minimisation}
 
-Definition \ref{def:min} in full detail (omitting $\Lift$):
 \begin{alignat*}{10}
   & \Con && : \Set \\
   & \Ty && : \Con\ra\N\ra\Set \\
