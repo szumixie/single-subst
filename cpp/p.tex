@@ -41,6 +41,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usepackage{proof}
+\usepackage{multicol}
 
 \newcommand{\ra}{\rightarrow}
 \newcommand{\Ra}{\Rightarrow}
@@ -947,12 +948,12 @@ all CwF operations and equations.
 The following four equations correspond to equations in B-systems which cannot
 be derived from the equations of SSC, these are versions of equations in Section
 \ref{sec:tt} lifted over arbitrary amount of $\blank^+$s.
-\begin{multicols}{2}
+\begin{multicols}{2}\noindent
 \begin{alignat}{10}
   B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \label{eq:lifted1} \\
-  B[\p^{+^n}][\langle a \rangle^{+^n}] & = B \label{eq:lifted2} \\
+  B[\p^{+^n}][\langle a \rangle^{+^n}] & = B \label{eq:lifted2}
 \end{alignat}
-\
+\columnbreak
 \begin{alignat}{10}
   B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \label{eq:lifted3} \\
   B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B\label{eq:lifted4}
