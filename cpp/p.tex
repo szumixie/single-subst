@@ -2,7 +2,7 @@
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
 
-\title{Type theory in type theory with single substitutions}
+\title{Type theory with single substitutions}
 
 \author{Ambrus Kaposi}{Eötvös Loránd University (ELTE), Hungary}{akaposi@inf.elte.hu}{https://orcid.org/0000-0001-9897-8936}{}
 
@@ -101,7 +101,7 @@ type theory. SSC relates to CwF as extensional combinatory calculus
 relates to lambda calculus: there are more models of the former, but
 the syntaxes are equivalent. If we have some additional type formers,
 we show that SSC models are actually equivalent to CwF-based models in
-a weak sense. Sections 2 and 3 of this paper were formalised in Agda.
+a weak sense.
 \end{abstract}
 
 \section{Introduction}
@@ -117,7 +117,7 @@ a generalised algebraic theory (GAT
 theories where later sorts can be indexed by previous sorts. An
 example is categories where the sort of morphisms is double-indexed
 over objects.
-
+%
 The GAT presentation of type theory is intrinsic
 \cite{DBLP:conf/csl/AltenkirchR99,DBLP:conf/popl/AltenkirchK16} rather
 than extrinsic
@@ -233,20 +233,20 @@ we substituted the last variable for the previous one.)  This is
 analogous to e.g.\ parametricity results
 \cite{DBLP:journals/jfp/BernardyJP12}, which do not hold in an
 arbitrary model, but they hold in the syntax. In this paper, we show
-that the \emph{syntaxes} of our SSC and the corresponding parallel
+that the \emph{syntaxes} of SSC and the corresponding parallel
 substitution calculus (CwF-based calculus) are isomorphic. All
-CwF-based models are models of our SSC, but not
+CwF-based models are models of SSC, but not
 necessarily the other way. While B-systems are equivalent to CwFs (and
 C-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more
-SSC models than CwF-based models. This relationship is similar to that
+SSC models than CwF-based models. This relationship is like that
 of extensional combinatory calculus and lambda calculus, where the
 syntaxes are equivalent, and every lambda model is a combinatory
-model, but not the other way round
+model, but not the other way
 \cite{DBLP:conf/fscd/AltenkirchKSV23}. Another example is the
 relationship between monoids over a set $X$ and nil/cons algebras over
-$X$, where every monoid is a nil/cons-algebra, but not the other way;
-but it is well-known that free monoids over $X$ (syntax of monoid over
-$X$) are the same as lists of $X$ (the syntax of nil/cons algebras
+$X$: every monoid is a nil/cons-algebra, but not the other way;
+it is well-known that free monoids over $X$ (syntax of monoid over
+$X$) are the same as $X$-lists (the syntax of nil/cons algebras
 over $X$).
 
 We introduce a technology for proving admissible rules in our
@@ -276,7 +276,7 @@ CwF-based model from an SSC-model. The idea is that $\Sigma$ types can
 represent contexts, functions between $\Sigma$ types represent
 parallel substitutions, functions into the universe represent
 dependent types. Then the SSC is just there for bootstrapping
-purposes: we use the SSC to formulate $\Sigma$, $\Pi$, $\U$, and then
+purposes: SSC formulates $\Sigma$, $\Pi$, $\U$, and then
 we use these to define a parallel substitution calculus. In summary,
 although SSC models and CwFs without any type formers are not
 equivalent, if we equip them with enough type formers, they become
@@ -284,8 +284,8 @@ equivalent, if we equip them with enough type formers, they become
 
 All of the constructions in this paper can be understood as happening
 internal to extensional type theory, and most results were formalised
-in Agda. Some results in this paper were presented at the TYPES 2024
-conference \cite{singleTypes}.
+in Agda. %Some results in this paper were presented at the TYPES 2024
+%conference \cite{singleTypes}.
 
 In summary, our contributions are (in the same order as the structure of the paper):
 \begin{description}
@@ -332,7 +332,7 @@ that we have fewer and less general equations, resulting in the fact
 that we have more models than B-systems. However in the syntax of our
 theory, all the rules of B-systems are admissible. We describe the
 relationship in more detail in Appendix \ref{app:bsys}.
-
+%
 Kaposi and Luksa \cite{luksa} defined a telescopic single substitution
 calculus for simple type theory, it can be seen as a simply typed
 version of B-systems. They show that the category of contextual models
@@ -457,6 +457,7 @@ SOGAT level of abstraction: Synthethic Tait Computability
 \cite{DBLP:phd/us/Sterling22} and internal sconing
 \cite{DBLP:conf/fscd/BocquetKS23}.
 
+\vspace{-0.7em}
 \subsection{Metatheory and formalisation}\label{sec:metatheory}
 
 Our metatheory is observational type theory
@@ -592,10 +593,10 @@ The above equation has 6 implicit arguments, namely $\Gamma$, $i$,
 $A$, $B$, $\Delta$ and $\gamma$.  This rule works for any weakening,
 no matter how many $\blank^+$s have been applied to it. As of now, all
 elements of $\Sub$ have the form
-\[
-\p^{+^n} : \Sub\,(\Gamma\ext A\ext B_1[\p]\ext B_2[\p^+]\ext\dots\ext B_n[\p^{+^{n-1}}])\,(\Gamma\ext B_1\ext B_2\ext\dots\ext B_n).
-\]
-where $+^n$ means the $n$-times iteration of $\blank^+$.
+$
+\p^{+^n} : \Sub\,(\Gamma\ext A\ext B_1[\p]\ext B_2[\p^+]\ext\dots\ext B_n[\p^{+^{n-1}}])\,(\Gamma\ext B_1\ext B_2\ext\dots\ext B_n),
+$
+where $^{+^n}$ means the $n$-times iteration of $\blank^+$.
 
 Now that we have weakenings of the form $\gamma^+$, we have to say how
 they act on variables, that is, terms of the form
@@ -626,15 +627,14 @@ The second and third equations only make sense because of the first
 equation. The phenomenon that later equations/operations depend on
 previous equations is common in GATs.
 
-Now that we have $[\p][^+]$ for types, we can derive the instantiation
-rule for nondependent function space as follows.
-\[
+Now that we have $[\p][^+]$ for types, we can derive its instantiation rule by
+$
 (A\Ra B)[\gamma] =
 \Pi\,A\,(B[\p])[\gamma] \overset{\Pi[]}{=}
 \Pi\,(A[\gamma])\,(B[\p][\gamma^+]) \overset{[\p][^+]}{=}
 \Pi\,(A[\gamma])\,(B[\gamma][\p]) =
-A[\gamma]\Ra(B[\gamma])
-\]
+(A[\gamma])\Ra(B[\gamma]).
+$
 
 So far our only terms are variables, but we would like to define
 functions via lambda abstraction. Abstraction takes a term in a
@@ -756,8 +756,8 @@ reference, we list the same rules again in Appendix \ref{app:tt}.
 The theory can be extended with new type and term formers in the same
 fashion: each operation has to be indexed over arbitrary contexts and come
 equipped with a substitution rule. There is no need to add more
-structural (substitution calculus) rules.\footnote{This is made formal in \cite{DBLP:conf/fscd/KaposiX24} where
-these equations are enough to describe the first-order theory of any SOGAT.}
+structural (substitution calculus) rules.\footnote{In \cite{DBLP:conf/fscd/KaposiX24},
+the same structural rules suffice to describe the first-order theory for any SOGAT.}
 For example, we show how to
 extend Definition \ref{def:tt} with $\top$ and $\Sigma$ types.
 \begin{definition}[Single substitution calculus with $\Pi$, $\U$, $\Lift$, $\top$, and $\Sigma$ types]\label{def:sigma}
@@ -789,13 +789,13 @@ motivate the next section on admissible equations.
 The polymorphic identity function for types at the level 0 is defined
 as
 \[
-\lam\,(\lam\,\q) : \Tm\,\diamond\,\Big(\Pi\,(\U\,0)\,\big(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)\big)\Big).
+\lam\,(\lam\,\q) : \Tm\,\diamond\,(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))).
 \]
 Note that readability of this term essentially relies on implicit
 arguments. For example, $\q$ takes $(\diamond\ext\U\,0)$ as its first,
 $1$ as its second and $\Lift\,(\El\,\q)$ as its third implicit
 argument, and these arguments themselves are terms written using
-implicit arguments. Inrinsically typed terms are the same as
+implicit arguments. Intrinsically typed terms are the same as
 derivation trees, we illustrate this by deriving this term as follows.
 \[
 \infer[\text{(*)}]{\lam\,(\lam\,\q) : \Tm\,\diamond\,\big(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))\big)}{\infer{\lam\,\q : \Tm\,(\diamond\ext\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))}{\infer{\q : \Tm\,(\diamond\ext\U\,0\ext\Lift\,(\El\,\q))\,(\Lift\,(\El\,\q)[\p])}{}}}
@@ -809,23 +809,23 @@ to coerce $\q$ along the equality $\U[]$:
 \infer{\Lift\,(\El\,\q) : \Ty\,(\diamond\ext\U\,0)\,1}{\infer{\El\,\q : \Ty\,(\diamond\ext\U\,0)\,0}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,(\U\,0)}{\infer{\q : \Tm\,(\diamond\ext\U\,0)\,((\U\,0)[\p])}{} && \infer{\U[] : (\U\,0)[\p] = \U\,0}{}}}}
 \]
 When working informally (or in extensional type theory), we don't
-write the coercion, but Agda requires it.
+write coercions.%, but Agda requires it.
 
 Given a type $A:\Ty\,\diamond\,0$, and $a : \Tm\,\diamond\,A$, we have
-\[
+$
 \lam\,(\lam\,\q)\cdot\cd\,A\cdot a \overset{\Pi\beta}{=}
 \lam\,\q[\langle\cd\,A\rangle]\cdot a \overset{\lam[]}{=}
 \lam\,(\q[\langle\cd\,A\rangle^+])\cdot a\, \overset{[\q][^+]}{=}
 \lam\,\q\cdot a \overset{\Pi\beta}{=}
 \q[\langle a\rangle] \overset{\q[\langle\rangle]}{=}
-a
-\]
+a.
+$
 If we want to specify open inputs $A':\Ty\,(\diamond\ext C)\,0$, and
 $a' : \Tm\,(\diamond\ext C)\,A'$, we have to weaken our function to
 accept them:
-\[
-\lam\,(\lam\,\q)[\p] : \Tm\,(\diamond\ext C)\,\Big(\Pi\,(\U\,0)\,\big(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q)\big)[\p]\Big).
-\]
+$
+\lam\,(\lam\,\q)[\p] : \Tm\,(\diamond\ext C)\,(\Pi\,(\U\,0)\,(\Lift\,(\El\,\q)\Ra\Lift\,(\El\,\q))[\p]).
+$
 But we have
 $
 \lam\,(\lam\,\q)[\p] \overset{\lam[]\,2\text{x}}{=} \lam\,(\lam\,(\q[\p^{++}])) \overset{\q[^+]}{=} \lam\,(\lam\,\q)
@@ -833,9 +833,9 @@ $
 (with different implicit arguments for the $\lam$s on the left and right hand side), so we are able to apply $\cd\,A'$
 and $a'$ just as before. What we cannot do is to directly weaken a
 term in context $\diamond$ to an arbitrary context $\Gamma$, where
-$\Gamma$ is a metavariable. If we know that $\Gamma$ has lengh $n$,
-then we can do the weakening by
-$\blank\underbrace{[\p][\p]\dots[\p]}_{\text{$n$ times}}$. If we work
+$\Gamma$ is a metavariable. If we know that $\Gamma$ has length $n$,
+then we can do the weakening by applying $\blank[\p]$ to it $n$ times.
+If we work
 in the syntax, then we can derive such weakenings (and more) using the
 methods of Section \ref{sec:admissible}.
 
@@ -850,18 +850,18 @@ that the roundtrips are identities. These isomorphisms are also
 by the equations $\El[]$, $\un[]$, $\cd[]$, $\mk[]$.
 
 $\Sigma$ types were introduced by a similar isomorphism, and we give
-names to the roundtrips eqautions according to our convention introduced in
+names to the roundtrips equations according to our convention introduced in
 Section \ref{sec:metatheory}: $\Sigma\beta_1 : \fst\,(a,b) = a$,
 $\Sigma\beta_2 : \snd\,(a,b) = b$ and $\Sigma\eta : w =
 (\fst\,w,\snd\,w)$. Naturality for $\Sigma$ was only stated in one
 direction (${,}[]$), naturalities in the other direction are
-derivable:
-\begin{alignat*}{10}
-  & (\fst\,w)[\gamma] && {=}(\Sigma\beta_1)                             && (\snd\,w)[\gamma] && {=}(\Sigma\beta_2)                             \\
-  & \fst\,\big((\fst\,w)[\gamma],(\snd\,w)[\gamma]\big)\, && {=}({,}[]) \hspace{6em} && \snd\,\big((\fst\,w)[\gamma],(\snd\,w)[\gamma]\big)\, && {=}({,}[]) \\
-  & \fst\,\big((\fst\,w,\snd\,w)[\gamma]\big) && {=}(\Sigma\eta)        && \snd\,\big((\fst\,w,\snd\,w)[\gamma]\big) && {=}(\Sigma\eta)        \\
-  & \fst\,(w[\gamma])                                                && && \snd\,(w[\gamma])                                                   
-\end{alignat*}
+derivable, for $\fst$ this is
+$
+(\fst\,w)[\gamma]  \overset{\Sigma\beta_1}{=}                          
+\fst\,\big((\fst\,w)[\gamma],(\snd\,w)[\gamma]\big) \overset{{,}[]}{=} 
+\fst\,\big((\fst\,w,\snd\,w)[\gamma]\big)  \overset{\Sigma\eta}=        
+\fst\,(w[\gamma]).
+$
 For $\Pi$ types, we construct a similar isomorphism
 $
 (\lambda t.t[\p]\cdot\q) : \Tm\,\Gamma\,(\Pi\,A\,B) \cong \Tm\,(\Gamma\ext A)\,B : \lam.
@@ -873,51 +873,39 @@ Section \ref{sec:admissible}. As above with weakening into an
 arbitrary context, this equation holds in the syntax, bot not in an
 arbitrary model.
 %and also if $t$ is not a metavariable, but an operation, e.g. if $t = \q$ or $t = \q[\p]\cdot\q$).
-The otherroundtrip is exactly $\Pi\eta : \lam\,(t[\p]\cdot\q) = t$.
+The other roundtrip is exactly $\Pi\eta : \lam\,(t[\p]\cdot\q) = t$.
 
 We construct another isomorphism between terms depending on a variable and
 terms depending on the lifted version of the same variable:
-\[
+\begin{equation}\label{eq:liftvar}
 (\lambda t.t[\p^+][\langle\un\,\q\rangle]) : \Tm\,(\Gamma\ext A)\,B \cong \Tm\,(\Gamma\ext\Lift\,A)\,(B[\p^+][\langle\q\rangle]) : (\lambda t.t[\p^+][\langle\mk\,\q\rangle])
-\]
-To derive the roundtrips, we again need admissible equations. Here is
-the proof of the first roundtrip equality, the other is analogous:
-\begin{alignat*}{10}
-  & t[\p^+][\langle\un\,\q\rangle][\p^+][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
-  & t[\p^+][{\p^+}^+][\langle\un\,\q[\p^+]\rangle][\langle\mk\,\q\rangle] && {=}(\un[]) \\
-  & t[\p^+][{\p^+}^+][\langle\un\,(\q[\p^+])\rangle][\langle\mk\,\q\rangle] && {=}(\q[^+]) \\
-  & t[\p^+][{\p^+}^+][\langle\un\,\q\rangle][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
-  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,\q[\langle\mk\,\q\rangle]\rangle] && {=}(\un[]) \\
-  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\q[\langle\mk\,\q\rangle])\rangle] && {=}(\q[\langle\rangle]) \\
-  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\mk\,\q)\rangle] && {=}(\Lift\beta) \\
-  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted1}) \\
-  & t[\p^+][\p^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted2}) \\
-  & t[\p^+][\langle\q\rangle] && {=}(\ref{eq:lifted4}) \\
-  & t
-\end{alignat*}
+\end{equation}
+To derive the roundtrips, we again need admissible equations. We prove
+the first roundtrip equality in Appendix \ref{app:liftvar}, the other
+is analogous.
 Once we have all the above isomorphisms, we can compose them to obtain commutation of $\Lift$ and $\Pi$:
 \begin{alignat*}{10}
-  & \Tm\,\Gamma\,\big(\Lift\,(\Pi\,A\,B)\big) && {\cong}\text{($\Lift$ iso)} \\
-  & \Tm\,\Gamma\,(\Pi\,A\,B) && {\cong}\text{($\Pi$ iso)} \\
-  & \Tm\,(\Gamma\ext A)\,B && {\cong}\text{($\Lift$ iso)} \\
-  & \Tm\,(\Gamma\ext A)\,(\Lift\,B) && {\cong}\text{(lifted variable iso)} \\
-  & \Tm\,(\Gamma\ext \Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle]) && {\cong}\text{($\Pi$ iso)} \\
-  & \Tm\,\Gamma\,\big(\Pi\,(\Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle])\big)
+  & \Tm\,\Gamma\,\big(\Lift\,(\Pi\,A\,B)\big) \overset{\text{$\Lift$}}{\cong}
+  \Tm\,\Gamma\,(\Pi\,A\,B) \overset{\text{$\Pi$}}{\cong} 
+  \Tm\,(\Gamma\ext A)\,B \overset{\text{$\Lift$}}{\cong} 
+  \Tm\,(\Gamma\ext A)\,(\Lift\,B) \overset{\text{lifted var}}{\cong} \\
+  & \Tm\,(\Gamma\ext \Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle]) \overset{\text{$\Pi$}}{\cong}
+  \Tm\,\Gamma\,\big(\Pi\,(\Lift\,A)\,(\Lift\,B[\p^+][\langle\un\,\q\rangle])\big)
 \end{alignat*}
 We hope that the above examples demonstrated the need for equations
 (\ref{eq:lifted1})--(\ref{eq:lifted4}) which we will prove in the next
 section.
 
-\subsection{Standard model}
-\label{sec:standard}
-
-As a sanity check for our notion of SSC-model, we defined the standard
-(metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
-SSC-based calculus in Agda. For convenience, we used an
-inductive-recursive universe to define the infinite hierarchy of types
-\cite{DBLP:journals/jsyml/Dybjer00,DBLP:conf/csl/Kovacs22}. All
-SSC-equations hold by reflexivity in this model. We defined the
-analogous CwF-based standard model.
+% \subsection{Standard model}
+% \label{sec:standard}
+% 
+% As a sanity check for our notion of SSC-model, we defined the standard
+% (metacircular \cite{DBLP:conf/popl/AltenkirchK16}) model of the
+% SSC-based calculus in Agda. For convenience, we used an
+% inductive-recursive universe to define the infinite hierarchy of types
+% \cite{DBLP:journals/jsyml/Dybjer00,DBLP:conf/csl/Kovacs22}. All
+% SSC-equations hold by reflexivity in this model. We defined the
+% analogous CwF-based standard model.
 
 
 \section{Admissible equations}
@@ -926,8 +914,7 @@ analogous CwF-based standard model.
 In this section we show that our SSC-based syntax is isomorphic to the
 CwF-based syntax with the same type formers.\footnote{Using the two translations from SOGATs to GATs
 \cite{DBLP:conf/fscd/KaposiX24}, we can rephrase the contents of this
-section as follows: the syntaxes of the single and parallel
-substitution first order versions of the SOGAT \ref{eq:tt} are
+section as follows: the parallel and single substitution syntax of the SOGAT (\ref{eq:tt}) are
 isomorphic.}
 
 \begin{definition}[CwF]\label{def:cwf}
@@ -952,6 +939,7 @@ all CwF operations and equations.
 The following four equations correspond to equations in B-systems which cannot
 be derived from the equations of SSC, these are versions of equations in Section
 \ref{sec:tt} lifted over arbitrary amount of $\blank^+$s.
+\setlength{\columnsep}{4em}
 \begin{multicols}{2}\noindent
 \begin{alignat}{10}
   B[\p^{+^n}][(\gamma^+)^{+^n}] & = B[\gamma^{+^n}][\p^{+^n}] \label{eq:lifted1} \\
@@ -959,10 +947,11 @@ be derived from the equations of SSC, these are versions of equations in Section
 \end{alignat}
 \columnbreak
 \begin{alignat}{10}
-  B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \label{eq:lifted3} \\
-  B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B\label{eq:lifted4}
+  \hspace{-4em} B[\langle a \rangle^{+^n}][\gamma^{+^n}] & = B[(\gamma^+)^{+^n}][\langle a[\gamma] \rangle^{+^n}] \label{eq:lifted3} \\
+  \hspace{-4em} B[(\p^+)^{+^n}][\langle\q\rangle^{+^n}] & = B\label{eq:lifted4}
 \end{alignat}
 \end{multicols}
+\vspace{-2em}
 The corresponding equations on terms are also needed. Note that we do not have
 the non-lifted term versions of the last two equations in SSC.
 
@@ -1073,7 +1062,7 @@ convert it into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
   & \Tms && : \Con\ra\Con\ra\Con && \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
   & \epsilon && : \Tms\,\Gamma\,\diamond && \llcorner\epsilon\lrcorner && := \id\circ\p\circ\dots\circ\p \\
-  & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A)\hspace{2em} && \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
+  & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A)\hspace{1.9em} && \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
 \end{alignat*}
 The computation of instantiating with $\Tms$ is illustrated below. On the
 right-hand side, we first weaken $B$ to the context in which the $a_i$'s live,
@@ -1131,14 +1120,14 @@ $[\p][^+]'$ rule is enough: the input equation holds for $B := \U\,i$
 via $\U[]$, thus we get that for any $\hat{A} : \Tm\,\Gamma\,(\U\,i)$,
 $\hat{A}[\p][\gamma^+] = \hat{A}[\gamma][\p]$. But every type has a
 code in the universe, so for a $B : \Ty\,\Gamma\,i$,
-\[
+$
 B[\p][\gamma^+] \overset{\U\beta}{=}
 \El\,(\cd\,B)[\p][\gamma^+] \overset{\El[]}{=}
 \El\,((\cd\,B)[\p][\gamma^+]) \overset{[\p][^+]'\,\U[]}{=}
 \El\,((\cd\,B)[\gamma][\p]) \overset{\El[]}{=}
 \El\,(\cd\,B)[\gamma][\p] \overset{\U\beta}{=}
 B[\gamma][\p].
-\]
+$
 Equation $[\q][^+] : \q[\gamma^+] = \q$ also only makes sense if we
 have $[\p][^+]$ for types, so either we have to make $[\q][^+]$
 conditional, or we coerce it along the derived equation.
@@ -1164,18 +1153,18 @@ $
 $
 Again, for $B = \U$ we have the assumption $e$. But then $t$ is in
 $\Tm\,\Gamma\,(\Pi\,A\,\U)$, which is isomorphic to $\Ty\,(\Gamma\ext
-A)$. So we argue as follows for any $B : \Ty\,(\Gamma\ext A)$.
-\begin{alignat*}{20}
-  & B[\langle a\rangle][\gamma] \overset{\U\beta}{=}
+A)$. So we argue as follows for any $B : \Ty\,(\Gamma\ext A)$:
+$
+  B[\langle a\rangle][\gamma] \overset{\U\beta}{=}
   \El\,(\cd\,(B[\langle a\rangle][\gamma])) \overset{\cd[]}{=}
   \El\,((\cd\,B)[\langle a\rangle][\gamma]) \overset{\Pi\beta}{=}
-  \El\,((\lam\,(\cd\,B)\cdot a)[\gamma]) \overset{\cdot[]'\,\U[])}{=} \\
-  & \El\,((\lam\,(\cd\,B)[\gamma])\cdot (a[\gamma])) \overset{\lam[]}{=}
+  \El\,((\lam\,(\cd\,B)\cdot a)[\gamma]) \overset{\cdot[]'\,\U[])}{=}
+  \El\,((\lam\,(\cd\,B)[\gamma])\cdot (a[\gamma])) \overset{\lam[]}{=}
   \El\,(\lam\,(\cd\,B[\gamma^+])\cdot (a[\gamma])) \overset{\Pi\beta}{=}
-  \El\,(\cd\,B[\gamma^+][\langle a[\gamma]\rangle]) \overset{\cd[]}{=} \\
-  & \El\,(\cd\,B)[\gamma^+][\langle a[\gamma]\rangle] \overset{\U\beta}{=}
-  B[\gamma^+][\langle a[\gamma]\rangle]
-\end{alignat*}
+  \El\,(\cd\,B[\gamma^+][\langle a[\gamma]\rangle]) \overset{\cd[]}{=}
+  \El\,(\cd\,B)[\gamma^+][\langle a[\gamma]\rangle] \overset{\U\beta}{=}
+  B[\gamma^+][\langle a[\gamma]\rangle].
+$
 Hence, the conditional $\cdot[]'$ equation implies the condition for
 all types.
 
@@ -1189,24 +1178,24 @@ with a more general variant conditional on the same equation.
 But first we need to check that the usage of $\Pi\beta$ above when
 proving $B[\langle a\rangle][\gamma] = B[\gamma^+][\langle
   a[\gamma]\rangle]$ is derivable from $\Pi\beta'$. Assuming a
-$\hat{B} : \Tm\,(\Gamma\ext A)\,\U$,
-\begin{alignat*}{10}
-  & \Pi\beta^\U :{} \lam\,\hat{B}\cdot a \overset{\q[\langle\rangle])}{=}
+$\hat{B} : \Tm\,(\Gamma\ext A)\,\U$, we argue
+$
+  \Pi\beta^\U :{} \lam\,\hat{B}\cdot a \overset{\q[\langle\rangle])}{=}
   \lam\,\hat{B}\cdot(\q[\langle a\rangle]) \overset{[\p][\langle\rangle]}=
-  ((\lam\,\hat{B})[\p][\langle a\rangle])\cdot(\q[\langle a\rangle]) \overset{\cdot[]'\,\U[]}= \\
-  & ((\lam\,\hat{B})[\p]\cdot\q)[\langle a\rangle] \overset{\Pi\beta'\,\U[]}=
+  ((\lam\,\hat{B})[\p][\langle a\rangle])\cdot(\q[\langle a\rangle]) \overset{\cdot[]'\,\U[]}=
+  ((\lam\,\hat{B})[\p]\cdot\q)[\langle a\rangle] \overset{\Pi\beta'\,\U[]}=
   \hat{B}[\langle a\rangle].
-\end{alignat*}
-Now we derive the assumption of $\Pi\beta'/\Pi\eta'$ for any type $B : \Ty\,(\Gamma\ext A)$.
-\begin{alignat*}{10}
-  & B[\p^+][\langle\q\rangle] \overset{\U\beta}=
+$
+Now, for any type $B : \Ty\,(\Gamma\ext A)$, we derive the assumption of $\Pi\beta'/\Pi\eta'$:
+$
+  B[\p^+][\langle\q\rangle] \overset{\U\beta}=
   \El\,(\cd\,B)[\p^+][\langle\q\rangle] \overset{\El[]}=
   \El\,(\cd\,B[\p^+][\langle\q\rangle]) \overset{\Pi\beta^\U}=
-  \El\,(\lam\,(\cd\,B[\p^+])\cdot\q) \overset{\lam[]}= \\
-  & \El\,(\lam\,(\cd\,B)[\p]\cdot\q) \overset{\Pi\beta'\,\U[]}=
+  \El\,(\lam\,(\cd\,B[\p^+])\cdot\q) \overset{\lam[]}= 
+  \El\,(\lam\,(\cd\,B)[\p]\cdot\q) \overset{\Pi\beta'\,\U[]}=
   \El\,(\cd\,B) \overset{\U\beta}=
-  B
-\end{alignat*}
+  B.
+$
 We summarise this section by formally stating what we defined.
 
 \begin{definition}[Minimised single substitution calculus with $\Pi$ and $\U$]\label{def:min}
@@ -1252,7 +1241,7 @@ metacircular interpretation \cite{DBLP:conf/popl/AltenkirchK16},
 contextualisation \cite{DBLP:conf/fscd/BocquetKS23}. Following
 \cite{kaposi-shallow} we call it termification, as most sorts in the
 new model are terms in the old model.
-\begin{problem}[Termification]
+\begin{problem}[Termification]\label{prob:termification}
   From a model of SSC (with $\Pi, \dots, \Sigma$, see Definition
   \ref{def:sigma}), we define a CwF (with the same type formers).
 \end{problem}
@@ -1292,28 +1281,15 @@ new model are terms in the old model.
   \begin{alignat*}{10}
     & \Con && := \Ty\,\diamond                                           && \Ty\,\Gamma && := \Tm\,\diamond\,(\Gamma\Ra\U) && \p && := \lam\,(\fst\,\q) \\                     
     & \Sub\,\Delta\,\Gamma && := \Tm\,\diamond\,(\Delta\Ra\Gamma)        && A[\gamma] && := \lam\,(A[\p]\cdot(\gamma[\p]\cdot\q)) && \q && := \lam\,(\snd\,\q) \\
-    & \gamma\circ\delta && := \lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q)) \hspace{1.5em} && \Tm\,\Gamma\,A && := \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q)))\hspace{1.5em} \\   
+    & \gamma\circ\delta && := \lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q)) \hspace{1.5em} && \Tm\,\Gamma\,A && := \Tm\,\diamond\,(\Pi\,\Gamma\,(\El\,(A[\p]\cdot\q)))\hspace{1.1em} \\   
     & \id && := \lam\,\q                                                 && a[\gamma] && := \lam\,(a[\p]\cdot(\gamma[\p]\cdot\q)) \\                      
     & \diamond && := \top                                                && \Gamma\ext A && := \Sigma\,\Gamma\,(\El\,(A[\p]\cdot\q)) \\                   
     & \epsilon && := \lam\,\tt                                           && (\gamma,a) && := \lam\,(\gamma[\p]\cdot\q,a[\p]\cdot\q)
   \end{alignat*}
   Context extension is given by $\Sigma$ types and pairing/projections
   by pairing/projections of $\Sigma$. All the CwF equations hold, for
-  example we derive the functor law for type substitution:
-  \begin{equation}
-  \begin{alignedat}{10}\label{eq:functor}
-    & A[\gamma\circ\delta] && {=} \\
-    & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q))[\p]\cdot\q)) && {=}(\lam[]) \\
-    & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p][\p^+]\cdot(\delta[\p][\p^+]\cdot\q))\cdot\q)) && {=}(\Pi\beta, {\cdot}[]) \\
-    & \lam\,(A[\p]\cdot(\gamma[\p][\p^+][\langle\q\rangle]\cdot(\delta[\p][\p^+][\langle\q\rangle]\cdot\q))) && {=}([\p][^+]) \\
-    & \lam\,(A[\p]\cdot(\gamma[\p][\p][\langle\q\rangle]\cdot(\delta[\p][\p][\langle\q\rangle]\cdot\q))) && {=}([\p][\langle\rangle]) \\
-    & \lam\,(A[\p]\cdot(\gamma[\p]\cdot(\delta[\p]\cdot\q))) && {=}(\Pi\beta) \\
-    & \lam\,(\lam\,(A[\p][\p^+]\cdot(\gamma[\p][\p^+]\cdot\q))\cdot(\delta[\p]\cdot\q))\,\, && {=}(\lam[]) \\
-    & \lam\,(\lam\,(A[\p]\cdot(\gamma[\p]\cdot\q))[\p]\cdot(\delta[\p]\cdot\q)) && {=} \\
-    & A[\gamma][\delta]
-  \end{alignedat}
-  \end{equation}
-  Type formers are added by adjusting them to handle contexts built up
+  example we derive the functor law for type substitution in Appendix
+  \ref{app:functor}. Type formers are added by adjusting them to handle contexts built up
   by $\Sigma$ types, for example,
   $
   \Pi\,A\,B := \lam\,(\cd\,(\Pi\,(\El\,(A[\p]\cdot\q))\,(\El\,(B[\p][\p]\cdot(\q[\p],\q)))))
@@ -1338,12 +1314,10 @@ specified by universal properties.
     & F : \Sub_{M'}\,\Delta\,\Gamma\ra\Sub_M\,(F\,\Delta)\,(F\,\Gamma)\hspace{3em} && F : \Tm_{M'}\,\Gamma\,A \cong \Tm_M\,(F\,\Gamma)\,(F\,A)
   \end{alignat*}
   We define them in the same order, omitting the $M$ subscripts:
-  \[
-  F\,\Gamma := \diamond\ext\Gamma  \hspace{3em}
-  F\,\gamma := (\p,\gamma[\p]\cdot\q) \hspace{3em}
-  F\,A := \El\,(A[\p]\cdot\q)  \hspace{3em}
-  F\,a := a[\p]\cdot\q
-  \]
+  $F\,\Gamma := \diamond\ext\Gamma$, 
+  $F\,\gamma := (\p,\gamma[\p]\cdot\q)$, 
+  $F\,A := \El\,(A[\p]\cdot\q)$, 
+  $F\,a := a[\p]\cdot\q$.
 %  \begin{alignat*}{10}
 %    & F : \Ty\,\diamond\ra\Con && F : \Tm\,\diamond\,(\Gamma\Ra\U) \cong \Tm\,(\diamond\ext\Gamma)\,\U \cong \Ty\,(\diamond\ext\Gamma) \\
 %    & F\,\Gamma := \diamond\ext\Gamma && F\,A := \El\,(A[\p]\cdot\q) \\
@@ -1369,76 +1343,92 @@ of contextual isomorphism for SSCs as future work.
 \section{Conclusions and further work}
 \label{sec:conclusion}
 
-Why are we still looking at alternative ways of defining type theory?
-New definitions might be closer to actual implementations, suggest new
-implementation techniques, they might be better pedagogically, have
-more models, or contribute to a coherent definition. We elaborate on
-the latter.
+We described type theory in a minimalistic way, without referring to
+categories or parallel substitutions. Our presentation has pedagogical
+value, as illustrated in Section \ref{sec:tt}.
+%
+It is amazing that any type theory can be described with such a
+minimal substitution calculus: the lifted equations
+(\ref{eq:lifted1})--(\ref{eq:lifted4}) are not required. We use them
+when proving properties of the syntax (such as normalisation), but
+they are admissible.
 
-Defining a useable syntax of type theory internally to homotopy type
-theory (HoTT \cite{HoTTbook}) is an open problem \cite{mike,nicolai}: the (h)set-truncated
-syntax can be formalised as a QIIT, but then we cannot even define the
-$\Type$-interpretation, that is, a function from the syntax which
-interprets closed types in the metatheoretic universe $\Type$ (rather
-than an inductive recursive universe as in Subsection
-\ref{sec:standard} or \cite[Section
-  4]{DBLP:conf/popl/AltenkirchK16}). In two-level type theory the
-syntax of type theory can be defined using infinitely many coherence
-rules \cite{DBLP:conf/lics/Kraus21}. For example, for substitution
-$\Sub$, we have an equation in the syntax on the associativity of composition of substitutions.
-If we truncate our syntax to be a set, then this is
-enough. If we don't truncate, there are two different ways of proving
-$((\gamma\circ\delta)\circ\theta)\circ\xi =
-\gamma\circ(\delta\circ(\theta\circ\xi))$, and nothing forces these to
-be the same, so in such a (wild) syntax substitutions don't form a
-set, hence they don't have decidable equality \cite{hedberg}. The
-solution is to add the pentagon law stating that these two equalities are equal, but then this introduces new
-higher equalities, which require more coherence laws, so in the end we
-have an infinite sequence of higher coherence laws that need to be
-part of the syntax. Our single substitution calculus does not have
-composition for $\Sub$, so there is no need for higher coherence laws
-like associativity. However as it currently stands, our syntax is not
-coherent, it needs set-truncation when working in HoTT. For example,
-there are two different ways to prove the following equation:
-\begin{alignat*}{10}
-  & (\cd\,\U)[\p][\langle a\rangle] \overset{[\p][\langle\rangle]}{=} \cd\,\U \\
-  & (\cd\,\U)[\p][\langle a\rangle] \overset{\cd[]}{=} \cd\,(\U[\p][\langle a\rangle]) \overset{\U[]}{=} \cd\,\U
-\end{alignat*}
-In a coherent version of our syntax we either need to state that these
-two proofs are equal, or we have to remove one of them. We can remove
-the first one by limiting $[\p][\langle\rangle]$ to only apply to
-variables (this needs the introduction of a new sort for
-variables). If we do this, the minimisation of Section
-\ref{sec:minimisation} does not work anymore, so we need the extra
-four equations for types ($[\p][^+]$, $[\p][\langle\rangle]$,
-$[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$). These equations on
-types make the syntax non-coherent again. A possible way out of this
-would be to make the equations that depend on one of these 
- conditional. But then the methods of Section
-\ref{sec:admissible} don't work anymore for re-proving the needed
-admissible equations. Also, if we only have the rule $[\p][^+]$ for
-variables, we cannot redo the termification of Section
-\ref{sec:cwf}, e.g.\ it is not clear how to prove equation
-(\ref{eq:functor}).
+In the future, we would like to investigate whether the calculus can
+be minimised even more, e.g.\ to the degree that there is only one
+equation between any two terms. This would be interesting for a
+possible coherent syntax of type theory avoiding the need for
+truncation in the setting of homotopy type theory.
 
-In this paper we unfolded a particular example of the SOGAT $\ra$
-single substitution GAT translation
-\cite{DBLP:conf/fscd/KaposiX24}. We showed that for this theory, the
-syntax is isomorphic to the parallel syntax, and we conjecture that
-our method works for any SOGAT. For our particular SOGAT, we minimised the single
-substitution syntax, and we even have that any
-single substitution model is equivalent to a parallel model in a weak
-sense. This shows that if we have enough type formers, the
-substitution calculus can be very weak, and still enough to bootstrap
-the usual theory. It needs further investigation whether we can remove
-even more structural rules, and still obtain isomorphic syntaxes. We
-would also like to understand what a good notion of weak equivalence
-is for single substitution models.
-
-TODO: named CwFs would be even closer to usual syntax.
-
+% Why are we still looking at alternative ways of defining type theory?
+% New definitions might be closer to actual implementations, suggest new
+% implementation techniques, they might be better pedagogically, have
+% more models, or contribute to a coherent definition. We elaborate on
+% the latter.
+% 
+% Defining a useable syntax of type theory internally to homotopy type
+% theory (HoTT \cite{HoTTbook}) is an open problem \cite{mike,nicolai}: the (h)set-truncated
+% syntax can be formalised as a QIIT, but then we cannot even define the
+% $\Type$-interpretation, that is, a function from the syntax which
+% interprets closed types in the metatheoretic universe $\Type$ (rather
+% than an inductive recursive universe as in Subsection
+% \ref{sec:standard} or \cite[Section
+%   4]{DBLP:conf/popl/AltenkirchK16}). In two-level type theory the
+% syntax of type theory can be defined using infinitely many coherence
+% rules \cite{DBLP:conf/lics/Kraus21}. For example, for substitution
+% $\Sub$, we have an equation in the syntax on the associativity of composition of substitutions.
+% If we truncate our syntax to be a set, then this is
+% enough. If we don't truncate, there are two different ways of proving
+% $((\gamma\circ\delta)\circ\theta)\circ\xi =
+% \gamma\circ(\delta\circ(\theta\circ\xi))$, and nothing forces these to
+% be the same, so in such a (wild) syntax substitutions don't form a
+% set, hence they don't have decidable equality \cite{hedberg}. The
+% solution is to add the pentagon law stating that these two equalities are equal, but then this introduces new
+% higher equalities, which require more coherence laws, so in the end we
+% have an infinite sequence of higher coherence laws that need to be
+% part of the syntax. Our single substitution calculus does not have
+% composition for $\Sub$, so there is no need for higher coherence laws
+% like associativity. However as it currently stands, our syntax is not
+% coherent, it needs set-truncation when working in HoTT. For example,
+% there are two different ways to prove the following equation:
+% \begin{alignat*}{10}
+%   & (\cd\,\U)[\p][\langle a\rangle] \overset{[\p][\langle\rangle]}{=} \cd\,\U \\
+%   & (\cd\,\U)[\p][\langle a\rangle] \overset{\cd[]}{=} \cd\,(\U[\p][\langle a\rangle]) \overset{\U[]}{=} \cd\,\U
+% \end{alignat*}
+% In a coherent version of our syntax we either need to state that these
+% two proofs are equal, or we have to remove one of them. We can remove
+% the first one by limiting $[\p][\langle\rangle]$ to only apply to
+% variables (this needs the introduction of a new sort for
+% variables). If we do this, the minimisation of Section
+% \ref{sec:minimisation} does not work anymore, so we need the extra
+% four equations for types ($[\p][^+]$, $[\p][\langle\rangle]$,
+% $[\langle\rangle][]$, $[\p^+][\langle\q\rangle]$). These equations on
+% types make the syntax non-coherent again. A possible way out of this
+% would be to make the equations that depend on one of these 
+%  conditional. But then the methods of Section
+% \ref{sec:admissible} don't work anymore for re-proving the needed
+% admissible equations. Also, if we only have the rule $[\p][^+]$ for
+% variables, we cannot redo the termification of Section
+% \ref{sec:cwf}, e.g.\ it is not clear how to prove equation
+% (\ref{eq:functor}).
+% 
+% In this paper we unfolded a particular example of the SOGAT $\ra$
+% single substitution GAT translation
+% \cite{DBLP:conf/fscd/KaposiX24}. We showed that for this theory, the
+% syntax is isomorphic to the parallel syntax, and we conjecture that
+% our method works for any SOGAT. For our particular SOGAT, we minimised the single
+% substitution syntax, and we even have that any
+% single substitution model is equivalent to a parallel model in a weak
+% sense. This shows that if we have enough type formers, the
+% substitution calculus can be very weak, and still enough to bootstrap
+% the usual theory. It needs further investigation whether we can remove
+% even more structural rules, and still obtain isomorphic syntaxes. We
+% would also like to understand what a good notion of weak equivalence
+% is for single substitution models.
+% 
+% TODO: named CwFs would be even closer to usual syntax.
+% 
 \bibliography{b}
-
+ 
 \appendix
 
 \section{Detailed comparison with B-systems}
@@ -1564,6 +1554,25 @@ Rules for individual type formers.
   & \Lift\eta && : \mk\,(\un\,a) = a
 \end{alignat*}
 
+\section{Equation for lifting variables}
+\label{app:liftvar}
+
+Here we prove one of the roundtrips in the isomorphism
+(\ref{eq:liftvar}), the other is analogous:
+\begin{alignat*}{10}
+  & t[\p^+][\langle\un\,\q\rangle][\p^+][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,\q[\p^+]\rangle][\langle\mk\,\q\rangle] && {=}(\un[]) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,(\q[\p^+])\rangle][\langle\mk\,\q\rangle] && {=}(\q[^+]) \\
+  & t[\p^+][{\p^+}^+][\langle\un\,\q\rangle][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,\q[\langle\mk\,\q\rangle]\rangle] && {=}(\un[]) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\q[\langle\mk\,\q\rangle])\rangle] && {=}(\q[\langle\rangle]) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\un\,(\mk\,\q)\rangle] && {=}(\Lift\beta) \\
+  & t[\p^+][{\p^+}^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted1}) \\
+  & t[\p^+][\p^+][\langle\mk\,\q\rangle^+][\langle\q\rangle] && {=}(\ref{eq:lifted2}) \\
+  & t[\p^+][\langle\q\rangle] && {=}(\ref{eq:lifted4}) \\
+  & t
+\end{alignat*}
+
 \section{Listing of Definition \ref{def:min}}
 \label{app:minimisation}
 
@@ -1612,5 +1621,25 @@ syntax defined in Section \ref{sec:minimisation}.
   & \Lift\beta && : \un\,(\mk\,a) = a \\
   & \Lift\eta && : \mk\,(\un\,a) = a
 \end{alignat*}
+
+\section{An equation in termification}
+\label{app:functor}
+
+As an example of the equations in the termification model construction
+(Problem \ref{prob:termification}), we derive one of the functor laws
+for types:
+\begin{equation*}
+\begin{alignedat}{10}
+  & A[\gamma\circ\delta] && {=} \\
+  & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p]\cdot(\delta[\p]\cdot\q))[\p]\cdot\q)) && {=}(\lam[]) \\
+  & \lam\,(A[\p]\cdot(\lam\,(\gamma[\p][\p^+]\cdot(\delta[\p][\p^+]\cdot\q))\cdot\q)) && {=}(\Pi\beta, {\cdot}[]) \\
+  & \lam\,(A[\p]\cdot(\gamma[\p][\p^+][\langle\q\rangle]\cdot(\delta[\p][\p^+][\langle\q\rangle]\cdot\q))) && {=}([\p][^+]) \\
+  & \lam\,(A[\p]\cdot(\gamma[\p][\p][\langle\q\rangle]\cdot(\delta[\p][\p][\langle\q\rangle]\cdot\q))) && {=}([\p][\langle\rangle]) \\
+  & \lam\,(A[\p]\cdot(\gamma[\p]\cdot(\delta[\p]\cdot\q))) && {=}(\Pi\beta) \\
+  & \lam\,(\lam\,(A[\p][\p^+]\cdot(\gamma[\p][\p^+]\cdot\q))\cdot(\delta[\p]\cdot\q))\,\, && {=}(\lam[]) \\
+  & \lam\,(\lam\,(A[\p]\cdot(\gamma[\p]\cdot\q))[\p]\cdot(\delta[\p]\cdot\q)) && {=} \\
+  & A[\gamma][\delta]
+\end{alignedat}
+\end{equation*}
 
 \end{document}
