@@ -181,7 +181,7 @@ called a parallel substitution, where the terms $u_0,\dots,u_n$ are
 all in the same context. Parallel substitutions are very natural in
 the algebraic setting because they form the morphisms in a category
 where objects are contexts (lists of types), then types/terms are
-preheaves, context extension is a representability condition, so the
+presheaves, context extension is a representability condition, so the
 equations of the algebraic theory are forced by the categorical
 structure. Some examples of algebraic definitions of type theory using
 parallel substitutions ranging from the more syntactic to the more
@@ -202,7 +202,7 @@ cannot be composed, thus they do not form a category. To bridge the
 gap between the intrinsic parallel substitution world and the
 extrinsic single substitution world, Voevodsky introduced B-systems
 \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} which are an algebraic
-desription of a single substitution calculus. B-systems involve
+description of a single substitution calculus. B-systems involve
 complex rules describing telescopes, weakenings and substitutions
 under telescopes, with several equations.
 
@@ -465,7 +465,7 @@ Our metatheory is observational type theory
 (QIITs). On paper we usually omit writing coercions, so our notation
 is close to extensional type theory. Sections \ref{sec:tt} and
 \ref{sec:admissible} of this paper are formalised in the proof
-assistant Agda. The formalisation is availble at TODO \href{https://szumixie.github.io/single-subst/TT.index.html}{\Agda}. We use a strict
+assistant Agda. The formalisation is available at TODO \href{https://szumixie.github.io/single-subst/TT.index.html}{\Agda}. We use a strict
 Prop-valued \cite{DBLP:journals/pacmpl/GilbertCST19} equality type
 with postulated coercion rule (transport rule) and postulated QIITs
 with computation rules added using rewrite rules
@@ -510,7 +510,7 @@ an implicit argument of $\Tm$.
 Just as lists have two constructors, there are two ways to form
 contexts: the empty context $\diamond$ and context extension $\ext$
 which is like the snoc operation for lists. Context extension takes a
-type which can have variables in the context preceeding the type.
+type which can have variables in the context preceding the type.
 \[
 \diamond : \Con \hspace{3em}
 \blank\ext\blank : (\Gamma:\Con)\ra\Ty\,\Gamma\,i\ra\Con
@@ -745,7 +745,7 @@ $\Lift$ such as $\Lift\,(A\Ra B) = (\Lift\,A\Ra\Lift\,B)$. It however
 holds as a definitional isomorphism (see Subsection
 \ref{sec:examples}). This adds extra administration when using our
 theory, but makes stating our theory simpler, and includes more
-models. The situation is similar to the correspondance between
+models. The situation is similar to the correspondence between
 $\Ty\,\Gamma\,i$ and $\Tm\,\Gamma\,(\U\,i)$ which could have been
 stated as an equality (making universes {\`a} la Russell).
 
@@ -845,12 +845,12 @@ the following isomorphisms:
 \El:\Tm\,\Gamma\,(\U\,i) \cong \Ty\,\Gamma\,i:\cd \hspace{5em} \un:\Tm\,\Gamma\,(\Lift\,A)\cong\Tm\,\Gamma\,A:\mk
 \]
 The $\U\beta$, $\U\eta$ and $\Lift\beta$, $\Lift\eta$ rules express
-that the roundtrips are identities. These isomorphisms are also
+that the round-trips are identities. These isomorphisms are also
 \emph{natural}, or compatible with substitutions: these are expressed
 by the equations $\El[]$, $\un[]$, $\cd[]$, $\mk[]$.
 
 $\Sigma$ types were introduced by a similar isomorphism, and we give
-names to the roundtrips equations according to our convention introduced in
+names to the round-trips equations according to our convention introduced in
 Section \ref{sec:metatheory}: $\Sigma\beta_1 : \fst\,(a,b) = a$,
 $\Sigma\beta_2 : \snd\,(a,b) = b$ and $\Sigma\eta : w =
 (\fst\,w,\snd\,w)$. Naturality for $\Sigma$ was only stated in one
@@ -866,22 +866,22 @@ For $\Pi$ types, we construct a similar isomorphism
 $
 (\lambda t.t[\p]\cdot\q) : \Tm\,\Gamma\,(\Pi\,A\,B) \cong \Tm\,(\Gamma\ext A)\,B : \lam.
 $
-The first roundtrip equality is proven as
+The first round-trip equality is proven as
 $\beta : (\lam\,t)[\p]\cdot\q \overset{\lam[]}{=} \lam\,(t[\p^+])\cdot\q \overset{\Pi\beta}{=} t[p^+][\langle\q\rangle] \overset{\text{(\ref{eq:lifted4})}}{=} t$.
 The last step is the admissible equation (\ref{eq:lifted4}) from
 Section \ref{sec:admissible}. As above with weakening into an
-arbitrary context, this equation holds in the syntax, bot not in an
+arbitrary context, this equation holds in the syntax, but not in an
 arbitrary model.
 %and also if $t$ is not a metavariable, but an operation, e.g. if $t = \q$ or $t = \q[\p]\cdot\q$).
-The other roundtrip is exactly $\Pi\eta : \lam\,(t[\p]\cdot\q) = t$.
+The other round-trip is exactly $\Pi\eta : \lam\,(t[\p]\cdot\q) = t$.
 
 We construct another isomorphism between terms depending on a variable and
 terms depending on the lifted version of the same variable:
 \begin{equation}\label{eq:liftvar}
 (\lambda t.t[\p^+][\langle\un\,\q\rangle]) : \Tm\,(\Gamma\ext A)\,B \cong \Tm\,(\Gamma\ext\Lift\,A)\,(B[\p^+][\langle\q\rangle]) : (\lambda t.t[\p^+][\langle\mk\,\q\rangle])
 \end{equation}
-To derive the roundtrips, we again need admissible equations. We prove
-the first roundtrip equality in Appendix \ref{app:liftvar}, the other
+To derive the round-trips, we again need admissible equations. We prove
+the first round-trip equality in Appendix \ref{app:liftvar}, the other
 is analogous.
 Once we have all the above isomorphisms, we can compose them to obtain commutation of $\Lift$ and $\Pi$:
 \begin{alignat*}{10}
@@ -1056,7 +1056,7 @@ redefined for $\Sub^*$.
 We can simulate parallel substitutions using $\Sub^*$ as iterated single
 substitutions, however it does not satisfy the equations of parallel
 substitutions. Thus we define parallel substitutions as lists of terms. It seems to be
-difficult to define the instatiation operation for $\Tms$ directly, so we also define
+difficult to define the instantiation operation for $\Tms$ directly, so we also define
 a map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to
 convert it into a sequence of instantiations of single substitutions.
 \begin{alignat*}{10}
@@ -1087,7 +1087,7 @@ Lemma \ref{thm:lifting} to avoid further induction on the syntax.
     \item[$\Leftarrow$] By recursion on the syntax, using $\Tms$ to interpret
     parallel substitutions.
   \end{description}
-  The roundtrips are proven by induction on the syntax.
+  The round-trips are proven by induction on the syntax.
 \end{proof}
 This also implies that the initial SSC is the initial CwF.
 
@@ -1330,14 +1330,14 @@ specified by universal properties.
   F\,a[F\,\gamma]$ and $(F\,\p,F\,\q) : \Sub\,(F\,(\Gamma\ext
   A))$ $(F\,\Gamma\ext F\,A)$ is an isomorphism. % hack
 \end{proof}
-The other roundtrip, that is, starting with an SSC-model, termifying
+The other round-trip, that is, starting with an SSC-model, termifying
 it and comparing the result with the original SSC-model does not provide an
 isomorphism because we can't define the map $F :
 \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra
 \Sub\,(\diamond\ext\Delta)\,(\diamond\ext\Gamma)$ on
 substitutions. Such a map is not definable only using single
 substitutions. However, the set of terms and types are still
-isomorphic after the roundtrip. We leave formulating the right notion
+isomorphic after the round-trip. We leave formulating the right notion
 of contextual isomorphism for SSCs as future work.
 
 \section{Conclusions and further work}
@@ -1557,7 +1557,7 @@ Rules for individual type formers.
 \section{Equation for lifting variables}
 \label{app:liftvar}
 
-Here we prove one of the roundtrips in the isomorphism
+Here we prove one of the round-trips in the isomorphism
 (\ref{eq:liftvar}), the other is analogous:
 \begin{alignat*}{10}
   & t[\p^+][\langle\un\,\q\rangle][\p^+][\langle\mk\,\q\rangle] && {=}(\ref{eq:lifted3}) \\
