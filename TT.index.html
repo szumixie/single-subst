@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>TT.index</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a>
+  <a id="15" class="Pragma">--without-K</a>
+  <a id="29" class="Pragma">--prop</a>
+  <a id="38" class="Pragma">--rewriting</a>
+  <a id="52" class="Pragma">--confluence-check</a>
+<a id="71" class="Symbol">#-}</a>
+
+<a id="76" class="Comment">{-
+This is the formalisaton for the paper
+
+  Type theory in type theory with single substitutions
+
+by Ambrus Kaposi and Szumi Xie.
+
+It is available here: https://github.com/szumixie/single-subst
+
+We typechecked it using Agda version 2.7.0.1. No library is needed.
+-}</a>
+
+<a id="344" class="Keyword">module</a> <a id="351" href="TT.index.html" class="Module">TT.index</a> <a id="360" class="Keyword">where</a>
+
+<a id="367" class="Keyword">import</a> <a id="374" href="TT.CwF.Syntax.html" class="Module">TT.CwF.Syntax</a>       <a id="394" class="Comment">-- CwF-based syntax for a theory with Π and Coquand universe</a>
+<a id="455" class="Keyword">import</a> <a id="462" href="TT.CwF.Standard.html" class="Module">TT.CwF.Standard</a>     <a id="482" class="Comment">-- its standard model</a>
+
+<a id="505" class="Keyword">import</a> <a id="512" href="TT.SSC.Syntax.html" class="Module">TT.SSC.Syntax</a>       <a id="532" class="Comment">-- the single substitution syntax for the same theory</a>
+<a id="586" class="Keyword">import</a> <a id="593" href="TT.SSC.Standard.html" class="Module">TT.SSC.Standard</a>     <a id="613" class="Comment">-- its standard model</a>
+<a id="635" class="Keyword">import</a> <a id="642" href="TT.SSC.AlphaNorm.html" class="Module">TT.SSC.AlphaNorm</a>    <a id="662" class="Comment">-- notion of α-normal forms (terms without explicit substitutions)</a>
+<a id="729" class="Keyword">import</a> <a id="736" href="TT.SSC.Lift.html" class="Module">TT.SSC.Lift</a>         <a id="756" class="Comment">-- admissible equations</a>
+<a id="780" class="Keyword">import</a> <a id="787" href="TT.SSC.Parallel.html" class="Module">TT.SSC.Parallel</a>     <a id="807" class="Comment">-- all the CwF rules hold in the single substitution syntax</a>
+
+<a id="868" class="Keyword">import</a> <a id="875" href="TT.Isomorphism.html" class="Module">TT.Isomorphism</a>      <a id="895" class="Comment">-- the single substitution and CwF-based syntaxes are isomorphic</a>
+</pre></body></html>
