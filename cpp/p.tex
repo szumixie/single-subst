@@ -16,8 +16,7 @@
 
 \keywords{type theory, category with families, substitution calculus}
 
-%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
-%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
+%\supplement{Formalisation: \url{https://szumixie.github.io/single-subst}} % TODO: add this back
 
 %\acknowledgements{I want to thank \dots}%optional
 
@@ -333,15 +332,14 @@ that we have more models than B-systems. However in the syntax of our
 theory, all the rules of B-systems are admissible. We describe the
 relationship in more detail in Appendix \ref{app:bsys}.
 %
-Kaposi and Luksa \cite{luksa} defined a telescopic single substitution
-calculus for simple type theory, it can be seen as a simply typed
+Kaposi and Luksa \cite{luksa} defined a telescopic SSC for simple type theory, it can be seen as a simply typed
 version of B-systems. They show that the category of contextual models
 of their calculus is equivalent to the category of contextual simply
-typed CwFs with function space.
+typed CwFs.
 %Their equivalence result holds even without the presence of function types.
 %In the presence of function space,
-The same equivalence holds for the simply typed version of our
-substitution calculus (TODO link).
+If we have function space, the same equivalence holds for the simply typed version of our
+substitution calculus (\href{https://szumixie.github.io/single-subst/STT.Contextual.html}{\Agda}).
 
 \vspace{-1.1em}
 \subparagraph*{Ehrhard's calculus.}
@@ -463,12 +461,14 @@ SOGAT level of abstraction: Synthethic Tait Computability
 Our metatheory is observational type theory
 \cite{DBLP:phd/hal/Pujet22} with quotient inductive-inductive types
 (QIITs). On paper we usually omit writing coercions, so our notation
-is close to extensional type theory. Sections \ref{sec:tt} and
+is close to extensional type theory. Definition \ref{def:tt} and Section
 \ref{sec:admissible} of this paper are formalised in the proof
-assistant Agda. The formalisation is available at TODO \href{https://szumixie.github.io/single-subst/TT.index.html}{\Agda}. We use a strict
-Prop-valued \cite{DBLP:journals/pacmpl/GilbertCST19} equality type
-with postulated coercion rule (transport rule) and postulated QIITs
-with computation rules added using rewrite rules
+assistant Agda. The formalisation is available online
+(\href{https://szumixie.github.io/single-subst/TT.index.html}{\Agda}). The Agda
+logos next to definitions/theorems are links to their formalised counterparts. We use a strict Prop-valued
+\cite{DBLP:journals/pacmpl/GilbertCST19} equality type with postulated
+coercion rule (transport rule) and postulated QIITs with computation
+rules added using rewrite rules
 \cite{DBLP:journals/pacmpl/CockxTW21}. Thus, we work in a setting of
 uniqueness of identity proofs (UIP), and our metatheory is
 incompatible with homotopy type theory \cite{HoTTbook}. Our notation
@@ -749,10 +749,14 @@ models. The situation is similar to the correspondence between
 $\Ty\,\Gamma\,i$ and $\Tm\,\Gamma\,(\U\,i)$ which could have been
 stated as an equality (making universes {\`a} la Russell).
 
-\begin{definition}[Single substitution calculus with $\Pi$, $\U$, $\Lift$]\label{def:tt}
+\begin{definition}[Single substitution calculus with $\Pi$, $\U$, $\Lift$ (\href{https://szumixie.github.io/single-subst/TT.SSC.Syntax.html}{\Agda})]\label{def:tt}
 This concludes the definition of our basic type theory. For
 reference, we list the same rules again in Appendix \ref{app:tt}.
 \end{definition}
+
+As a sanity check for our notion of SSC-model, we defined the standard (metacircular\slash set/type) model \cite{DBLP:conf/popl/AltenkirchK16} of the
+SSC-based calculus in Agda (\href{https://szumixie.github.io/single-subst/TT.SSC.Standard.html}{\Agda}).
+
 The theory can be extended with new type and term formers in the same
 fashion: each operation has to be indexed over arbitrary contexts and come
 equipped with a substitution rule. There is no need to add more
@@ -917,9 +921,9 @@ CwF-based syntax with the same type formers.\footnote{Using the two translations
 section as follows: the parallel and single substitution syntax of the SOGAT (\ref{eq:tt}) are
 isomorphic.}
 
-\begin{definition}[CwF]\label{def:cwf}
+\begin{definition}[CwF (see \href{https://szumixie.github.io/single-subst/TT.CwF.Syntax.html}{\Agda})]\label{def:cwf}
   A category with $\N$-many families is defined as a category (objects
-  denoted $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
+   $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
   ($\epsilon$ denotes the unique morphism into it); for each $i$ a
   presheaf of types (action on objects denoted $\Ty\,\blank\,i$,
   action on morphisms $\blank[\blank]$); for each $i$ a locally
@@ -957,14 +961,14 @@ the non-lifted term versions of the last two equations in SSC.
 
 To formally state equations (\ref{eq:lifted1})--(\ref{eq:lifted4}), we
 define telescopes as an inductive type together with a recursive
-operation to append telescopes to contexts.
+operation to append telescopes to contexts (\href{https://szumixie.github.io/single-subst/TT.SSC.Tel.html#Tel}{\Agda}).
 \begin{alignat*}{10}
   & \Tel && : \Con\ra\Set   && \rlap{$\blank+\blank : (\Gamma:\Con)\ra\Tel\,\Gamma\ra\Con$} \\
   & \diamond && : \Tel\,\Gamma && \Gamma+\diamond && := \Gamma \\
   & \blank\ext\blank && : (\Omega:\Tel\,\Gamma)\ra\Ty\,(\Gamma+\Omega)\ra\Tel\,\Gamma \hspace{3em} && \Gamma+(\Omega\ext A) && := (\Gamma+\Omega)\ext A
 \end{alignat*}
 We then define a lifting operation over any telescope mutually with an
-instantiation operation on telescopes by recursion on telescopes.
+instantiation operation on telescopes by recursion on telescopes (\href{https://szumixie.github.io/single-subst/TT.SSC.Tel.html#_[_]\%E1\%B5\%80\%CB\%A1}{\Agda}).
 \[
 \blank[\blank] : \Tel\,\Gamma\ra\Sub\,\Delta\,\Gamma\ra\Tel\,\Delta \hspace{3em}
 \blank^{+^\Omega} : (\gamma:\Sub\,\Delta\,\Gamma)\ra\Sub\,(\Delta+\Omega[\gamma])\,(\Gamma+\Omega)
@@ -980,7 +984,7 @@ A type or term is $\alpha$-normal if it does not contain instantiation
 operations, except at the leaves of the syntax tree as variables. However,
 $\alpha$-normal terms can still contain $\beta$/$\eta$ redexes, so that we do
 not need to do full normalization. We define variables and $\alpha$-normal forms
-as inductive predicates in $\Prop$ as follows.
+as inductive predicates in $\Prop$ as follows (\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html#Var}{\Agda}).
 \begin{itemize}
   \item $\q:\Tm\,(\Gamma\ext A)\ (A[\p])$ is a variable.
   \item $x[\p]:\Tm\,(\Gamma\ext A)\ (B[\p])$ is a variable if $x:\Tm\,\Gamma\,B$
@@ -999,10 +1003,10 @@ $\alpha$-normal predicate to be a proposition to ensure that it preserves the
 $\beta$/$\eta$ conversion rules.
 
 We prove that the $\alpha$-normal predicate holds for $\alpha$-normal types and
-terms instantiated with $\alpha$-normal substitutions. However, this needs to be
+terms instantiated with $\alpha$-normal substitutions (\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html\#[]\%E1\%B4\%BA\%E1\%B4\%BE}{\Agda}). However, this needs to be
 proved separately for weakenings and $\alpha$-normal single substitutions for
-the induction to be structural. We define predicates for weakening and
-$\alpha$-normal single substitutions as follows.
+the induction to be structural. We define predicates for weakening (\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html#Wk}{\Agda}) and
+$\alpha$-normal single substitutions (\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html#NSSub}{\Agda}) as follows.
 \begin{itemize}
   \item $\p$ is a weakening.
   \item $\gamma^+$ is a weakening if $\gamma$ is a weakening.
@@ -1012,9 +1016,9 @@ $\alpha$-normal single substitutions as follows.
   $\alpha$-normal single substitution.
 \end{itemize}
 We define $\alpha$-normal substitutions to be the disjoint union of weakenings
-and $\alpha$-normal single substitutions.
+and $\alpha$-normal single substitutions (\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html#NSub}{\Agda}).
 
-\begin{lemma}
+\begin{lemma}[\href{https://szumixie.github.io/single-subst/TT.SSC.AlphaNorm.html\#norm\%E1\%B5\%80}{\Agda}]
   \label{thm:alpha}
   The $\alpha$-normal predicate holds for any type and term.
 \end{lemma}
@@ -1027,20 +1031,20 @@ and $\alpha$-normal single substitutions.
 Instead of doing induction on $\alpha$-normal forms for each of equations 
 (\ref{eq:lifted1})--(\ref{eq:lifted4}), we define a general lemma which can lift any equation between
 instantiations over a telescope. For this we define $\Sub^*$ to be $\Sub$ with
-freely added identity and composition operations, we do not require it to
+freely added identity and composition operations (\href{https://szumixie.github.io/single-subst/TT.SSC.Path.html#Sub*}{\Agda}), we do not require it to
 satisfy the laws of a category as we will not compare $\Sub^*$s directly for
 equality, only between types and terms instantiated with $\Sub^*$s. All
 instantiation operations, lifting operations, and substitution rules are
-redefined for $\Sub^*$.
+redefined for $\Sub^*$ (\href{https://szumixie.github.io/single-subst/TT.SSC.Path.html}{\Agda}).
 \begin{lemma}
   \label{thm:lifting}
   Given $\gamma_0, \gamma_1 : \Sub^*\,\Delta\,\Gamma$, if for any $A:\Ty\,\Gamma$, $A[\gamma_0] = A[\gamma_1]$, and
   for any variable $x:\Tm\,\Gamma\,A$, $x[\gamma_0] = x[\gamma_1]$,
   then:
   \begin{itemize}
-    \item $\Omega[\gamma_0] = \Omega[\gamma_1]$ for $\Omega:\Tel\,\Gamma$
-    \item $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
-    \item $a[\gamma_0^{+^\Omega}] = a[\gamma_1^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
+    \item \textnormal{(\href{https://szumixie.github.io/single-subst/TT.SSC.Lift.html\#5574}{\Agda})} $\Omega[\gamma_0] = \Omega[\gamma_1]$ for $\Omega:\Tel\,\Gamma$
+    \item \textnormal{(\href{https://szumixie.github.io/single-subst/TT.SSC.Lift.html\#5713}{\Agda})} $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
+    \item \textnormal{(\href{https://szumixie.github.io/single-subst/TT.SSC.Lift.html\#5874}{\Agda})} $a[\gamma_0^{+^\Omega}] = a[\gamma_1^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
   \end{itemize}
   Note that the later equations depend on the the earlier ones.
 \end{lemma}
@@ -1058,13 +1062,13 @@ substitutions, however it does not satisfy the equations of parallel
 substitutions. Thus we define parallel substitutions as lists of terms. It seems to be
 difficult to define the instantiation operation for $\Tms$ directly, so we also define
 a map into $\Sub^*$, and reuse the instantiation operation of $\Sub^*$ to
-convert it into a sequence of instantiations of single substitutions.
+convert it into a sequence of instantiations of single substitutions (\href{https://szumixie.github.io/single-subst/TT.SSC.Parallel.html\#Tms}{\Agda}).
 \begin{alignat*}{10}
   & \Tms && : \Con\ra\Con\ra\Con && \llcorner\blank\lrcorner && : \Tms\,\Delta\,\Gamma \to \Sub^*\,\Delta\,\Gamma \\
   & \epsilon && : \Tms\,\Gamma\,\diamond && \llcorner\epsilon\lrcorner && := \id\circ\p\circ\dots\circ\p \\
   & \blank,\blank && : (\gamma:\Tms\,\Delta\,\Gamma)\ra\Tm\,\Delta\,(A[\llcorner\gamma\lrcorner])\ra\Tms\,\Delta\,(\Gamma\ext A)\hspace{1.9em} && \llcorner\gamma,a\lrcorner && := \llcorner\gamma\lrcorner^+\circ\langle a \rangle
 \end{alignat*}
-The computation of instantiating with $\Tms$ is illustrated below. On the
+The computation of instantiating with $\Tms$ (\href{https://szumixie.github.io/single-subst/TT.SSC.Parallel.html\#559}{\Agda}) is illustrated below. On the
 right-hand side, we first weaken $B$ to the context in which the $a_i$'s live,
 then replace the variables of $B$ one by one using the $a_i$'s, which are
 well-typed because of the previous weakening.
@@ -1073,9 +1077,9 @@ well-typed because of the previous weakening.
   B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
 \]
 All CwF operations and equations can be defined with $\Tms$ by induction, using
-Lemma \ref{thm:lifting} to avoid further induction on the syntax.
+Lemma \ref{thm:lifting} to avoid further induction on the syntax (\href{https://szumixie.github.io/single-subst/TT.SSC.Parallel.html}{\Agda}).
 
-\begin{problem}
+\begin{problem}[\href{https://szumixie.github.io/single-subst/TT.Isomorphism.html}{\Agda}]
   Contexts, types, and terms in the SSC syntax are isomorphic to the
   corresponding sorts in the CwF syntax. In addition $\Tms$ is isomorphic to CwF
   substitutions.
@@ -1425,7 +1429,7 @@ truncation in the setting of homotopy type theory.
 % would also like to understand what a good notion of weak equivalence
 % is for single substitution models.
 % 
-% TODO: named CwFs would be even closer to usual syntax.
+% named CwFs would be even closer to usual syntax.
 % 
 \bibliography{b}
  
