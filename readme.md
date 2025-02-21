@@ -1,7 +1,7 @@
 ## Contents of this repository
 
-* CPP [submission](https://bitbucket.org/akaposi/single/raw/no-var/cpp/p.pdf) titled "Type theory in type theory with single substitutions" by Ambrus Kaposi and Szumi Xie.
-* TYPES [abstract](types_2024/abstract.tex) titled "Type theory in type theory using single substitutions" by Ambrus Kaposi and Szumi Xie.
+* CPP [submission](https://raw.githubusercontent.com/szumixie/single-subst/main/cpp/p.pdf) titled "Type theory in type theory with single substitutions" by Ambrus Kaposi and Szumi Xie.
+* [source](types_2024/abstract.tex) of TYPES [abstract](https://types2024.itu.dk/abstracts.pdf#page=80) titled "Type theory in type theory using single substitutions" by Ambrus Kaposi and Szumi Xie.
 * Agda formalisation:
     * Simple type theory:
         * [Syntax](STT/SSC.agda)
