@@ -35,13 +35,17 @@
 \ArticleNo{23}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newtheorem{problem}[theorem]{Problem}
-\newtheorem{construction}[theorem]{Construction}
-
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usepackage{proof}
 \usepackage{multicol}
+
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{construction}[theorem]{Construction}
+
+\newcommand{\Agda}{%
+  \raisebox{-.15em}{\includegraphics[height=.9em]{agda-logo.pdf}}%
+}
 
 \newcommand{\ra}{\rightarrow}
 \newcommand{\Ra}{\Rightarrow}
@@ -460,7 +464,7 @@ Our metatheory is observational type theory
 (QIITs). On paper we usually omit writing coercions, so our notation
 is close to extensional type theory. Sections \ref{sec:tt} and
 \ref{sec:admissible} of this paper are formalised in the proof
-assistant Agda. The formalisation is availble at TODO. We use a strict
+assistant Agda. The formalisation is availble at TODO \href{https://szumixie.github.io/single-subst/TT.index.html}{\Agda}. We use a strict
 Prop-valued \cite{DBLP:journals/pacmpl/GilbertCST19} equality type
 with postulated coercion rule (transport rule) and postulated QIITs
 with computation rules added using rewrite rules
@@ -1073,8 +1077,8 @@ convert it into a sequence of instantiations of single substitutions.
 \end{alignat*}
 The computation of instantiating with $\Tms$ is illustrated below. On the
 right-hand side, we first weaken $B$ to the context in which the $a_i$'s live,
-then replace the variables of $B$ one by one by $a_i$'s, which are well-typed
-because of the previous weakening.
+then replace the variables of $B$ one by one using the $a_i$'s, which are
+well-typed because of the previous weakening.
 \[
   B[\llcorner\epsilon,a_1,a_2,\dots,a_{n-1},a_n\lrcorner] = 
   B[\p^{+^n}]\dots[\p^{+^n}][\langle a_1 \rangle^{+^{n-1}}][\langle a_2 \rangle^{+^{n-2}}]\dots[\langle a_{n-1} \rangle^+][\langle a_n \rangle]
