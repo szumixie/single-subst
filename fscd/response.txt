@@ -1,0 +1,138 @@
+We thank the reviewers for their constructive criticism.
+
+----------------------------------------------------------
+Response to Reviewer 1
+----------------------------------------------------------
+
+> 2. In various places you speak of "equivalent" systems, but it is
+> not always clear to me what you mean by that. E.g. line 93, in what
+> sense B-systems are equivalent to CwF? Certainly it is not an
+> equivalence of categories, that one exists between Bsys and Csys. If
+> you are only referring to the syntax, then it would be good to
+> specify so. This happens again in lines 149-150.
+
+TODO
+
+> 7. line 233. It is not clear to me what you mean by: "We instantiate
+> the type with the Sub[...] weakening."
+
+We will remove this unclear sentence.
+
+> 13. line 568-569. The sentence starting "as most sorts..." is a bit
+> obscure to me: in Section 2 you speak of a sort of types and one of
+> terms, etc.
+
+Sorry, we should have said that most sorts in the new model are given
+by specific term-sorts in the old model. We will fix this.
+
+----------------------------------------------------------
+Response to Reviewer 2
+----------------------------------------------------------
+
+> - Problem 11: What is a contextual isomorphism? Why are `F_Con` and
+> `F_Sub` not required to be invertible?
+
+A contextual isomorphism is an isomorphism between the contextual
+cores of the two models (that is, when context and substitutions are
+inductively generated from types and terms). In a model of type
+theory, the important structure is carried by types and terms, and
+contexts/substitutions are only there as helpful infrastructure
+(scaffolding). This is why the notion of contextual isomorphism makes
+sense: it ignores the possible differences between
+contexts/substitutions. We will add a definition and more explanation.
+
+> As mentioned in the summary above, the claim that for type theory
+> with Π-types, Σ-types and a universe hierarchy, the theory of CwFs
+> is "weakly equivalent" to the SSC, is not well-defined and not fully
+> substantiated.
+
+We agree that this is problematic: as we mention in line 618--619,
+types and terms are isomorphic after the other roundtrip, but because
+of the limitations of the single substitution calculus, it is not
+clear how to define contextual cores. We will acknowledge this more
+directly and will only say (in the abstract and introduction) that a
+CwF structure can be defined on an SSC with Σ,Π,U.
+
+> I think the second half of §2.1 is a bit sloppy: - For Σ-types, it
+> is suddenly mentioned that naturalities in one direction are
+> derivable, but the argument used seems to apply to any type former
+> with η.
+
+Yes, this indeed works for any type former with η, if it is specified
+as an isomorphism (Π is not specified as such, this is why we need
+admissibility, see response to the next comment).
+
+> - On ln 400, an admissible equation is suddenly used.
+
+In the beginning of subsection 2.1, we say that this subsection will
+motivate the need for admissible equations, and this is why we use
+some equations defined later. This illustrates a limitation of the SSC
+formulation: although the SSC theory is very concise, it is too weak
+to even define the Π-isomorphism from the traditional version of
+application in an arbitrary model.
+
+> ## Minor comments
+> 
+> - Somewhat important in my opinion: a theorem environment labelled
+> "Problem" gives the impression of an *open* problem.
+
+We used Vladimir Voevodsky's convention from his paper "A C-system
+defined by a universe in a category" where problem/construction refers
+to a proof relevant theorem/proof pair. That is, when a construction
+is a theorem, it means that it has at most one proof. We will clarify.
+
+> - The word "instantiation" is used often but not really introduced;
+
+A substitution is a list of terms. We use instantiation for the action
+of a substitution. We will clarify.
+
+> - ln 456: "It is important ...": [...] since αβη-equality is encoded
+> as metatheoretic equality, any predicate will preserve the
+> conversion rules.
+
+It is true that any predicate preserves αβη-equality, but we cannot
+define a map into a non-truncated version of α-normal forms, because
+that would expose differences between βη-equal terms. This is the
+reason for truncation.
+
+> - ln 568-569: Do you mean "most sort inhabitants"?
+
+See answer to reviewer 1.
+
+> 1. A lot of the presented material is formalized in Agda. A
+> recurring theme is admissibility vs. derivability.
+
+We directly encode admissible equations as "provable in the syntax
+(initial model)" and derivability as provable in any model. Similarly
+for admissible operations/sorts. One can say that in Agda, pattern
+matching corresponds to admissibility, and adding a definition to a
+record corrsponds to derivability. We don't use pattern matching
+because we simply postulate initial models and use their eliminator
+instead.
+
+> 2. To what extent can the central result in the paper (problem 6) be
+> factored through the following result/conjecture: For any CwF, the
+> category of parallel substitutions is exactly presented (†) by the
+> graph of single-variable weakenings and substitutions, subject to
+> the equations in def. 1 / def. 7 (expressed not as equations on
+> type/term actions but as equations on morphisms in the free category
+> over that graph).
+
+We believe that the reviewer's conjecture does not hold: TODO
+
+Ehrhard is exactly SSC+moving_equations_to_morphisms+ε+comp+id+⁺functoriality.
+
+----------------------------------------------------------
+Response to Reviewer 3
+----------------------------------------------------------
+
+We agree that we don't see a direct application of the SSC technique,
+but we think that such a surprisingly concise and previously unknown
+definition of type theory deserves a publication. Also, the general
+phenomenon that for certain theories, the syntaxes are equivalent but
+not the models, is interesting (like the relationship of lambda
+calculus and SK-combinator calculus), and we work out a similar
+example. This calculus is a kind of "minimisation" of type theory --
+and it might be the first step in this direction: in the conclusions,
+we speculate about its potential use as a coherent syntax, but this is
+so far only fictional.

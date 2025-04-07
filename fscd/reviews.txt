@@ -1,0 +1,148 @@
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 12
+TITLE: Type theory with single substitutions
+AUTHORS: Ambrus Kaposi and Szumi Xie
+
+----------- Overall evaluation -----------
+SCORE: 3 (strong accept)
+----- TEXT:
+The paper under review introduces a novel algebraic presentation of Martin-Loef type theory which has two main features: (i) it is intrinsic, and (ii) it only has single substitutions (as opposed to parallel ones). It is the first
+presentation combining these two aspects, and it may be understood as a B-system (essentially algebraic single substution presentation) presented as a Generalised Algebraic Theory (GAT). The main interesting consequence of this
+combination is that the presentation requires very few equations: the core substitution calculus (called SSC for single substitution calculus) has only 8 (and they can be reduced even further). The core SSC theory is very general and
+rather weak. However the authors show that by adding a universe and dependent function types (Pi-types) one recovers the same syntax as the one of categories with families (CwF). More precisely, the SSC with a universe and Pi-types
+has more models than CwFs, but the initial ones are isomorphic (t
+his is Problem 6). The paper is well-written, the introduction is clear and provides motivation and comparison with related works. Overall, I consider this submission a valuable contribution to the study of type systems, so I
+strongly recommend acceptance.
+----------- Questions for authors (optional) -----------
+Specific comments and typos:
+1. lines 64-65, why only natural models come with their creator's name? (I understand Ehrhard's notion does not have a name, so it needs its creator's name)
+2. In various places you speak of "equivalent" systems, but it is not always clear to me what you mean by that. E.g. line 93, in what sense B-systems are equivalent to CwF? Certainly it is not an equivalence of categories, that one
+exists between Bsys and Csys. If you are only referring to the syntax, then it would be good to specify so. This happens again in lines 149-150.
+3. line 178, typo: a model of the GAT _that_ we obtain
+4. line 221. Maybe Set could be called Sort in the paper?
+5. lines 227-228. I think these sentences are missing a conjunction or something.
+6. lines 231-232. These sentences also sound odd, maybe drop the last 'is'?
+7. line 233. It is not clear to me what you mean by: "We instantiate the type with the Sub[...] weakening." Which type are you speaking about? What is "the the Sub[...] weakening"?
+8. line 311. I think it's be more appropriate to say "a finite number" rather than "a couple".
+9. Please highlight the terms defined: line 416 a category with N-many families, and line 445 \alpha-normal.
+10. line 475-476. I think Sub*s is a typo (occurring two times).
+11. section 4. This is a very clever trick, but I suggest you take one more sentence to explain it: you made explicit that you use the U[] instance to get the equation for types, and I think it would be good if you add that you use
+the conditional equation _again_ to get that for terms. This could go for instance right after you prove that the equation for types hold.
+12. line 536. Typo: the second labelled equation has a ) which should not be there.
+13. line 568-569. The sentence starting "as most sorts..." is a bit obscure to me: in Section 2 you speak of a sort of types and one of terms, etc. But now you seem to suggest that these are terms instead.
+14. line 618. It would be good if you could give some motivation for this function not be definable.
+15. Ref. [24]. Capitalise Martin-Loef.
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 12
+TITLE: Type theory with single substitutions
+AUTHORS: Ambrus Kaposi and Szumi Xie
+
+----------- Overall evaluation -----------
+SCORE: 1 (weak accept)
+----- TEXT:
+# Overall Evaluation
+1 Weak accept
+
+# Reviewer's confidence
+4 High confidence
+
+# Best paper
+No
+
+# Overall Evaluation
+
+## Summary
+In an earlier paper [38], the authors explain how to translate SOGATs to GATs, in two ways: either using explicit parallel substitutions, or using explicit single-variable substitutions (and weakenings).
+In this paper, the results of these two translations are formally compared after applying them to the SOGAT of dependent type theory (with or without certain type formers); these resulting SOGATs are called the theory of CwFs
+(categories with (N many) families) and the SSC (single substitution calculus, def. 1, with an equivalent but more minimal axiomatization in def. 7).
+It is fairly trivial that the SSC translates to the theory of CwFs, therefore that every CwF is an SSC model.
+The authors show, however, that the initial CwF has the same contexts, types and terms as the initial SSC model (Problem 6).
+It is also claimed that if the SOGAT of dependent types is equipped with Π-types, Σ-types and a universe hierarchy, then the resulting theory of CwFs is "weakly equivalent" to the resulting SSC, although the authors seem partly
+unsure what that even means (Problem 11 and below), and as such a full proof is not given. Therefore the claim seems overblown.
+
+## Evaluation
+I think the paper provides new results, which are (mostly - see major comments) clearly stated and so are their limitations. Textual argumentation and Agda formalizations create confidence in the results.
+I find the paper (mostly - see major comments) acceptably well-written.
+My main reservation is that I have no decisive answer to the question "Why are these results important?", neither from my own knowledge nor from the paper's exposition.
+
+## Major comments
+As mentioned in the summary above, the claim that for type theory with Π-types, Σ-types and a universe hierarchy, the theory of CwFs is "weakly equivalent" to the SSC, is not well-defined and not fully substantiated. This should be
+honestly acknowledged everywhere.
+- Problem 11: What is a contextual isomorphism? Why are `F_Con` and `F_Sub` not required to be invertible?
+
+I think the second half of §2.1 is a bit sloppy:
+- For Σ-types, it is suddenly mentioned that naturalities in one direction are derivable, but the argument used seems to apply to any type former with η.
+- On ln 400, an admissible equation is suddenly used. It's not clear to me why this is ok at this point (i.e. why should we not stick to derivable equations). At a higher level, it is not clear to me what this part of narrative is
+trying to accomplish.
+- ln 411: using equations to be introduced later, did not improve readability imho.
+
+## Minor comments
+- Somewhat important in my opinion: a theorem environment labelled "Problem" gives the impression of an *open* problem. Alternative labels could be specification, constructive theorem, object, inhabitation problem, ...
+Alternatively/additionally, "construction" could be replaced by "solution".
+
+- ln 39: for clarity "an alternative intrinsic presentation"
+- A general writing advice is not to start sentences with a mathematical symbol (e.g. ln 58)
+- The word "instantiation" is used often but not really introduced; it is not clear whether it is regarded as synonymous with substitution or has a slightly different meaning.
+- ln 143: explain the appearance of the Agda logo upon first use
+- ln 148: parentheses around `-,-`
+- ln 149: the authors could be more clear about what it means for GATs to be equivalent
+- ln 164: shallowLY embedding
+- ln 172: simply modelled by -> simly abstracted over / axiomatized by
+- ln 184: categorIES with families
+- ln 310: "there are no equations on Sub": the authors could add that there is a good reason for this: many of the relevant equations involve composition of substitutions, and this is not defined for substitutions themselves, but it
+is for their actions on types and terms
+- ln 348: metacircular is not explained
+- ln 384-386: It took me a while to figure out what is meant and whether it's true. I think "what we cannot do" is insufficiently precise: it can be done admissibly (as, by induction, every context is known to have a length), but it
+is not derivable.
+- ln 431-432: "Note that we do not have the non-lifted term versions of the last two equations in SSC": this sentence confused me. I find non-lifted versions of all four equations:
+  (4) ln 285, first equation
+  (5) ln 322, first equation
+  (6) ln 317, first equation
+  (7) ln 329, second equation
+  EDIT: Oh, ok, it's about *term* versions, perhaps this should be typographically emphasized.
+- ln 445 and on: Given that αβη-equality is encoded by quotienting, i.e. as metatheoretic equality, any predicate will be closed under αβη-equality. As such, strictly speaking, and I think it is helpful to say this explicitly, a term
+is α-normal if it is αβη-equal to a term that does not contain instantiation operations.
+- ln 456: "It is important ...": I do not understand this statement at all. Again, since αβη-equality is encoded as metatheoretic equality, any predicate will preserve the conversion rules. This is unrelated to the predicate being
+truncated.
+- ln 509: "the initial SSC *model*" (in general please double check the hygienic use of terminology surrounding GATs: there is a theory, there is a model of the theory, there is a category of models, and each has its own name)
+- ln 522: Coquand universes: perhaps briefly explain this term or refer somewhere
+- ln 568-569: Do you mean "most sort inhabitants"? Or "appear as types"? If it is meant as stated, I do not understand.
+- ln 606: SSC *model*
+
+# Questions
+1. A lot of the presented material is formalized in Agda. A recurring theme is admissibility vs. derivability. Is there a way to reason about this in Agda, and do the authors make use of this?
+2. To what extent can the central result in the paper (problem 6) be factored through the following result/conjecture:
+   For any CwF, the category of parallel substitutions is exactly presented (†) by the graph of single-variable weakenings and substitutions, subject to the equations in def. 1 / def. 7 (expressed not as equations on type/term
+actions but as equations on morphisms in the free category over that graph).
+   (†) https://ncatlab.org/nlab/show/presentation+of+a+category+by+generators+and+relations
+----------- Questions for authors (optional) -----------
+1. A lot of the presented material is formalized in Agda. A recurring theme is admissibility vs. derivability. Is there a way to reason about this in Agda, and do the authors make use of this?
+2. To what extent can the central result in the paper (problem 6) be factored through the following result/conjecture:
+   For any CwF, the category of parallel substitutions is exactly presented (†) by the graph of single-variable weakenings and substitutions, subject to the equations in def. 1 / def. 7 (expressed not as equations on type/term
+actions but as equations on morphisms in the free category over that graph).
+   (†) https://ncatlab.org/nlab/show/presentation+of+a+category+by+generators+and+relations
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 12
+TITLE: Type theory with single substitutions
+AUTHORS: Ambrus Kaposi and Szumi Xie
+
+----------- Overall evaluation -----------
+SCORE: -1 (weak reject)
+----- TEXT:
+Summary:
+
+The paper describes a single substitution calculus for type theory. It defines weakening by one element and lifting of weakenings, together with single substitution. Furthermore, it defines 4 equations for substitutions and 4
+equations on types needed for typechecking. It introduces the idea of alpha-normalform which essentially pushes instantiations to the variables. We can simulate parallel substitutions by iterating single substitutions. Furthermore,
+the paper shows that the syntax of the single substitution calculus is weakly equivalent to CwFs.
+
+Evaluation:
+
+The paper clearly spells out the equations and definitions of single weakenings and substitutions; it is indeed written in a pedagogical style, as the authors mention in the conclusion. However, I still cannot get excited about this
+paper. Most of the definitions seem reasonable and are not surprising. They are mostly tedious to write down in detail. The connection to CwF is a nice result, but also not surprising. Last, while the type theory is minimalistic in a
+certain sense, it is less clear to me what the benefit of SSC in practice. For example, is it an effective approach to mechanize meta-theory?  The paper would be stronger, if it could show that this single substitution approach is
+indeed as effective (or more effective?) as the simultaneous substitution approach when it comes to mechanizing meta-properties.
+
+-----------------------------------------------------
+
