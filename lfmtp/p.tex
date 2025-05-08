@@ -1,12 +1,28 @@
-\documentclass[a4paper,UKenglish]{article}
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{LFMTP 2025} % Name of the event you are submitting to
 
-\bibliographystyle{plainurl}% the mandatory bibstyle
+\usepackage{iftex}
+
+\ifpdf
+  \usepackage{underscore}         % Only needed if you use pdflatex.
+  \usepackage[T1]{fontenc}        % Recommended with pdflatex
+\else
+  \usepackage{breakurl}           % Not needed if you use pdflatex only.
+\fi
 
 \title{Type theory with single substitutions}
-
-%\author{Ambrus Kaposi}{Eötvös Loránd University (ELTE), Hungary}{akaposi@inf.elte.hu}{https://orcid.org/0000-0001-9897-8936}{}
-
-%\author{Szumi Xie}{Eötvös Loránd University (ELTE), Hungary}{szumi@inf.elte.hu}{https://orcid.org/0009-0001-1355-1114}{}
+\author{Ambrus Kaposi
+\institute{Eötvös Loránd University (ELTE)\\
+Budapest, Hungary}
+\email{akaposi@inf.elte.hu}
+\and
+Szumi Xie
+\institute{Eötvös Loránd University (ELTE)\\
+Budapest, Hungary}
+\email{szumi@inf.elte.hu}
+}
+\def\titlerunning{Type theory with single substitutions}
+\def\authorrunning{A. Kaposi \& Sz. Xie}
 
 %\ccsdesc[500]{Theory of computation~Type theory}
 
@@ -63,7 +79,6 @@
 \newcommand{\Type}{\mathsf{Type}}
 
 \begin{document}
-
 \maketitle
 
 \begin{abstract}
@@ -1417,6 +1432,7 @@ setting of homotopy type theory.
 % 
 % named CwFs would be even closer to usual syntax.
 % 
+\bibliographystyle{eptcs}
 \bibliography{b}
  
 \appendix
