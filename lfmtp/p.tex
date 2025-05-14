@@ -37,7 +37,6 @@ Budapest, Hungary}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{hyperref}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{problem}[theorem]{Problem}
@@ -236,7 +235,7 @@ arbitrary model, but they hold in the syntax. In this paper, we show
 that the \emph{syntaxes} of SSC and the corresponding parallel
 substitution calculus (CwF-based calculus) are isomorphic. All
 CwF-based models are models of SSC, but not
-necessarily the other way. While B-systems are equivalent to CwFs (and
+necessarily the other way. While B-systems are equivalent to contextual CwFs (and
 C-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more
 SSC models than CwF-based models. This relationship is like that
 of extensional combinatory calculus and lambda calculus, where the
@@ -329,7 +328,9 @@ algebraic theories relate to generalised algebraic theories, or
 sets with a map into $I$ relate to indexed families over $I$
 \cite[page 221]{DBLP:journals/apal/Cartmell86}. Another difference is
 that we have fewer and less general equations, resulting in the fact
-that we have more models than B-systems. However in the syntax of our
+that we have more models than B-systems. A further difference is that contexts
+in B-systems are inductively defined (we call such models \emph{contextual}).
+However in the syntax of our
 theory, all the rules of B-systems are admissible. We describe the
 relationship in more detail in Appendix \ref{app:bsys}.
 %
@@ -354,9 +355,8 @@ removed. Categories with families (CwFs
 \cite{DBLP:conf/types/Dybjer95,Castellan2021}) feature $\p$, $\q$,
 $\blank,\blank$ operations which make it more apparent that
 substitutions are lists of terms. CwFs are equivalent to Ehrhard's
-calculus, and so are contextual categories/C-systems
-\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18},
-the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18} and
+calculus and the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18}. Contextual versions of these are equivalent to contextual categories/C-systems
+\cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18}, and
 B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
 
 \vspace{-1.1em}
@@ -427,7 +427,7 @@ isomorphism):
 Second-order models of SOGATs are not well-behaved, as there is no
 good notion of homomorphism between them \cite[bottom of page 5]{DBLP:conf/fscd/KaposiX24}. This is why Kaposi and Xie
 \cite{DBLP:conf/fscd/KaposiX24} translate SOGATs to GATs: a model of a
-SOGAT then is a model of the GAT the we obtain by their
+SOGAT then is a model of the GAT that we obtain by their
 translation. GATs come with well-behaved metatheory: a category of
 models with initial model (syntax), (co)free models
 \cite{andras,DBLP:phd/hal/Moeneclaey22}, and so on. However, the
@@ -518,17 +518,17 @@ type which can have variables in the context preceding the type.
 \]
 We will refer to variables by their distance from the end of the
 context. We would like to describe the operation providing the last
-variable in a context, the zero De Bruijn index \cite{debruijn}, we
-denote it by $\q : \Tm\,(\Gamma\ext A)\,A'$. It is a term in an
+variable in a context, first of all we need an operation providing the last
+variable in the context. This is the zero De Bruijn index \cite{debruijn}, which we
+denote by $\q : \Tm\,(\Gamma\ext A)\,A'$. It is a term in an
 extended context, and it should have type $A$, but the issue is that
 $A : \Ty\,\Gamma$, and $A' : \Ty\,(\Gamma\ext A)$. We need a way to
 weaken the type $A$ to obtain such an $A'$. For this, we will
 introduce an operation $\blank[\p] : \Ty\,\Gamma\,i\ra\Ty\,(\Gamma\ext
 A)\,i$ and define $A' := A[\p]$. Instead of introducing just
-$\blank[\p]$, we generalise a bit and add a new sort $\Sub$ which for
-now only has the single element $\p$ and the operation
-$\blank[\blank]$ is called \emph{instantiation}. We instantiate the
-type with the $\Sub\,\Delta\,\Gamma$ weakening.  Elements of $\Sub$
+$\blank[\p]$, we generalise a bit and add a new sort $\Sub$. For
+now, $\Sub$ only has the single element $\p$ and we introduce the operation
+$\blank[\blank]$ called \emph{instantiation}. Elements of $\Sub$
 will later be called substitutions, hence the name, but for now, we
 only have single end-of context weakenings in $\Sub$. The context
 $\Delta$ is called the domain, $\Gamma$ the codomain of a
@@ -679,8 +679,8 @@ lifted, single substitutions can also be lifted, and the
 weakening-rules $\Pi[]$, $\lam[]$ also work for single
 substitutions. We won't have more ways to introduce elements of
 $\Sub$, and there are no equations on $\Sub$. An element of $\Sub$ is
-either a single weakening $\p$ lifted a couple of times, or a single
-substitution lifted a couple of times. We call elements of $\Sub$
+either a single weakening $\p$ lifted a finite number of times, or a single
+substitution lifted a finite number of times. We call elements of $\Sub$
 substitutions for simplicity.
 
 With the introduction of $\blank\cdot\blank$, we need a new
@@ -923,7 +923,7 @@ section as follows: the parallel and single substitution syntax of the SOGAT (\r
 isomorphic.}
 
 \begin{definition}[CwF (see \href{https://szumixie.github.io/single-subst/TT.CwF.Syntax.html}{\Agda})]\label{def:cwf}
-  A category with $\N$-many families is defined as a category (objects
+  A \emph{category with $\N$-many families} is defined as a category (objects
    $\Con$, morphisms $\Sub$) with a terminal object $\diamond$
   ($\epsilon$ denotes the unique morphism into it); for each $i$ a
   presheaf of types (action on objects denoted $\Ty\,\blank\,i$,
@@ -981,7 +981,7 @@ to commute the instantiations without the equations to do so. Therefore, we
 first $\alpha$-normalize the syntax to compute away all the instantiations, then
 prove the equations by induction on the $\alpha$-normal forms.
 
-A type or term is $\alpha$-normal if it does not contain instantiation
+A type or term is \emph{$\alpha$-normal} if it does not contain instantiation
 operations, except at the leaves of the syntax tree as variables. However,
 $\alpha$-normal terms can still contain $\beta$/$\eta$ redexes, so that we do
 not need to do full normalization. We define variables and $\alpha$-normal forms
@@ -1047,7 +1047,7 @@ redefined for $\Sub^*$ (\href{https://szumixie.github.io/single-subst/TT.SSC.Pat
     \item \textnormal{(\href{https://szumixie.github.io/single-subst/TT.SSC.Lift.html\#5713}{\Agda})} $A[\gamma_0^{+^\Omega}] = A[\gamma_1^{+^\Omega}]$ for $A:\Ty\,(\Gamma+\Omega)$
     \item \textnormal{(\href{https://szumixie.github.io/single-subst/TT.SSC.Lift.html\#5874}{\Agda})} $a[\gamma_0^{+^\Omega}] = a[\gamma_1^{+^\Omega}]$ for $a:\Tm\,(\Gamma+\Omega)\,A$
   \end{itemize}
-  Note that the later equations depend on the the earlier ones.
+  Note that the later equations depend on the earlier ones.
 \end{lemma}
 \begin{proof}
   Assuming the first equation, we prove that $x[\gamma_0^{+^\Omega}] =
@@ -1133,6 +1133,7 @@ B[\p][\gamma^+] \overset{\U\beta}{=}
 \El\,(\cd\,B)[\gamma][\p] \overset{\U\beta}{=}
 B[\gamma][\p].
 $
+Thus, as the input of equation $[\p][^+]'$ holds all the time, we get this equation for every term.
 Equation $[\q][^+] : \q[\gamma^+] = \q$ also only makes sense if we
 have $[\p][^+]$ for types, so either we have to make $[\q][^+]$
 conditional, or we coerce it along the derived equation.
@@ -1163,7 +1164,7 @@ $
   B[\langle a\rangle][\gamma] \overset{\U\beta}{=}
   \El\,(\cd\,(B[\langle a\rangle][\gamma])) \overset{\cd[]}{=}
   \El\,((\cd\,B)[\langle a\rangle][\gamma]) \overset{\Pi\beta}{=}
-  \El\,((\lam\,(\cd\,B)\cdot a)[\gamma]) \overset{\cdot[]'\,\U[])}{=}
+  \El\,((\lam\,(\cd\,B)\cdot a)[\gamma]) \overset{\cdot[]'\,\U[]}{=}
   \El\,((\lam\,(\cd\,B)[\gamma])\cdot (a[\gamma])) \overset{\lam[]}{=}
   \El\,(\lam\,(\cd\,B[\gamma^+])\cdot (a[\gamma])) \overset{\Pi\beta}{=}
   \El\,(\cd\,B[\gamma^+][\langle a[\gamma]\rangle]) \overset{\cd[]}{=}
@@ -1245,7 +1246,7 @@ The following construction is also known as the standard model,
 metacircular interpretation \cite{DBLP:conf/popl/AltenkirchK16},
 contextualisation \cite{DBLP:conf/fscd/BocquetKS23}. Following
 \cite{kaposi-shallow} we call it termification, as most sorts in the
-new model are terms in the old model.
+new model are given by the sort of terms in the old model.
 \begin{problem}[Termification]\label{prob:termification}
   From a model of SSC (with $\Pi, \dots, \Sigma$, see Definition
   \ref{def:sigma}), we define a CwF (with the same type formers).
@@ -1341,7 +1342,7 @@ isomorphism because we can't define the map $F :
 \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra
 \Sub\,(\diamond\ext\Delta)\,(\diamond\ext\Gamma)$ on
 substitutions. Such a map is not definable only using single
-substitutions. However, the set of terms and types are still
+substitutions (a $\Sub$ is either a lifted weaking or a lifted single substitution, but we don't know anything about the relationship between $\Delta$ and $\Gamma$). However, the set of terms and types are still
 isomorphic after the round-trip. We leave formulating the right notion
 of contextual isomorphism for SSCs as future work.
 
