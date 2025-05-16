@@ -74,6 +74,9 @@ Budapest, Hungary}
 \newcommand{\un}{\mathsf{un}}
 \newcommand{\id}{\mathsf{id}}
 \newcommand{\Type}{\mathsf{Type}}
+% \NewCommandCopy{\oldGamma}{\Gamma}\renewcommand{\Gamma}{{\mathit{\oldGamma}}}
+% \NewCommandCopy{\oldDelta}{\Delta}\renewcommand{\Delta}{{\mathit{\oldDelta}}}
+% \NewCommandCopy{\oldTheta}{\Theta}\renewcommand{\Theta}{{\mathit{\oldTheta}}}
 
 \begin{document}
 \maketitle
@@ -899,7 +902,7 @@ terms depending on the lifted version of the same variable:
 (\lambda t\ldotp t[\p^+][\langle\un\,\q\rangle]) : \Tm\,(\Gamma\ext A)\,B \cong \Tm\,(\Gamma\ext\Lift\,A)\,(B[\p^+][\langle\q\rangle]) : (\lambda t\ldotp t[\p^+][\langle\mk\,\q\rangle])
 \end{equation}
 To derive the round-trips, we again need admissible equations. We prove
-the first round-trip equality in Appendix \ref{app:liftvar}, the other
+the first round-trip equality in Appendix \ref{app:tt}, the other
 is analogous.
 Once we have all the above isomorphisms, we can compose them to obtain commutation of $\Lift$ and $\Pi$:
 \begin{alignat*}{10}
@@ -1235,16 +1238,12 @@ We summarise this section by formally stating the above.
 
 In this section we show that if the single substitution calculus has
 certain type formers, then a CwF structure is derivable in any model.
-The idea is that
-\begin{itemize}
-\item using $\Sigma$ types we emulate contexts,
-\item using functions between these $\Sigma$ types we emulate parallel
-  substitutions,
-\item using the functions into the universe we emulate dependent types,
-\end{itemize}
-and then single substitutions are just there to set up $\Sigma$, $\Pi$
-and $\U$, and these types are enough to bootstrap the parallel
-substitution calculus.
+The idea is that (i) using $\Sigma$ types we emulate contexts; (ii)
+using functions between these $\Sigma$ types we emulate parallel
+substitutions; (iii) using the functions into the universe we emulate
+dependent types. Then single substitutions are just there to set up
+$\Sigma$, $\Pi$ and $\U$, and these types are enough to bootstrap the
+parallel substitution calculus.
 
 \begin{problem}
   Every CwF (with type formers $\Pi, \dots, \Sigma$) gives rise to an SSC (with
@@ -1314,7 +1313,7 @@ new model are given by the sort of terms in the old model.
   and $\lam\,b := \lam\,(\lam\,(b[\p][\p]\cdot(\q[\p],\q)))$. All
   substitution laws and $\beta$/$\eta$-laws hold.
 \end{proof}
-In Appendix \ref{sec:functor}, we show that the roundtrip CwF
+In Appendix \ref{app:functor}, we show that the roundtrip CwF
 $\longrightarrow$ SSC
 $\xrightarrow{\text{termification}}$ CwF results in a
 contextually isomorphic CwF.
