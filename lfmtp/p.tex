@@ -200,7 +200,7 @@ variable name (a pointer into a context) and a term. Substitutions
 cannot be composed, thus they do not form a category. To bridge the
 gap between the intrinsic parallel substitution world and the
 extrinsic single substitution world, Voevodsky introduced B-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} which are an algebraic
+\cite{bc} which are an algebraic
 description of a single substitution calculus. B-systems involve
 complex rules describing telescopes, weakenings and substitutions
 under telescopes, with several equations.
@@ -236,7 +236,7 @@ that the \emph{syntaxes} of SSC and the corresponding parallel
 substitution calculus (CwF-based calculus) are isomorphic. All
 CwF-based models are models of SSC, but not
 necessarily the other way. While B-systems are equivalent to contextual CwFs (and
-C-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}), there are more
+C-systems \cite{bc}), there are more
 SSC models than CwF-based models. This relationship is like that
 of extensional combinatory calculus and lambda calculus, where the
 syntaxes are equivalent, and every lambda model is a combinatory
@@ -357,7 +357,7 @@ $\blank,\blank$ operations which make it more apparent that
 substitutions are lists of terms. CwFs are equivalent to Ehrhard's
 calculus and the natural models of Awodey \cite{DBLP:journals/mscs/Awodey18}. Contextual versions of these are equivalent to contextual categories/C-systems
 \cite{DBLP:journals/apal/Cartmell86,DBLP:journals/lmcs/AhrensLV18}, and
-B-systems \cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023}.
+B-systems \cite{bc}.
 
 \vspace{-1.1em}
 \subparagraph*{Formalisations of type theory.}
@@ -386,7 +386,7 @@ in Cubical Agda, set-truncated and groupoid-truncated syntaxes of type
 theory have been formalised \cite{cohtt}. Without QIITs, tricks such
 as shallowly embedding the syntax can be used to formalise metatheoretic
 results about type theory such as gluing
-\cite{kaposi_et_al:LIPIcs:2019:10532}, and its special cases
+\cite{glue}, and its special cases
 canonicity and parametricity \cite{kaposi-shallow}.
 
 \vspace{-1.1em}
@@ -394,7 +394,7 @@ canonicity and parametricity \cite{kaposi-shallow}.
 We can define languages with binders as second-order theories
 following higher-order abstract syntax \cite{DBLP:conf/lics/Hofmann99}
 and logical frameworks
-\cite{DBLP:journals/jacm/HarperHP93,10.1007/978-3-642-14203-1_2}. Second-order
+\cite{DBLP:journals/jacm/HarperHP93,beluga}. Second-order
 generalised algebraic theories (SOGATs
 \cite{uemura,DBLP:conf/fscd/KaposiX24}) can be used to present type
 theory more abstractly than GATs: SOGATs abstract over the exact
@@ -1434,17 +1434,18 @@ setting of homotopy type theory.
 % is for single substitution models.
 % 
 % named CwFs would be even closer to usual syntax.
-% 
+%
+
 \bibliographystyle{eptcs}
 \bibliography{b}
- 
+
 \appendix
 
 \section{Detailed comparison with B-systems}
 \label{app:bsys}
 
 In this section, we describe the relationship between B-systems
-\cite{AHRENS_EMMENEGGER_NORTH_RIJKE_2023} and our Definition
+\cite{bc} and our Definition
 \ref{def:tt} in detail.
 
 B-systems are B-frames
