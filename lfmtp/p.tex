@@ -134,7 +134,7 @@ The GAT presentation has the following advantages:
   conversion $\sim$ is equality, this rule holds by the general
   properties of equality; and we also avoid lots of boilerplate
   stating that e.g.\ conversion is a congruence with respect to all
-  operations (for an intrinsic presentation with explicit conversion
+  operations (for an alternative intrinsic presentation with explicit conversion
   relation see \cite{chapman09eatitself}).
 \item Syntax and semantics are concordant: the syntax is simply the
   initial model, which always exists for any GAT and is called a
@@ -175,8 +175,8 @@ to use parallel substitutions, which means that the instantiation
 operation replaces all variables in a context by terms in another
 context \emph{at the same time}, that is, $t[x_0\mapsto
   u_0,\dots,x_n\mapsto u_n]$ where $x_0,\dots,x_n$ are the variables
-in the context of $t$. $(x_0\mapsto u_0,\dots,x_n\mapsto u_n)$ is
-called a parallel substitution, where the terms $u_0,\dots,u_n$ are
+in the context of $t$. We call $(x_0\mapsto u_0,\dots,x_n\mapsto u_n)$
+a parallel substitution, where the terms $u_0,\dots,u_n$ are
 all in the same context. Parallel substitutions are very natural in
 the algebraic setting because they form the morphisms in a category
 where objects are contexts (lists of types), then types/terms are
@@ -384,7 +384,7 @@ model \cite{kaposi-qiit-setoid}, thus Cubical Agda
 theory \cite{setoid,DBLP:phd/hal/Pujet22} support QIITs. For example,
 in Cubical Agda, set-truncated and groupoid-truncated syntaxes of type
 theory have been formalised \cite{cohtt}. Without QIITs, tricks such
-as shallow embedding the syntax can be used to formalise metatheoretic
+as shallowly embedding the syntax can be used to formalise metatheoretic
 results about type theory such as gluing
 \cite{kaposi_et_al:LIPIcs:2019:10532}, and its special cases
 canonicity and parametricity \cite{kaposi-shallow}.
@@ -441,7 +441,7 @@ substitutions. If we apply their parallel translation to the SOGAT
 \end{alignedat}
 \end{equation}
 with only two sorts and no operations or equations, we obtain the GAT
-of category with families (CwF). If we apply their single substitution
+of categories with families (CwFs). If we apply their single substitution
 translation to the SOGAT (\ref{eq:tt}), we obtain Definition
 \ref{def:tt} (also listed in Appendix \ref{app:tt}). The current paper
 can be seen as taking a big enough type theory (described as a SOGAT),
@@ -678,7 +678,9 @@ simplicity. There is no need for separation: just as weakenings can be
 lifted, single substitutions can also be lifted, and the
 weakening-rules $\Pi[]$, $\lam[]$ also work for single
 substitutions. We won't have more ways to introduce elements of
-$\Sub$, and there are no equations on $\Sub$. An element of $\Sub$ is
+$\Sub$, and there are no equations on $\Sub$,
+as the equations relating substitutions are defined for their action
+on types and terms. An element of $\Sub$ is
 either a single weakening $\p$ lifted a finite number of times, or a single
 substitution lifted a finite number of times. We call elements of $\Sub$
 substitutions for simplicity.
@@ -836,7 +838,7 @@ $
 \lam\,(\lam\,\q)[\p] \overset{\lam[]\,2\text{x}}{=} \lam\,(\lam\,(\q[\p^{++}])) \overset{\q[^+]}{=} \lam\,(\lam\,\q)
 $
 (with different implicit arguments for the $\lam$s on the left and right hand side), so we are able to apply $\cd\,A'$
-and $a'$ just as before. What we cannot do is to directly weaken a
+and $a'$ just as before. What we cannot derive is to directly weaken a
 term in context $\diamond$ to an arbitrary context $\Gamma$, where
 $\Gamma$ is a metavariable. If we know that $\Gamma$ has length $n$,
 then we can do the weakening by applying $\blank[\p]$ to it $n$ times.
@@ -958,7 +960,7 @@ be derived from the equations of SSC, these are versions of equations in Section
 \end{multicols}
 \vspace{-2em}
 The corresponding equations on terms are also needed. Note that we do not have
-the non-lifted term versions of the last two equations in SSC.
+the non-lifted \emph{term} versions of the last two equations in SSC.
 
 To formally state equations (\ref{eq:lifted1})--(\ref{eq:lifted4}), we
 define telescopes as an inductive type together with a recursive
@@ -1094,7 +1096,7 @@ Lemma \ref{thm:lifting} to avoid further induction on the syntax (\href{https://
   \end{description}
   The round-trips are proven by induction on the syntax.
 \end{proof}
-This also implies that the initial SSC is the initial CwF.
+This also implies that the initial SSC model is the initial CwF.
 
 \section{Minimisation}
 \label{sec:minimisation}
@@ -1310,7 +1312,7 @@ terms. Note that a contextual isomorphism preserves all type formers
 specified by universal properties.
 \begin{problem}
   Given a CwF (with type formers) $M$, let $M'$ denote the CwF
-  obtained by first seeing it as an SSC and then termifying it. We
+  obtained by first seeing it as an SSC model and then termifying it. We
   construct a contextual isomorphism between $M'$ and $M$.
 \end{problem}
 \begin{proof}[Construction]
