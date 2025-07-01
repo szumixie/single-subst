@@ -32,19 +32,22 @@
     title = {Generalised algebraic presentation of type theory},
     note = {\url{https://www.cse.chalmers.se/~coquand/cwf2.pdf}},
     year = 2020}
-@incollection{martinlof73predicative,
-    Author = {Per Martin-L{\"o}f},
-    Booktitle = {Logic Colloquium '73, Proceedings of the Logic Colloquium},
-    Editor = {H.E. Rose and J.C. Shepherdson},
-    Mrclass = {02C15 (02D99)},
-    Mrnumber = {0387009 (52 \#7856)},
-    Mrreviewer = {Horst Luckhardt},
-    Pages = {73--118},
-    Publisher = {North-Holland},
-    Series = {Studies in Logic and the Foundations of Mathematics},
-    Title = {An intuitionistic theory of types: predicative part},
-    Volume = 80,
-    Year = 1975}
+@incollection{MARTINLOF197573,
+title = {An Intuitionistic Theory of Types: Predicative Part},
+editor = {H.E. Rose and J.C. Shepherdson},
+series = {Studies in Logic and the Foundations of Mathematics},
+publisher = {Elsevier},
+volume = {80},
+pages = {73-118},
+year = {1975},
+booktitle = {Logic Colloquium '73},
+issn = {0049-237X},
+doi = {https://doi.org/10.1016/S0049-237X(08)71945-1},
+url = {https://www.sciencedirect.com/science/article/pii/S0049237X08719451},
+author = {Per Martin-Löf},
+abstract = {Publisher Summary
+The theory of types is intended to be a full-scale system for formalizing intuitionistic mathematics as developed. The language of the theory is richer than the languages of traditional intuitionistic systems in permitting proofs to appear as parts of propositions so that the propositions of the theory can express properties of proofs. There are axioms for universes that link the generation of objects and types and play somewhat the same role for the present theory as does the replacement axiom for Zermelo–Fraenkel set theory. The present theory is based on a strongly impredicative axiom that there is a type of all types in symbols. This axiom has to be abandoned, however, after it has been shown to lead to a contraction. This chapter discusses Normalization theorem, which can be strengthened in two ways: it can be made to cover open terms and it can be proved that every reduction sequence starting from an arbitrary term leads to a unique normal term after a finite number of steps. The definition of the notion of convertibility and the proof that an arbitrary term is convertible can no longer be separated because the type symbols and the terms are generated simultaneously.}
+}
 @book{DBLP:books/cu/Ha2016,
   author       = {Robert Harper},
   title        = {Practical Foundations for Programming Languages (2nd. Ed.)},
@@ -229,7 +232,7 @@ url="https://doi.org/10.1007/978-3-030-66545-6_5"
   biburl       = {https://dblp.org/rec/journals/mscs/Awodey18.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-@article{bc, title={B-SYSTEMS AND {C}-SYSTEMS ARE EQUIVALENT}, DOI={10.1017/jsl.2023.41}, journal={The Journal of Symbolic Logic}, author={Ahrens, Benedikt and Emmenegger, Jacopo and North, Paige Randall and Rijke, Egbert}, year={2023}, pages={1–9}}
+@article{bc, title={B-systems and {C}-systems are equivalent}, DOI={10.1017/jsl.2023.41}, journal={The Journal of Symbolic Logic}, author={Ahrens, Benedikt and Emmenegger, Jacopo and North, Paige Randall and Rijke, Egbert}, year={2023}, pages={1–9}}
 @inproceedings{DBLP:conf/fscd/AltenkirchKSV23,
   author       = {Thorsten Altenkirch and
                   Ambrus Kaposi and
@@ -364,7 +367,8 @@ publisher="Springer Berlin Heidelberg",
 address="Berlin, Heidelberg",
 pages="15--21",
 abstract="Beluga is an environment for programming and reasoning about formal systems given by axioms and inference rules. It implements the logical framework LF for specifying and prototyping formal systems via higher-order abstract syntax. It also supports reasoning: the user implements inductive proofs about formal systems as dependently typed recursive functions. A distinctive feature of Beluga is that it not only represents binders using higher-order abstract syntax, but directly supports reasoning with contexts. Contextual objects represent hypothetical and parametric derivations, leading to compact and elegant proofs. Our test suite includes standard examples such as the Church-Rosser theorem, type uniqueness, proofs about compiler transformations, and preservation and progress for various ML-like languages. We also implemented proofs of structural properties of expressions and paths in expressions. Stating these properties requires nesting of quantifiers and implications, demonstrating the expressive power of Beluga.",
-isbn="978-3-642-14203-1"
+isbn="978-3-642-14203-1",
+doi = {10.1007/978-3-642-14203-1_2}
 }
 @misc{abel2013normalization,
   title={Normalization by evaluation: dependent types and impredicativity},
@@ -377,13 +381,19 @@ isbn="978-3-642-14203-1"
     title = {Formalisation and meta-theory of type theory},
     school = {Université de Nantes},
     year = {2020}}
-@ARTICLE{debruijn,
-    author = {N. G. De Bruijn},
-    title = {Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser Theorem},
-    journal = {INDAG. MATH},
-    year = {1972},
-    volume = {34},
-    pages = {381--392}
+@article{DEBRUIJN1972381,
+title = {Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church-Rosser theorem},
+journal = {Indagationes Mathematicae (Proceedings)},
+volume = {75},
+number = {5},
+pages = {381-392},
+year = {1972},
+issn = {1385-7258},
+doi = {https://doi.org/10.1016/1385-7258(72)90034-0},
+url = {https://www.sciencedirect.com/science/article/pii/1385725872900340},
+author = {de Bruijn, N. G.},
+abstract = {In ordinary lambda calculus the occurrences of a bound variable are made recognizable by the use of one and the same (otherwise irrelevant) name at all occurrences. This convention is known to cause considerable trouble in cases of substitution. In the present paper a different notational system is developed, where occurrences of variables are indicated by integers giving the “distance” to the binding λ instead of a name attached to that λ. The system is claimed to be efficient for automatic formula manipulation as well as for metalingual discussion. As an example the most essential part of a proof of the Church-Rosser theorem is presented in this namefree calculus.},
+doi = {10.1016/1385-7258(72)90034-0}
 }
 @article{lmcs:4005,
   TITLE = {{Normalisation by Evaluation for Type Theory, in Type Theory}},
@@ -396,29 +406,44 @@ isbn="978-3-642-14203-1"
   MONTH = Oct,
   KEYWORDS = {Computer Science - Logic in Computer Science ; F.4.1},
 }
-@InProceedings{setoid,
-author="Altenkirch, Thorsten
-and Boulier, Simon
-and Kaposi, Ambrus
-and Tabareau, Nicolas",
-editor="Hutton, Graham",
-title="Setoid Type Theory---A Syntactic Translation",
-booktitle="Mathematics of Program Construction",
-year="2019",
-publisher="Springer International Publishing",
-address="Cham",
-pages="155--196",
-isbn="978-3-030-33636-3"
+@inproceedings{DBLP:conf/mpc/AltenkirchBKT19,
+  author       = {Thorsten Altenkirch and
+                  Simon Boulier and
+                  Ambrus Kaposi and
+                  Nicolas Tabareau},
+  editor       = {Graham Hutton},
+  title        = {Setoid Type Theory - {A} Syntactic Translation},
+  booktitle    = {Mathematics of Program Construction - 13th International Conference,
+                  {MPC} 2019, Porto, Portugal, October 7-9, 2019, Proceedings},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {11825},
+  pages        = {155--196},
+  publisher    = {Springer},
+  year         = {2019},
+  url          = {https://doi.org/10.1007/978-3-030-33636-3\_7},
+  doi          = {10.1007/978-3-030-33636-3\_7},
+  timestamp    = {Sun, 02 Oct 2022 16:12:41 +0200},
+  biburl       = {https://dblp.org/rec/conf/mpc/AltenkirchBKT19.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-@INPROCEEDINGS{kaposi-shallow,
-    title = {Shallow embedding of type theory is morally correct},
-    author = {Ambrus Kaposi and Andr{\'a}s Kov{\'a}cs and Nicolai Kraus},
-    year = {2020},
-    booktitle = {26th International Conference on Types for Proofs and Programs, TYPES 2020},
-    editor = {Ugo de' Liguoro and Stefano Berardi},
-    publisher = {University of Turin},
-    comment = {Abstract},
-    url = {https://types2020.di.unito.it/abstracts/BookOfAbstractsTYPES2020.pdf#page=76}
+@inproceedings{DBLP:conf/mpc/KaposiKK19,
+  author       = {Ambrus Kaposi and
+                  Andr{\'{a}}s Kov{\'{a}}cs and
+                  Nicolai Kraus},
+  editor       = {Graham Hutton},
+  title        = {Shallow Embedding of Type Theory is Morally Correct},
+  booktitle    = {Mathematics of Program Construction - 13th International Conference,
+                  {MPC} 2019, Porto, Portugal, October 7-9, 2019, Proceedings},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {11825},
+  pages        = {329--365},
+  publisher    = {Springer},
+  year         = {2019},
+  url          = {https://doi.org/10.1007/978-3-030-33636-3\_12},
+  doi          = {10.1007/978-3-030-33636-3\_12},
+  timestamp    = {Thu, 07 Nov 2019 09:20:32 +0100},
+  biburl       = {https://dblp.org/rec/conf/mpc/KaposiKK19.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 @InProceedings{glue,
   author =	{Ambrus Kaposi and Simon Huber and Christian Sattler},
@@ -726,11 +751,13 @@ isbn="978-3-030-33636-3"
   biburl       = {https://dblp.org/rec/conf/csl/Kovacs22.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-@techreport{HoTTbook,
-        Author = {The Univalent Foundations Program},
-        Institution = {Institute for Advanced Study},
-        Title = {Homotopy type theory: Univalent foundations of mathematics},
-        Year = {2013}}
+@Book{hottbook,
+  author =    {{The Univalent Foundations Program}},
+  sortname =  {{Univalent Foundations Program}},
+  title =     {Homotopy Type Theory: Univalent Foundations of Mathematics},
+  publisher = {\url{https://homotopytypetheory.org/book}},
+  address =   {Institute for Advanced Study},
+  year =      2013}
 @inproceedings{DBLP:conf/lics/Kraus21,
   author       = {Nicolai Kraus},
   title        = {Internal {\(\infty\)}-Categorical Models of Dependent Type Theory
@@ -800,24 +827,19 @@ isbn="978-3-030-33636-3"
   biburl       = {https://dblp.org/rec/journals/mscs/ClairambaultD14.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-@article{10.1145/3204492,
-author = {Berg, Benno Van Den},
-title = {Path Categories and Propositional Identity Types},
-year = {2018},
-issue_date = {April 2018},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {19},
-number = {2},
-issn = {1529-3785},
-url = {https://doi.org/10.1145/3204492},
-doi = {10.1145/3204492},
-abstract = {Connections between homotopy theory and type theory have recently attracted a lot of attention, with Voevodsky’s univalent foundations and the interpretation of Martin-L\"{o}f’s identity types in Quillen model categories as some of the highlights. In this article, we establish a connection between a natural weakening of Martin-L\"{o}f’s rules for the identity types that has been considered by Cohen, Coquand, Huber and M\"{o}rtberg in their work on a constructive interpretation of the univalence axiom on the one hand and the notion of a path category, a slight variation on the classic notion of a category of fibrant objects due to Brown, on the other. This involves showing that the syntactic category associated to a type theory with weak identity types carries the structure of a path category, strengthening earlier results by Avigad, Lumsdaine, and Kapulkin. In this way, we not only relate a well-known concept in homotopy theory with a natural concept in logic but also provide a framework for further developments.},
-journal = {ACM Trans. Comput. Logic},
-month = jun,
-articleno = {15},
-numpages = {32},
-keywords = {homotopy theory, categorical logic, Type theory}
+@article{DBLP:journals/tocl/Berg18,
+  author       = {van den Berg, Benno},
+  title        = {Path Categories and Propositional Identity Types},
+  journal      = {{ACM} Trans. Comput. Log.},
+  volume       = {19},
+  number       = {2},
+  pages        = {15:1--15:32},
+  year         = {2018},
+  url          = {https://doi.org/10.1145/3204492},
+  doi          = {10.1145/3204492},
+  timestamp    = {Wed, 21 Nov 2018 12:44:28 +0100},
+  biburl       = {https://dblp.org/rec/journals/tocl/Berg18.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 @INPROCEEDINGS{setoidhell,
     title = {From setoid hell to homotopy heaven? The role of extensionality in Type Theory},

@@ -10,7 +10,7 @@
   \usepackage{breakurl}           % Not needed if you use pdflatex only.
 \fi
 
-\title{Type theory with single substitutions\thanks{This research was supported by the the HOTT ERC Grant 101170308.}}
+\title{Type theory with single substitutions\thanks{This research was supported by the HOTT ERC Grant 101170308.}}
 \author{Ambrus Kaposi
 \institute{Eötvös Loránd University (ELTE)\\
 Budapest, Hungary}
@@ -108,7 +108,7 @@ we show that an SSC model gives rise to a CwF.
 
 What is type theory? Here we refer to type theory as a particular
 formal system based on Martin-Löf's original definition
-\cite{martinlof73predicative}, and not to the study of type systems
+\cite{MARTINLOF197573}, and not to the study of type systems
 (e.g.\ \cite{DBLP:books/daglib/0005958}).
 
 In this paper, we will answer this question by defining type theory as
@@ -191,7 +191,7 @@ natural models \cite{DBLP:journals/mscs/Awodey18}, contextual
 categories \cite{DBLP:journals/apal/Cartmell86}, C-systems
 \cite{DBLP:journals/lmcs/AhrensLV18}, locally cartesian closed
 categories \cite{DBLP:journals/mscs/ClairambaultD14}, path categories
-\cite{10.1145/3204492}.
+\cite{DBLP:journals/tocl/Berg18}.
 
 In traditional extrinsic presentations
 (e.g.\ \cite{alti:phd93,DBLP:books/daglib/0005958}) instantiation
@@ -381,13 +381,13 @@ proof, we have experimental evidence that QIITs are supported by the
 cubical set model \cite{DBLP:conf/lics/CoquandHM18} and the setoid
 model \cite{kaposi-qiit-setoid}, thus Cubical Agda
 \cite{DBLP:journals/jfp/VezzosiMA21} and setoid/observational type
-theory \cite{setoid,DBLP:phd/hal/Pujet22} support QIITs. For example,
+theory \cite{DBLP:conf/mpc/AltenkirchBKT19,DBLP:phd/hal/Pujet22} support QIITs. For example,
 in Cubical Agda, set-truncated and groupoid-truncated syntaxes of type
 theory have been formalised \cite{cohtt}. Without QIITs, tricks such
 as shallowly embedding the syntax can be used to formalise metatheoretic
 results about type theory such as gluing
 \cite{glue}, and its special cases
-canonicity and parametricity \cite{kaposi-shallow}.
+canonicity and parametricity \cite{DBLP:conf/mpc/KaposiKK19}.
 
 \vspace{-1em}
 \subparagraph*{SOGATs}
@@ -523,7 +523,7 @@ type which can have variables in the context preceding the type.
 We will refer to variables by their distance from the end of the
 context. We would like to describe the operation providing the last
 variable in a context, first of all we need an operation providing the last
-variable in the context. This is the zero De Bruijn index \cite{debruijn}, which we
+variable in the context. This is the zero De Bruijn index \cite{DEBRUIJN1972381}, which we
 denote by $\q : \Tm\,(\Gamma\ext A)\,A'$. It is a term in an
 extended context, and it should have type $A$, but the issue is that
 $A : \Ty\,\Gamma$, and $A' : \Ty\,(\Gamma\ext A)$. We need a way to
@@ -1256,7 +1256,7 @@ parallel substitution calculus.
 The following construction is also known as the standard model,
 metacircular interpretation \cite{DBLP:conf/popl/AltenkirchK16},
 contextualisation \cite{DBLP:conf/fscd/BocquetKS23}. Following
-\cite{kaposi-shallow} we call it termification, as most sorts in the
+\cite{DBLP:conf/mpc/KaposiKK19} we call it termification, as most sorts in the
 new model are given by the sort of terms in the old model.
 \begin{problem}[Termification]\label{prob:termification}
   From a model of SSC (with $\Pi, \dots, \Sigma$, see Definition
@@ -1423,7 +1423,7 @@ In this section, we describe the relationship between B-systems
 B-systems are B-frames
 together with substitution, weakening and generic element
 operations. A B-frame is given by sets $B_i$, $\tilde{B}_i$ and
-functions between them as shown below . \\
+functions between them as shown below. \\
 \begin{tikzpicture}
   \node (b0) at (4,0) {$\top$};
   \node (b1) at (5,0) {$B_1$};
@@ -1679,7 +1679,7 @@ isomorphism because we can't define the map $F :
 \Tm\,\diamond\,(\Delta\Ra\Gamma) \ra
 \Sub\,(\diamond\ext\Delta)\,(\diamond\ext\Gamma)$ on
 substitutions. Such a map is not definable only using single
-substitutions (a $\Sub$ is either a lifted weaking or a lifted single substitution, but we don't know anything about the relationship between $\Delta$ and $\Gamma$). However, the set of terms and types are still
+substitutions (a $\Sub$ is either a lifted weakening or a lifted single substitution, but we don't know anything about the relationship between $\Delta$ and $\Gamma$). However, the set of terms and types are still
 isomorphic after the round-trip. We leave formulating the right notion
 of contextual isomorphism for SSCs as future work.
 
